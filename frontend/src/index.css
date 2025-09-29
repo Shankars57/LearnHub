@@ -1,0 +1,72 @@
+@import url("https://fonts.googleapis.com/css2?family=Bitcount+Prop+Single:wght@100..900&family=Outfit:wght@100..900&family=Playwrite+AU+QLD:wght@100..400&family=Quicksand:wght@300..700&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+@import "tailwindcss";
+
+* {
+  font-family: "Outfit", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: black;
+}
+
+button {
+  cursor: pointer;
+}
+
+.fade-in {
+  animation: fade-in 3s linear infinite;
+}
+
+@keyframes fade-in {
+  0% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: rgb(34, 34, 34);
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.text-animate {
+  font-weight: bold;
+  background: linear-gradient(90deg, pink, purple, red, yellow);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  animation: gradientMove 4s linear infinite alternate;
+}
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 50% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #1f2937;
+  border-radius: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #3b82f6;
+  border-radius: 6px;
+  border: 2px solid #1f2937;
+}
