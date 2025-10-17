@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Book,
   User,
@@ -16,7 +16,8 @@ import {
   Home,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { LearnContext } from "../../context/LearnContextProvider";
 
 const variants = {
   initial: { y: -20, opacity: 0 },
@@ -72,8 +73,17 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const [active, setActive] = useState(location.pathname);
-
+  const { setToken } = useContext(LearnContext);
+  const handleLogout = () => {
+    const availToken = localStorage.getItem("token");
+    if (availToken) {
+      setToken("");
+      localStorage.removeItem("token");
+      navigate("/");
+    }
+  };
   const navItems = [
     { label: "Home", path: "/", icon: <Home size={18} /> },
     { label: "Playlist", path: "/playlist", icon: <Play size={18} /> },
@@ -84,7 +94,6 @@ const Navbar = () => {
       icon: <MessageSquare size={18} />,
     },
     { label: "AI", path: "/ai", icon: <Sparkles size={18} /> },
-    { label: "Profile", path: "/profile", icon: <User size={18} /> },
   ];
 
   useEffect(() => {
@@ -167,6 +176,49 @@ const Navbar = () => {
                 </Link>
               </motion.div>
             ))}
+            <div className="relative group">
+              <div
+                className={`w-8 h-8 flex items-center justify-center rounded-full cursor-pointer transition-colors duration-200 
+      ${
+        isScrolled
+          ? "text-gray-700 hover:text-blue-600"
+          : "text-gray-200 hover:text-blue-400"
+      }
+    `}
+              >
+                <User className="w-5 h-5" />
+              </div>
+
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="absolute  -right-20  w-40 flex-col rounded-xl
+               bg-white/10 backdrop-blur-md border border-white/20 
+               shadow-lg p-2 opacity-0 scale-95 
+               group-hover:opacity-100 group-hover:scale-100 
+               group-hover:flex hidden z-50 transition-all duration-300"
+              >
+                <Link
+                  to="/profile"
+                  className="px-4 py-2 
+                  text-sm font-medium text-white text-center
+                   rounded-md hover:bg-white/20 transition-colors duration-200"
+                >
+                  Profile
+                </Link>
+
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 text-sm 
+                  font-medium text-white
+                   rounded-md hover:bg-red-500/70 
+                   transition-colors duration-200"
+                >
+                  Logout
+                </button>
+              </motion.div>
+            </div>
           </motion.div>
 
           {/* Mobile Menu Button */}
@@ -208,6 +260,21 @@ const Navbar = () => {
                 </Link>
               </motion.div>
             ))}
+            <Link
+              to="/profile"
+              onClick={() => {
+                setActive("/profile");
+                setIsMenuOpen(false);
+              }}
+              className={`flex items-center gap-2 px-3 py-2 rounded text-sm font-medium transition-colors duration-200 ${
+                active === "/profile"
+                  ? "text-blue-600 font-semibold"
+                  : "text-gray-400 hover:text-blue-600"
+              }`}
+            >
+              <User size={18} />
+              Profile
+            </Link>
           </motion.div>
         )}
       </div>

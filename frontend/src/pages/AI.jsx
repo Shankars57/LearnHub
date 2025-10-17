@@ -7,8 +7,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import toast from "react-hot-toast";
 
-// ====== Animation Variants ======
-const fadeSlideUp = {
+const fadeUp = {
   hidden: { opacity: 0, y: 40 },
   visible: (i = 0) => ({
     opacity: 1,
@@ -22,13 +21,7 @@ const fadeSlideUp = {
   }),
 };
 
-const scaleIn = {
-  hidden: { opacity: 0, scale: 0.9 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } },
-};
-
-// ====== Example Prompts ======
-const promptsExample = [
+const promptsList = [
   {
     icon: <Code size={28} />,
     prompt: "Explain Binary Search",
@@ -51,47 +44,38 @@ const promptsExample = [
   },
 ];
 
-// ====== Typing Indicator Component ======
-const TypingIndicator = () => (
+const TypingDots = () => (
   <div className="flex gap-1">
     {[0, 1, 2].map((i) => (
       <motion.span
         key={i}
-        className="w-2 h-2 bg-gray-300 rounded-full"
-        animate={{ y: ["0%", "-50%", "0%"] }}
-        transition={{
-          repeat: Infinity,
-          repeatType: "loop",
-          delay: i * 0.2,
-          duration: 0.6,
-        }}
+        className="w-2 h-2 bg-gray-400 rounded-full"
+        animate={{ y: ["0%", "-40%", "0%"] }}
+        transition={{ repeat: Infinity, delay: i * 0.2, duration: 0.6 }}
       />
     ))}
   </div>
 );
 
 const AI = () => {
-  const [status] = useState("online");
   const [messages, setMessages] = useState([
-    {
-      sender: "bot",
-      text: "Hello! I’m your AI Assistant 🤖. How can I help you today?",
-    },
+    { sender: "bot", text: "👋 Hey! I’m your AI Assistant. Ask me anything!" },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [started, setStarted] = useState(false);
   const messageEndRef = useRef(null);
-
-  // Auto-scroll on new messages
+  const inputRef = useRef(null);
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
+    setStarted(true);
 
-    const userMessage = { sender: "user", text: input };
-    setMessages((prev) => [...prev, userMessage]);
+    const userMsg = { sender: "user", text: input };
+    setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setLoading(true);
 
@@ -99,113 +83,80 @@ const AI = () => {
       const { data } = await axios.post("http://localhost:5000/api/ai-chat", {
         prompt: input,
       });
-      if (data.success) toast.success("New response is updated.");
+      if (data.success) toast.success("AI replied!");
       setMessages((prev) => [...prev, { sender: "bot", text: data.reply }]);
-    } catch (error) {
-      console.error(error);
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Something went wrong";
-      toast.error(errorMessage);
-      setMessages((prev) => [
-        ...prev,
-        { sender: "bot", text: `⚠️ ${errorMessage}` },
-      ]);
+    } catch (err) {
+      const msg =
+        err?.response?.data?.message || err.message || "Something went wrong";
+      toast.error(msg);
+      setMessages((prev) => [...prev, { sender: "bot", text: `⚠️ ${msg}` }]);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-b from-black via-gray-900 to-black">
-      {/* Heading */}
-      <motion.h1
-        variants={scaleIn}
-        initial="hidden"
-        animate="visible"
-        className="text-2xl flex items-center justify-center block px-10 py-2 rounded-full font-sm shadow-sm shadow-white/10 bg-gradient-to-l from-pink-400 to-indigo-500 bg-clip-text text-transparent font-bold"
-      >
-        <Sparkles size={20} className="mx-2 text-white/80" /> AI Assistant
-      </motion.h1>
-
-      {/* Sub-text */}
-      <motion.p
-        variants={fadeSlideUp}
-        initial="hidden"
-        animate="visible"
-        className="sm:text-2xl text-gray-300 mt-4"
-      >
-        Get instant help with coding problems, study guidance, and career
-        advice.
-      </motion.p>
-
-      {/* Example Cards */}
+    <div
+      className="relative min-h-screen 
+    flex flex-col
+     bg-gradient-to-b from-black via-gray-900 to-black
+      w-[80%] mx-auto 
+     "
+    >
       <motion.div
+        variants={fadeUp}
         initial="hidden"
         animate="visible"
-        className="w-[90%] mx-auto flex flex-wrap gap-6 items-center justify-center mt-8"
+        className="text-center
+         py-5 border-b border-white/10"
       >
-        {promptsExample.map((item, idx) => (
-          <motion.div
-            key={idx}
-            custom={idx}
-            variants={fadeSlideUp}
-            className="border border-gray-700 rounded-2xl bg-white/10 backdrop-blur-md p-6 flex flex-col items-center w-48 text-center hover:shadow-lg hover:shadow-pink-500/40 hover:scale-105 transition-transform"
-          >
-            <span className="mb-3 text-white p-2 rounded-xl bg-gradient-to-r from-pink-600 to-indigo-600">
-              {item.icon}
-            </span>
-            <p className="text-white text-sm font-medium">{item.prompt}</p>
-            <p className="text-xs text-gray-400">{item.title}</p>
-          </motion.div>
-        ))}
+        <h1
+          className="text-3xl
+         font-bold 
+         bg-gradient-to-r 
+         from-blue-900
+         to-white bg-clip-text
+          text-transparent flex 
+          justify-center items-center gap-2"
+        >
+          <Sparkles size={22} className="text-white" /> AI Assistant
+        </h1>
+        <p className="text-gray-400 mt-2 text-sm">
+          Ask coding, DSA, or career questions instantly.
+        </p>
       </motion.div>
 
-      {/* Chat Box */}
-      <motion.div
-        variants={scaleIn}
-        initial="hidden"
-        animate="visible"
-        className="w-[60%] mx-auto 
-          max-h-120
-          mb-10
-        flex flex-col border mt-8 border-white/10 rounded-xl bg-white/5 h-[500px] backdrop-blur-lg shadow-lg"
-      >
-        {/* Header */}
-        <div className="min-h-20 px-4 flex items-center justify-between border-b border-white/10">
-          <h1 className="text-xl gap-2 text-white flex flex-col">
-            <span className="flex items-center gap-2">
-              <span className="p-1 border border-white/20 rounded-lg bg-gradient-to-r from-pink-600 to-indigo-600">
-                <Bot size={22} />
-              </span>
-              AI Assistant
-            </span>
-            <p className="text-sm text-gray-500">Always here to help you.</p>
-          </h1>
-          <div className="flex items-center gap-1">
-            <span
-              className={`w-3 h-3 border rounded-full ${
-                status === "online" ? "bg-green-500" : "bg-red-400"
-              }`}
-            ></span>
-            <p
-              className={`text-sm ${
-                status === "online" ? "text-green-400" : "text-red-400"
-              }`}
-            >
-              {status === "online" ? "Online" : "Offline"}
-            </p>
-          </div>
-        </div>
+      <div className="flex-1 overflow-y-auto p-6 space-y-4 [&::-webkit-scrollbar]:hidden">
+        {!started && (
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            className="flex flex-wrap justify-center gap-6 mt-10"
+          >
+            {promptsList.map((item, i) => (
+              <motion.div
+                key={i}
+                custom={i}
+                variants={fadeUp}
+                onClick={() => {
+                  setInput(item.prompt);
+                  setStarted(true);
+                  inputRef.current.focus();
+                }}
+                className="cursor-pointer border border-gray-700 rounded-2xl bg-white/10 backdrop-blur-md p-6 w-52 text-center hover:shadow-lg hover:shadow-pink-500/40 hover:scale-105 transition-transform"
+              >
+                <span className="text-white mb-2 p-2 rounded-xl bg-gradient-to-r from-pink-600 to-indigo-600 inline-block">
+                  {item.icon}
+                </span>
+                <p className="text-white text-sm font-medium">{item.prompt}</p>
+                <p className="text-xs text-gray-400">{item.title}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
 
-        {/* Messages */}
-        <div
-          className="flex-1 p-4 
-
-        overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] space-y-4"
-        >
-          {messages.map((msg, i) => (
+        {started &&
+          messages.map((msg, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, x: msg.sender === "user" ? 40 : -40 }}
@@ -216,17 +167,16 @@ const AI = () => {
               }`}
             >
               <div
-                className={`px-4 py-2 rounded-lg
-                 max-w-[70%] text-sm shadow-md ${
-                   msg.sender === "user"
-                     ? "bg-gradient-to-r from-pink-600 to-indigo-500 text-white rounded-br-none"
-                     : "bg-gray-800/90 text-gray-200 rounded-bl-none"
-                 }`}
+                className={`px-4 py-3 rounded-2xl text-sm max-w-[70%] shadow-md ${
+                  msg.sender === "user"
+                    ? "bg-gradient-to-r from-pink-600 to-indigo-500 text-white rounded-br-none"
+                    : "bg-gray-800/90 text-gray-200 rounded-bl-none border border-gray-700"
+                }`}
               >
                 {msg.sender === "bot" ? (
                   <ReactMarkdown
                     components={{
-                      code({ node, inline, className, children, ...props }) {
+                      code({ inline, className, children, ...props }) {
                         return !inline ? (
                           <SyntaxHighlighter
                             style={oneDark}
@@ -254,43 +204,31 @@ const AI = () => {
             </motion.div>
           ))}
 
-          {/* Typing Indicator */}
-          {loading && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex justify-start"
-            >
-              <div className="px-4 py-2 rounded-lg max-w-[70%] bg-gray-800/90 text-gray-200 rounded-bl-none">
-                <TypingIndicator />
-              </div>
-            </motion.div>
-          )}
-        </div>
-
-        {/* Input */}
-        <div className="flex items-center p-3 border-t border-white/10">
-          <input
-            type="text"
-            placeholder="Type your message..."
-            value={input}
-            onKeyDown={async (e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                await handleSend();
-              }
-            }}
-            onChange={(e) => setInput(e.target.value)}
-            className="flex-1 px-4 py-2 bg-gray-900 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500"
-          />
-          <button
-            onClick={handleSend}
-            className="ml-3 p-2 bg-gradient-to-r from-pink-600 to-indigo-500 rounded-lg text-white hover:opacity-80 transition"
-          >
-            <Send size={20} />
-          </button>
-        </div>
-      </motion.div>
+        {loading && (
+          <div className="flex justify-start">
+            <div className="px-4 py-3 rounded-2xl bg-gray-800/90 text-gray-200 border border-gray-700">
+              <TypingDots />
+            </div>
+          </div>
+        )}
+      </div>
+      <div className="sticky bottom-0 left-0 w-full border-t border-white/10 bg-black/70 backdrop-blur-lg p-4 flex items-center">
+        <input
+          type="text"
+          placeholder="Type your message..."
+          value={input}
+          ref={inputRef}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSend()}
+          className="flex-1 px-4 py-2 bg-gray-900 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500"
+        />
+        <button
+          onClick={handleSend}
+          className="ml-3 p-2 bg-gradient-to-r from-pink-600 to-indigo-500 rounded-lg text-white hover:opacity-80 transition"
+        >
+          <Send size={20} />
+        </button>
+      </div>
     </div>
   );
 };

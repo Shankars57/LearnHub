@@ -94,7 +94,7 @@ const Playlists = () => {
       ? playlists
       : playlists.filter((playlist) => playlist.category === activeFilter);
 
-  // Motion variants
+  
   const containerVariants = {
     hidden: {},
     visible: {
@@ -112,9 +112,9 @@ const Playlists = () => {
   };
 
   return (
-    <section id="playlists" className="py-20 bg-gray-900/50">
+    <section  className="py-20 bg-gray-900/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
+     
         <div className="text-center mb-12">
           <motion.h2
             className="text-4xl sm:text-5xl font-bold mb-4"
@@ -136,7 +136,7 @@ const Playlists = () => {
           </motion.p>
         </div>
 
-        {/* Filter Tabs */}
+      
         <motion.div
           className="flex flex-wrap justify-center gap-2 mb-12"
           initial="hidden"
@@ -170,7 +170,7 @@ const Playlists = () => {
           ))}
         </motion.div>
 
-        {/* Playlists Grid */}
+       
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           variants={containerVariants}
@@ -187,7 +187,7 @@ const Playlists = () => {
                 boxShadow: "0px 20px 40px rgba(0, 0, 255, 0.2)",
               }}
             >
-              {/* Thumbnail */}
+         
               <div className="relative overflow-hidden">
                 <img
                   src={playlist.thumbnail}
@@ -213,7 +213,7 @@ const Playlists = () => {
                 </div>
               </div>
 
-              {/* Content */}
+      
               <div className="p-6">
                 <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors duration-300">
                   {playlist.title}

@@ -1,9 +1,14 @@
+// server.js
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
+import path from "path";
 import dotenv from "dotenv";
 import AIRouter from "./routes/aiRoute.js";
+import connectDB from "./config/DB.js";
+import pdfRouter from "./routes/materialRoute.js";
+import userRouter from "./routes/userRoutes.js";
 
 dotenv.config();
 
@@ -11,12 +16,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const __dirname = path.resolve();
+
+// HTTP + Socket.IO server
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: { origin: "*", methods: ["GET", "POST"] },
 });
 
-// Channels with initial messages
+// --- In-memory channels ---
 let channels = [
   {
     id: "general",
@@ -69,25 +77,30 @@ let channels = [
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 
-  // Send current channel list to the client
+  console.log(socket);
+
   socket.emit("channels_list", channels);
 
-  // Join room
-  socket.on("join_room", (roomId) => {
+  socket.on("join_room", ({ roomId, user }) => {
     const channel = channels.find((c) => c.id === roomId);
     if (!channel) return;
+
     socket.join(roomId);
-    // Update members count based on actual room size
+    socket.data.user = user;
+
     const room = io.sockets.adapter.rooms.get(roomId);
     channel.members = room ? room.size : 0;
-    // Send chat history to the user
+
+    // Send chat history to this user
     socket.emit("receive_history", channel.messages);
-    // Notify all clients about updated members count
+
+    // Update everyone with new channel data
     io.emit("channels_list", channels);
+
     console.log(`${socket.id} joined ${roomId} (members: ${channel.members})`);
   });
 
-  // Leave room
+  // --- Leave Room ---
   socket.on("leave_room", (roomId) => {
     const channel = channels.find((c) => c.id === roomId);
     if (!channel) return;
@@ -98,10 +111,11 @@ io.on("connection", (socket) => {
     channel.members = room ? room.size : 0;
 
     io.emit("channels_list", channels);
+
     console.log(`${socket.id} left ${roomId} (members: ${channel.members})`);
   });
 
-  // Handle messages
+  // --- Send Message ---
   socket.on("send_message", ({ roomId, message }) => {
     const channel = channels.find((c) => c.id === roomId);
     if (!channel) return;
@@ -109,17 +123,19 @@ io.on("connection", (socket) => {
     if (!channel.messages) channel.messages = [];
     channel.messages.push(message);
 
-    // Send to others in the same room
+    // Emit to others in room
     socket.to(roomId).emit("receive_message", message);
-    //console.log(`Message in ${roomId}:`, message.text);
+
+    console.log(`Message in ${roomId} from ${message.user}: ${message.text}`);
   });
-  // Disconnect
+
+  // --- Disconnect Cleanup ---
   socket.on("disconnecting", () => {
     socket.rooms.forEach((roomId) => {
       const channel = channels.find((c) => c.id === roomId);
       if (channel) {
         const room = io.sockets.adapter.rooms.get(roomId);
-        channel.members = room ? room.size : 0;
+        channel.members = room ? room.size - 1 : 0;
       }
     });
 
@@ -128,13 +144,25 @@ io.on("connection", (socket) => {
   });
 });
 
-// API routes
-app.use("/api", AIRouter);
+//Connect DB
 
-// Root
+connectDB();
+
+// --- API Routes ---
+app.use("/api", AIRouter);
+app.use("/api/material", pdfRouter);
+app.use("/api/user", userRouter);
+
+// --- Health Check ---
 app.get("/", (req, res) => {
-  res.send("Server is running and ready for connections!");
+  res.send("🚀 Server is running and ready for connections!");
 });
 
+
+app.use(express.static(path.join(__dirname, "dist")));
+
+
+
+// --- Start Server ---
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () => console.log(`⚡ Server running on port ${PORT}`));
