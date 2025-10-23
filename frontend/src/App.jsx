@@ -17,6 +17,8 @@ import ChatRoom from "./components/ChatRoom";
 import { Toaster } from "react-hot-toast";
 import { LearnContext } from "../context/LearnContextProvider";
 import Login from "./components/Login";
+import Playlists from "./components/PlayLists";
+import VideoContent from "./components/VideoContent";
 const NotFound = () => (
   <div className="h-screen flex items-center justify-center">
     <h1 className="text-white text-5xl">Page Not Found 404.</h1>
@@ -33,7 +35,11 @@ const App = () => {
         <Routes>
           <Route path="/" element={token ? <Home /> : <Login />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/playlist" element={<PlayList />} />
+          <Route path="/playlist" element={<PlayList />}>
+            <Route index element={<VideoContent />} />
+            <Route path=":playlistId" element={<Playlists />} />
+          </Route>
+
           <Route path="/materials" element={<Materials />} />
           <Route path="/chats" element={<Chat />}>
             <Route index element={<Navigate to="general" replace />} />

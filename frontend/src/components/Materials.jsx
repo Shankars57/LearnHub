@@ -6,6 +6,9 @@ import {
   FileType,
   Download,
   Star,
+  Map,
+  ScrollText,
+  FileUser,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -40,12 +43,39 @@ const materialTypes = [
     count: "800+",
     gradient: "from-green-500 to-emerald-500",
   },
+  {
+    icon: ScrollText,
+    title: "Cheat Sheets",
+    description:
+      "Quick reference sheets for syntax, algorithms, and important formulas",
+    count: "200+",
+    gradient: "from-yellow-500 to-amber-500",
+  },
+  {
+    icon: Map,
+    title: "Roadmaps",
+    description:
+      "Step-by-step learning paths to guide your development journey",
+    count: "50+",
+    gradient: "from-indigo-500 to-blue-500",
+  },
+  {
+    icon: FileUser,
+    title: "Resume Templates",
+    description:
+      "Professional resume templates to help you stand out in job applications",
+    count: "100+",
+    gradient: "from-pink-500 to-rose-500",
+  },
 ];
 
 export default function Materials() {
   const navigate = useNavigate();
   return (
-    <section id="materials" className="relative py-24 bg-gradient-to-br from-blue-950 via-gray-900 to-purple-950 overflow-hidden">
+    <section
+      id="materials"
+      className="relative py-24 bg-gradient-to-br from-blue-950 via-gray-900 to-purple-950 overflow-hidden"
+    >
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
       <div className="absolute top-1/3 right-0 w-96 h-96 bg-blue-600 rounded-full filter blur-3xl opacity-10"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-600 rounded-full filter blur-3xl opacity-10"></div>
@@ -67,11 +97,12 @@ export default function Materials() {
           </h2>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
             Access comprehensive study materials including PDFs, notes,
-            documents, and visual diagrams to strengthen your theoretical
-            understanding
+            documents, diagrams, cheat sheets, roadmaps, and more to strengthen
+            your theoretical and practical knowledge.
           </p>
         </motion.div>
 
+       
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {materialTypes.map((material, index) => (
             <motion.div
@@ -108,6 +139,7 @@ export default function Materials() {
           ))}
         </div>
 
+      
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}

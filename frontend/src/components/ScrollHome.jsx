@@ -31,15 +31,18 @@ const ScrollHome = () => {
   }, []);
 
   return (
-    <div className="hidden md:flex flex-col fixed top-20 right-0 z-50 items-end">
+    <div className="hidden md:flex flex-col fixed top-40 right-0 z-50 items-end">
       <motion.button
         onClick={() => setOpen(!open)}
         className="mb-3 p-2 bg-gray-800/70 rounded-l-md text-white hover:bg-gray-700 transition-colors"
         whileTap={{ scale: 0.9 }}
       >
         <motion.div
-          animate={{ rotate: open ? 0 : 180 }}
-          transition={{ type: "tween", duration: 0.4 }}
+          
+          animate={{ rotate: open ? 0 : 180, }}
+          transition={{ type: "tween",
+           duration: .4, 
+           }}
         >
           <ChevronRight size={20} />
         </motion.div>

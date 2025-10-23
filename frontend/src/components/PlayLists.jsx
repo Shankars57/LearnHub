@@ -1,256 +1,192 @@
-import React, { useState } from "react";
-import { Play, Filter, Eye, Clock } from "lucide-react";
-import { motion } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+import { motion, AnimatePresence } from "framer-motion";
+import { VideoIcon, Menu, X } from "lucide-react";
+import useVideoStore from "../../store/useVideoStore";
 
-const Playlists = () => {
-  const [activeFilter, setActiveFilter] = useState("All");
+const PlayLists = () => {
+  const { playlistId } = useParams();
+  const [videos, setVideos] = useState([]);
+  const { setPlaylist, setVideo } = useVideoStore();
+  const [currentVideo, setCurrentVideo] = useState(null);
+  const [open, setOpen] = useState(true);
+  const moveUpRef = useRef(null);
 
-  const categories = [
-    "All",
-    "DSA",
-    "Web Dev",
-    "AI/ML",
-    "System Design",
-    "Database",
-  ];
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const res = await axios.get(`/api/yt/playlist/${playlistId}`);
+        const items = res.data.items.filter(
+          (v) => v.snippet && v.snippet.thumbnails
+        );
+        setVideos(items);
 
-  const playlists = [
-    {
-      id: 1,
-      title: "Complete Data Structures & Algorithms",
-      description:
-        "Master DSA from basics to advanced with practical implementations and problem solving.",
-      category: "DSA",
-      thumbnail:
-        "https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?auto=compress&cs=tinysrgb&w=400",
-      videos: 156,
-      duration: "24h 30m",
-      views: "1.2M",
-    },
-    {
-      id: 2,
-      title: "Full Stack Web Development",
-      description:
-        "Complete MERN stack course covering React, Node.js, Express, and MongoDB.",
-      category: "Web Dev",
-      thumbnail:
-        "https://images.pexels.com/photos/2004161/pexels-photo-2004161.jpeg?auto=compress&cs=tinysrgb&w=400",
-      videos: 89,
-      duration: "18h 45m",
-      views: "890K",
-    },
-    {
-      id: 3,
-      title: "Machine Learning Fundamentals",
-      description:
-        "Learn ML algorithms, Python libraries, and build real-world projects.",
-      category: "AI/ML",
-      thumbnail:
-        "https://images.pexels.com/photos/355948/pexels-photo-355948.jpeg?auto=compress&cs=tinysrgb&w=400",
-      videos: 67,
-      duration: "15h 20m",
-      views: "654K",
-    },
-    {
-      id: 4,
-      title: "System Design Interview Prep",
-      description:
-        "Master system design concepts and ace your technical interviews.",
-      category: "System Design",
-      thumbnail:
-        "https://images.pexels.com/photos/1181263/pexels-photo-1181263.jpeg?auto=compress&cs=tinysrgb&w=400",
-      videos: 45,
-      duration: "12h 15m",
-      views: "432K",
-    },
-    {
-      id: 5,
-      title: "Database Design & SQL Mastery",
-      description:
-        "Complete guide to database design, SQL queries, and optimization techniques.",
-      category: "Database",
-      thumbnail:
-        "https://images.pexels.com/photos/1181244/pexels-photo-1181244.jpeg?auto=compress&cs=tinysrgb&w=400",
-      videos: 73,
-      duration: "16h 30m",
-      views: "567K",
-    },
-    {
-      id: 6,
-      title: "Advanced JavaScript Concepts",
-      description:
-        "Deep dive into JavaScript closures, promises, async/await, and ES6+ features.",
-      category: "Web Dev",
-      thumbnail:
-        "https://images.pexels.com/photos/1181472/pexels-photo-1181472.jpeg?auto=compress&cs=tinysrgb&w=400",
-      videos: 54,
-      duration: "11h 45m",
-      views: "723K",
-    },
-  ];
-
-  const filteredPlaylists =
-    activeFilter === "All"
-      ? playlists
-      : playlists.filter((playlist) => playlist.category === activeFilter);
-
-  
-  const containerVariants = {
-    hidden: {},
-    visible: {
-      transition: { staggerChildren: 0.1, delayChildren: 0.1 },
-    },
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { type: "spring", stiffness: 100, damping: 12 },
-    },
-  };
+        if (items.length) {
+          setPlaylist(items);
+          setCurrentVideo(items[0]);
+          setVideo(items[0]);
+        }
+      } catch {
+        toast.error("Failed to load playlist");
+      }
+    };
+    fetchVideos();
+  }, [playlistId, setPlaylist, setVideo]);
 
   return (
-    <section  className="py-20 bg-gray-900/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-     
-        <div className="text-center mb-12">
-          <motion.h2
-            className="text-4xl sm:text-5xl font-bold mb-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-              Learning Playlists
-            </span>
-          </motion.h2>
-          <motion.p
-            className="text-xl text-gray-300 max-w-2xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            Curated video playlists to accelerate your learning journey
-          </motion.p>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
+      className="relative min-h-[90vh] flex flex-col bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white"
+    >
+      
+      <button
+        onClick={() => setOpen(!open)}
+        className="fixed top-20 right-4 z-50 p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
+      >
+        {open ? <X size={22} /> : <Menu size={22} />}
+      </button>
+
+      <div className="flex w-full">
+       
+        <div
+          ref={moveUpRef}
+          className={`flex-1 flex flex-col items-center transition-all duration-300 ${
+            open ? "mr-80" : "mr-0"
+          } px-4 md:px-8`}
+        >
+          {videos.length > 0 && (
+            <motion.h2
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-3xl font-bold mb-8 text-center"
+            >
+              Playlist —{" "}
+              <span className="text-blue-400 capitalize">
+                {videos[0]?.snippet?.channelTitle}
+              </span>
+            </motion.h2>
+          )}
+
+          <AnimatePresence mode="wait">
+            {currentVideo && (
+              <motion.div
+                key={currentVideo.contentDetails.videoId}
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -40 }}
+                transition={{ duration: 0.5 }}
+                className="flex flex-col items-center text-center w-full"
+              >
+                <div className="w-full max-w-8xl aspect-video rounded-2xl overflow-hidden shadow-2xl shadow-blue-900/30 border border-gray-800">
+                  <iframe
+                    className="w-full h-full"
+                    src={`https://www.youtube.com/embed/${currentVideo.contentDetails.videoId}?rel=0&modestbranding=1`}
+                    title={currentVideo.snippet.title}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                </div>
+
+                <motion.h3
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="mt-5 text-2xl font-semibold text-white"
+                >
+                  {currentVideo.snippet.title}
+                </motion.h3>
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="hidden md:block max-w-3xl text-gray-400 mt-3 text-sm leading-relaxed"
+                >
+                  {currentVideo.snippet.description ||
+                    "No description available for this video."}
+                </motion.p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
-      
-        <motion.div
-          className="flex flex-wrap justify-center gap-2 mb-12"
-          initial="hidden"
-          animate="visible"
-          variants={{
-            hidden: {},
-            visible: { transition: { staggerChildren: 0.05 } },
-          }}
-        >
-          {categories.map((category) => (
-            <motion.button
-              key={category}
-              onClick={() => setActiveFilter(category)}
-              className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 ${
-                activeFilter === category
-                  ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/25"
-                  : "bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-blue-400"
-              }`}
-              whileHover={{
-                scale: 1.05,
-                boxShadow: "0px 8px 20px rgba(0,0,255,0.3)",
-              }}
-              whileTap={{ scale: 0.95 }}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
+        {/* Sidebar Playlist */}
+        <AnimatePresence>
+          {open && (
+            <motion.aside
+              initial={{ x: 200 }}
+              animate={{ x: 0 }}
+              exit={{ x: 300 }}
+              transition={{ type: "tween", duration: 0.4 }}
+              className="fixed top-20 right-0 bottom-0 w-80 bg-gray-900 border-l border-gray-800 overflow-y-auto p-4 z-40 custom-scrollbar pointer-events-auto"
             >
-              <Filter className="w-4 h-4" />
-              <span>{category}</span>
-            </motion.button>
-          ))}
-        </motion.div>
+              <h2 className="text-lg font-bold mb-4 text-center">
+                Playlist Videos
+              </h2>
+              {videos.map((v) => {
+                const { snippet } = v;
+                if (!snippet || !snippet.thumbnails) return null;
 
-       
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {filteredPlaylists.map((playlist, index) => (
-            <motion.div
-              key={playlist.id}
-              className="group bg-gray-800/50 rounded-xl overflow-hidden border border-gray-700/50 hover:border-blue-500/50 transition-all duration-500"
-              variants={cardVariants}
-              whileHover={{
-                scale: 1.05,
-                boxShadow: "0px 20px 40px rgba(0, 0, 255, 0.2)",
-              }}
-            >
-         
-              <div className="relative overflow-hidden">
-                <img
-                  src={playlist.thumbnail}
-                  alt={playlist.title}
-                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent" />
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="w-16 h-16 bg-blue-500/80 rounded-full flex items-center justify-center backdrop-blur-sm">
-                    <Play className="w-8 h-8 text-white ml-1" />
-                  </div>
-                </div>
-                <div className="absolute top-4 left-4">
-                  <span className="bg-blue-500/80 text-white px-3 py-1 rounded-full text-sm font-medium backdrop-blur-sm">
-                    {playlist.category}
-                  </span>
-                </div>
-                <div className="absolute bottom-4 right-4 flex items-center space-x-4 text-white text-sm">
-                  <div className="flex items-center space-x-1">
-                    <Eye className="w-4 h-4" />
-                    <span>{playlist.views}</span>
-                  </div>
-                </div>
-              </div>
+                const thumbnailUrl =
+                  snippet.thumbnails.medium?.url ||
+                  snippet.thumbnails.default?.url ||
+                  "/fallback.jpg";
 
-      
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors duration-300">
-                  {playlist.title}
-                </h3>
-                <p className="text-gray-400 mb-4 line-clamp-2">
-                  {playlist.description}
-                </p>
+                const isPlaying =
+                  currentVideo?.contentDetails.videoId ===
+                  v.contentDetails.videoId;
 
-                <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                  <div className="flex items-center space-x-1">
-                    <Play className="w-4 h-4" />
-                    <span>{playlist.videos} videos</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Clock className="w-4 h-4" />
-                    <span>{playlist.duration}</span>
-                  </div>
-                </div>
-
-                <motion.button
-                  className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/25 flex items-center justify-center space-x-2"
-                  whileHover={{
-                    scale: 1.05,
-                    boxShadow: "0px 10px 30px rgba(0,0,255,0.3)",
-                  }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Play className="w-4 h-4" />
-                  <span>Start Learning</span>
-                </motion.button>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+                return (
+                  <motion.div
+                    key={v.contentDetails.videoId}
+                    onClick={() => {
+                      setCurrentVideo(v);
+                      setVideo(v);
+                      setOpen(false);
+                      moveUpRef.current?.scrollIntoView({
+                        behavior: "smooth",
+                      });
+                    }}
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                    className={`flex gap-3 mb-4 cursor-pointer rounded-lg p-2 border transition-all duration-300 ${
+                      isPlaying
+                        ? "border-blue-500 bg-blue-900/30 shadow-lg shadow-blue-600/30"
+                        : "border-gray-700 hover:border-blue-500 hover:bg-gray-800/60"
+                    }`}
+                  >
+                    <img
+                      src={thumbnailUrl}
+                      alt={snippet.title}
+                      className="w-20 h-16 rounded-md object-cover"
+                    />
+                    <div className="flex flex-col justify-between text-sm">
+                      <p className="font-semibold line-clamp-2">
+                        {snippet.title}
+                      </p>
+                      <p className="text-gray-400 text-xs">
+                        {snippet.videoOwnerChannelTitle}
+                      </p>
+                      {isPlaying && (
+                        <div className="flex items-center gap-1 text-blue-400 text-xs">
+                          <VideoIcon size={14} /> Playing
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </motion.aside>
+          )}
+        </AnimatePresence>
       </div>
-    </section>
+    </motion.div>
   );
 };
 
-export default Playlists;
+export default PlayLists;

@@ -4,12 +4,14 @@ import App from "./App.jsx";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import LearnContextProvider from "../context/LearnContextProvider.jsx";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <LearnContextProvider>
+  <BrowserRouter>
+    <LearnContextProvider>
+      <GoogleOAuthProvider clientId={clientId}>
         <App />
-      </LearnContextProvider>
-    </BrowserRouter>
-  </React.StrictMode>
+      </GoogleOAuthProvider>
+    </LearnContextProvider>
+  </BrowserRouter>
 );

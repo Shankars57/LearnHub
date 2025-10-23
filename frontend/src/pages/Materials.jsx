@@ -14,6 +14,7 @@ import moment from "moment";
 import { motion } from "framer-motion";
 import Uploader from "../components/Uploader";
 import { LearnContext } from "../../context/LearnContextProvider";
+import { TypeAnimation } from "react-type-animation";
 
 const bookType = ["all", "notes", "pdf", "docx", "books", "jpg"];
 
@@ -134,7 +135,7 @@ const Materials = () => {
             <motion.div
               key={idx}
               whileHover={{ scale: 1.05 }}
-              className="relative w-full bg-gray-800/60 border border-gray-700 rounded-xl flex flex-col gap-3 px-4 py-4 text-gray-300 hover:shadow-xl hover:shadow-blue-500/40 transition-all"
+              className="relative w-full bg-gray-800/60 border border-gray-700 rounded-xl flex flex-col gap-3 px-4 py-4 text-gray-300 hover:shadow-md hover:shadow-gray-800/40 transition-all"
             >
               {isNew && (
                 <span className="absolute top-3 right-3 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full font-semibold shadow-md">
@@ -171,6 +172,21 @@ const Materials = () => {
                   </span>
                   Upload: {moment(item.updatedAt).fromNow()}
                 </p>
+                {item.fileType === "png" ||
+                  (item.fileType === "jpg" && (
+                    <div className="absolute group w-20 h-20 right-1 ">
+                      <motion.img
+                        whileHover={{ scale: 1.1 }}
+                        src={item.url}
+                        className="w-full h-full  object-fit rounded-md shadow-lg shadow-black/40 hover:shadow-white"
+                      />
+                      <span className="absolute 
+                      flex items-center justify-center text-white transition ease duration-200
+                      w-full h-full opacity-0 group-hover:opacity-100 bg-black/20  top-0">
+                        sample
+                      </span>
+                    </div>
+                  ))}
               </div>
 
               <div className="flex justify-between items-center mt-2 gap-2 flex-wrap">
@@ -200,8 +216,23 @@ const Materials = () => {
         })}
       </motion.div>
       {filteredMaterials.length === 0 && (
-        <h1 className="text-xl text-center text-red-500">
-          Not Founded {"   :("}
+        <h1 className="text-2xl text-center text-red-500 ">
+          {/*Not Found {"   :("}*/}
+          <TypeAnimation
+            sequence={[
+              "Not Found :(",
+              1500,
+              "Please Try other filter options",
+              1500,
+            ]}
+            wrapper="span"
+            speed={60}
+            repeat={Infinity}
+            style={{
+              display: "inline-block",
+              whiteSpace: "nowrap",
+            }}
+          />
         </h1>
       )}
     </div>

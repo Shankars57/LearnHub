@@ -9,6 +9,7 @@ import React, { useContext, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LearnContext } from "../../context/LearnContextProvider";
 import toast from "react-hot-toast";
+import { useAuthStore } from "../../store/useAuthStore";
 
 const Uploader = ({ isOpen, setIsOpen }) => {
   const [fileName, setFileName] = useState("");
@@ -17,7 +18,7 @@ const Uploader = ({ isOpen, setIsOpen }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const { axios, setUploadState } = useContext(LearnContext);
-
+  const { token } = useAuthStore();
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -50,6 +51,10 @@ const Uploader = ({ isOpen, setIsOpen }) => {
       toast.error("Please select a file first!");
       return;
     }
+    if (!token) {
+      toast.error("Please login");
+      return;
+    }
 
     setLoading(true);
     const formData = new FormData();
@@ -62,7 +67,11 @@ const Uploader = ({ isOpen, setIsOpen }) => {
 
     try {
       const res = await axios.post("/api/material/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: {
+          Authorization: `Bearer ${token}`,
+
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       if (res.data.success) {
@@ -81,6 +90,8 @@ const Uploader = ({ isOpen, setIsOpen }) => {
       setIsOpen(false);
     }
   };
+
+  console.log(token);
 
   return (
     <AnimatePresence>

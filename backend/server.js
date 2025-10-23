@@ -1,4 +1,4 @@
-// server.js
+
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
@@ -9,11 +9,17 @@ import AIRouter from "./routes/aiRoute.js";
 import connectDB from "./config/DB.js";
 import pdfRouter from "./routes/materialRoute.js";
 import userRouter from "./routes/userRoutes.js";
+import ytRouter from "./routes/youtubeRoute.js";
 
 dotenv.config();
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 const __dirname = path.resolve();
@@ -77,7 +83,7 @@ let channels = [
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 
-  console.log(socket);
+  // console.log(socket);
 
   socket.emit("channels_list", channels);
 
@@ -97,7 +103,7 @@ io.on("connection", (socket) => {
     // Update everyone with new channel data
     io.emit("channels_list", channels);
 
-    console.log(`${socket.id} joined ${roomId} (members: ${channel.members})`);
+    //console.log(`${socket.id} joined ${roomId} (members: ${channel.members})`);
   });
 
   // --- Leave Room ---
@@ -112,7 +118,7 @@ io.on("connection", (socket) => {
 
     io.emit("channels_list", channels);
 
-    console.log(`${socket.id} left ${roomId} (members: ${channel.members})`);
+    // console.log(`${socket.id} left ${roomId} (members: ${channel.members})`);
   });
 
   // --- Send Message ---
@@ -126,7 +132,7 @@ io.on("connection", (socket) => {
     // Emit to others in room
     socket.to(roomId).emit("receive_message", message);
 
-    console.log(`Message in ${roomId} from ${message.user}: ${message.text}`);
+    // console.log(`Message in ${roomId} from ${message.user}: ${message.text}`);
   });
 
   // --- Disconnect Cleanup ---
@@ -140,29 +146,23 @@ io.on("connection", (socket) => {
     });
 
     io.emit("channels_list", channels);
-    console.log("User disconnected:", socket.id);
+    //console.log("User disconnected:", socket.id);
   });
 });
 
 //Connect DB
-
 connectDB();
 
-// --- API Routes ---
 app.use("/api", AIRouter);
 app.use("/api/material", pdfRouter);
 app.use("/api/user", userRouter);
+app.use("/api/yt", ytRouter);
 
-// --- Health Check ---
 app.get("/", (req, res) => {
   res.send("🚀 Server is running and ready for connections!");
 });
 
-
 app.use(express.static(path.join(__dirname, "dist")));
 
-
-
-// --- Start Server ---
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => console.log(`⚡ Server running on port ${PORT}`));
+server.listen(PORT, () => console.log(` Server running on port ${PORT}`));

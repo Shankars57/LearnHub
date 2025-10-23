@@ -102,7 +102,8 @@ const ChatRoom = () => {
 
   return (
     <div className="flex flex-col h-full w-full ">
-      <div className="p-4 border-b border-gray-700 bg-gray-800/90 text-white   flex items-center justify-between flex-wrap gap-2">
+      <div className="p-4 border-b border-gray-700 bg-gray-800/90 text-white  
+       flex items-center justify-between flex-wrap gap-2">
         <h2 className="font-semibold text-lg capitalize">#{roomId}</h2>
         <h2 className="font-semibold text-sm sm:text-base text-green-400">
           Online: {total}

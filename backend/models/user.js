@@ -14,6 +14,15 @@ const userSchema = new mongoose.Schema(
       default: "Hey! Welcome to LearnHub, Please updated your bio in settings.",
     },
     userName: { type: String },
+    profile: { type: String },
+    bgImage: { type: String },
+
+  
+    streak: { type: Number, default: 0 },
+    lastActiveDate: { type: Date, default: null },
+    totalWatchTime: { type: Number, default: 0 }, 
+    level: { type: Number, default: 1 },
+    xp: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

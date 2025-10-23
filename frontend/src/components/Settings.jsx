@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const Settings = ({ user, setUserData }) => {
+const Settings = ({ user, setUserData, image, setImage }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [bio, setBio] = useState("");
@@ -14,18 +14,24 @@ const Settings = ({ user, setUserData }) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
     setLoading(true);
+
     try {
+      const formData = new FormData();
+      formData.append("firstName", firstName);
+      formData.append("lastName", lastName);
+      formData.append("bio", bio);
+      formData.append("userName", userName);
+      if (image) {
+        formData.append("profile_pic", image);
+      }
+
       const { data } = await axios.put(
         `/api/user/update/${user._id}`,
-        {
-          firstName,
-          lastName,
-          bio,
-          userName,
-        },
+        formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -33,11 +39,12 @@ const Settings = ({ user, setUserData }) => {
       if (data.success) {
         toast.success(data.message);
         setUserData(data.updatedUser);
+        setImage(null);
       } else {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response?.data?.message || error.message);
     } finally {
       setLoading(false);
     }

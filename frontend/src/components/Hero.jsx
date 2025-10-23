@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { TypeAnimation } from "react-type-animation";
+import DashBoardData from "./DashBoardData";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 40 },
@@ -44,8 +45,10 @@ const Hero = () => {
   ];
 
   return (
-    <section id="hero" className="relative w-full flex items-center justify-center py-24 bg-gradient-to-tr from-[#030712] via-[#06071b] to-black overflow-hidden">
-     
+    <section
+      id="hero"
+      className="relative w-full flex items-center justify-center py-24 bg-gradient-to-tr from-[#030712] via-[#06071b] to-black overflow-hidden"
+    >
       <motion.div
         animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
         transition={{ duration: 20, repeat: Infinity }}
@@ -54,7 +57,6 @@ const Hero = () => {
       <div className="absolute bottom-0 right-0 w-[28rem] h-[28rem] bg-blue-900/20 blur-[160px] rounded-full"></div>
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 text-center flex flex-col items-center">
-      
         <motion.h1
           variants={fadeInUp}
           initial="hidden"
@@ -72,8 +74,8 @@ const Hero = () => {
                 1500,
                 "Inspire Others",
                 1500,
-                "Happy Learning!",
-                1500
+                "Start your journey!",
+                1500,
               ]}
               wrapper="span"
               speed={60}
@@ -187,9 +189,14 @@ const Hero = () => {
                     LearnHub Dashboard
                   </div>
                 </div>
-                <div className="h-80 sm:h-96 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                <div className="h-80 
+                sm:h-96 bg-gradient-to-br
+                 from-gray-800 to-gray-900 
+                 flex items-center
+                  justify-center">
                   <div className="text-gray-500 text-base sm:text-lg">
                     Dashboard Preview
+                    <DashBoardData />
                   </div>
                 </div>
               </div>
