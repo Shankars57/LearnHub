@@ -6,6 +6,7 @@ import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import toast from "react-hot-toast";
+import { useAuthStore } from "../../store/useAuthStore";
 
 // --- Memoized YouTube Embed ---
 const YouTubeEmbed = memo(({ href, children }) => {
@@ -131,7 +132,7 @@ const ChatRoom = () => {
   const { roomId } = useParams();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const [username, setUsername] = useState("");
+
   const [password, setPassword] = useState("");
   const [joined, setJoined] = useState(false);
   const [total, setTotal] = useState(0);
@@ -139,7 +140,8 @@ const ChatRoom = () => {
   const socketRef = useRef(null);
   const bottomRef = useRef(null);
   const typingTimeoutRef = useRef(null);
-
+  const { user } = useAuthStore();
+  const [username, setUsername] = useState("");
   // Reset state on room change
   useEffect(() => {
     setJoined(false);
@@ -148,6 +150,12 @@ const ChatRoom = () => {
     setMessages([]);
     setTotal(0);
     setTypingUsers([]);
+  }, [roomId]);
+
+  useEffect(() => {
+    if (user.userName) {
+      setUsername(user.userName);
+    }
   }, [roomId]);
 
   // Socket setup
@@ -248,7 +256,7 @@ const ChatRoom = () => {
         <input
           type="text"
           value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          onChange={(e) => setUsername(user.userName && e.target.value)}
           placeholder="Enter your username"
           className="px-4 py-2 rounded-lg bg-gray-700 w-full max-w-xs text-white outline-none"
         />

@@ -80,7 +80,7 @@ const PlayLists = () => {
                 transition={{ duration: 0.5 }}
                 className="flex flex-col items-center text-center w-full"
               >
-                <div className="w-full max-w-8xl aspect-video rounded-2xl overflow-hidden shadow-2xl shadow-blue-900/30 border border-gray-800">
+                <div className="w-full max-w-10xl aspect-video rounded-2xl overflow-hidden shadow-2xl shadow-blue-900/30 border border-gray-800">
                   <iframe
                     className="w-full h-full"
                     src={`https://www.youtube.com/embed/${currentVideo.contentDetails.videoId}?rel=0&modestbranding=1`}

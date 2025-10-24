@@ -19,6 +19,7 @@ import { LearnContext } from "../context/LearnContextProvider";
 import Login from "./components/Login";
 import Playlists from "./components/PlayLists";
 import VideoContent from "./components/VideoContent";
+import PersistentPlayer from "./components/PersistencePlayer";
 const NotFound = () => (
   <div className="h-screen flex items-center justify-center">
     <h1 className="text-white text-5xl">Page Not Found 404.</h1>
@@ -31,6 +32,7 @@ const App = () => {
       <Toaster />
 
       {token && <Navbar />}
+      <PersistentPlayer />
       <main className={`${token && "pt-16"}`}>
         <Routes>
           <Route path="/" element={token ? <Home /> : <Login />} />

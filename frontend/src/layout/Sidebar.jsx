@@ -15,7 +15,6 @@ const Sidebar = () => {
 
   const scrollRef = useRef(null);
 
-  
   useEffect(() => {
     const s = io(import.meta.env.VITE_BACKEND_URL || "http://localhost:5000");
     setSocket(s);
@@ -29,7 +28,6 @@ const Sidebar = () => {
     return () => s.disconnect();
   }, []);
 
-  
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({
@@ -68,7 +66,8 @@ const Sidebar = () => {
         </button>
       )}
       <div
-        className={`fixed md:static top-14 left-0 h-full w-72 bg-gray-800/90 border-r border-gray-700 shadow-lg flex flex-col transform transition-transform duration-300 z-40 ${
+        className={`fixed md:static top-14 left-0  h-full w-72 bg-gray-800/90 border-r 
+        border-gray-700 shadow-lg flex flex-col transform transition-transform duration-300 z-40 ${
           open ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
@@ -144,9 +143,13 @@ const Sidebar = () => {
                 <div className="flex flex-col">
                   <span className="font-medium truncate"># {item.name}</span>
                   {item.password && (
-                    <span className="text-xs text-red-400
+                    <span
+                      className="text-xs text-red-400
                      flex items-center gap-1
-                    "><Lock size={12} /> Protected</span>
+                    "
+                    >
+                      <Lock size={12} /> Protected
+                    </span>
                   )}
                   {item.admin && (
                     <span className="text-xs text-gray-400">

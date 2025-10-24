@@ -29,6 +29,7 @@ const useVideoStore = create(
       },
       setVideo: (video) => set({ currentVideo: video }),
       reset: () => set({ currentPlaylist: null, currentVideo: null }),
+      clearVideo:()=>set({currentVideo:null})
     }),
     { name: "video-store" }
   )
