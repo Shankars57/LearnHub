@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import toast from "react-hot-toast";
@@ -9,7 +10,12 @@ import toast from "react-hot-toast";
 // Typing indicator component
 const TypingIndicator = ({ users }) => {
   return (
-    <div className="flex items-center gap-1 text-sm text-gray-400 italic">
+    <div
+      className="
+    flex items-center gap-1 
+    text-sm 
+     text-gray-400 italic"
+    >
       <span>
         {users.join(", ")} {users.length > 1 ? "are" : "is"} typing
       </span>
@@ -61,7 +67,7 @@ const ChatRoom = () => {
   const bottomRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
-  // Reset join state when room changes
+  // Reset state on room change
   useEffect(() => {
     setJoined(false);
     setUsername("");
@@ -71,6 +77,7 @@ const ChatRoom = () => {
     setTypingUsers([]);
   }, [roomId]);
 
+  // Socket setup
   useEffect(() => {
     if (!socketRef.current) {
       socketRef.current = io(
@@ -163,9 +170,7 @@ const ChatRoom = () => {
   const handleTyping = (e) => {
     setInput(e.target.value);
     socketRef.current.emit("typing", { roomId, user: username });
-
     if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
-
     typingTimeoutRef.current = setTimeout(() => {
       socketRef.current.emit("stop_typing", { roomId, user: username });
     }, 1000);
@@ -207,7 +212,7 @@ const ChatRoom = () => {
           Online: {total}
         </h2>
       </div>
-      <div className="flex-1 p-3 sm:p-4 overflow-y-auto space-y-3 custom-scrollbar bg-gray-900/90">
+      <div className="flex-1 p-4 sm:p-4 overflow-y-auto space-y-3 custom-scrollbar bg-gray-900/90">
         {messages.length === 0 ? (
           <p className="text-gray-400 text-center italic mt-10">
             No messages yet in #{roomId}.
@@ -227,7 +232,18 @@ const ChatRoom = () => {
               </p>
               <ReactMarkdown
                 children={msg.text}
+                remarkPlugins={[remarkGfm]}
                 components={{
+                  a: ({ href, children }) => (
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-300 underline"
+                    >
+                      {children}
+                    </a>
+                  ),
                   code({ inline, className, children, ...props }) {
                     const match = /language-(\w+)/.exec(className || "");
                     return !inline && match ? (
