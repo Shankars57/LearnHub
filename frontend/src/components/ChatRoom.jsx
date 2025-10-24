@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, memo } from "react";
 import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import ReactMarkdown from "react-markdown";
@@ -7,15 +7,36 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import toast from "react-hot-toast";
 
-// Typing indicator component
+// --- Memoized YouTube Embed ---
+const YouTubeEmbed = memo(({ href, children }) => {
+  const videoId = href.split("youtu.be/")[1] || href.split("v=")[1];
+  return (
+    <div className="flex flex-col gap-1">
+      <iframe
+        width="300"
+        height="169"
+        src={`https://www.youtube.com/embed/${videoId}`}
+        frameBorder="0"
+        allow="autoplay; encrypted-media"
+        allowFullScreen
+        title="YouTube video"
+      />
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-300 underline"
+      >
+        {children}
+      </a>
+    </div>
+  );
+});
+
+// --- Typing Indicator ---
 const TypingIndicator = ({ users }) => {
   return (
-    <div
-      className="
-    flex items-center gap-1 
-    text-sm 
-     text-gray-400 italic"
-    >
+    <div className="flex items-center gap-1 text-sm text-gray-400 italic">
       <span>
         {users.join(", ")} {users.length > 1 ? "are" : "is"} typing
       </span>
@@ -38,7 +59,6 @@ const TypingIndicator = ({ users }) => {
         .typing-dots span:nth-child(3) {
           animation-delay: 0.4s;
         }
-
         @keyframes blink {
           0%,
           80%,
@@ -53,6 +73,59 @@ const TypingIndicator = ({ users }) => {
     </div>
   );
 };
+
+// --- Memoized Message Item ---
+const MessageItem = memo(({ msg, username }) => (
+  <div
+    className={`px-3 py-2 rounded-lg w-fit max-w-[90%] sm:max-w-xl break-words ${
+      msg.user === username
+        ? "ml-auto bg-blue-500 text-white"
+        : "bg-gray-700/60 text-gray-200"
+    }`}
+  >
+    <p className="text-xs font-semibold mb-1 opacity-80 px-2 py-1 rounded-lg bg-black/10 inline-block">
+      {msg.user}
+    </p>
+    <ReactMarkdown
+      children={msg.text}
+      remarkPlugins={[remarkGfm]}
+      components={{
+        a: ({ href, children }) => {
+          if (href.includes("youtu"))
+            return <YouTubeEmbed href={href}>{children}</YouTubeEmbed>;
+          return (
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-300 underline"
+            >
+              {children}
+            </a>
+          );
+        },
+        code({ inline, className, children, ...props }) {
+          const match = /language-(\w+)/.exec(className || "");
+          return !inline && match ? (
+            <SyntaxHighlighter
+              style={oneDark}
+              language={match[1]}
+              PreTag="div"
+              className="rounded-lg text-sm"
+              {...props}
+            >
+              {String(children).replace(/\n$/, "")}
+            </SyntaxHighlighter>
+          ) : (
+            <code className="bg-black/40 px-1 py-0.5 rounded text-pink-300">
+              {children}
+            </code>
+          );
+        },
+      }}
+    />
+  </div>
+));
 
 const ChatRoom = () => {
   const { roomId } = useParams();
@@ -90,12 +163,10 @@ const ChatRoom = () => {
       const current = channels.find((c) => c.id === roomId);
       if (current) setTotal(current.members);
     };
-
     const handleHistory = (history) => {
       setMessages(history || []);
       toast.success(`Joined #${roomId} with ${history?.length || 0} messages`);
     };
-
     const handleMessage = (msg) => {
       setMessages((prev) => [...prev, msg]);
       if (msg.user !== username) {
@@ -106,19 +177,15 @@ const ChatRoom = () => {
         ));
       }
     };
-
     const handleError = (msg) => {
       toast.error(msg);
       setJoined(false);
     };
-
     const handleUserTyping = ({ user }) => {
-      setTypingUsers((prev) => {
-        if (!prev.includes(user) && user !== username) return [...prev, user];
-        return prev;
-      });
+      setTypingUsers((prev) =>
+        !prev.includes(user) && user !== username ? [...prev, user] : prev
+      );
     };
-
     const handleUserStopTyping = ({ user }) => {
       setTypingUsers((prev) => prev.filter((u) => u !== user));
     };
@@ -147,10 +214,8 @@ const ChatRoom = () => {
   }, [messages]);
 
   const joinRoom = () => {
-    if (!username.trim()) {
-      toast.error("Enter a username before joining!");
-      return;
-    }
+    if (!username.trim())
+      return toast.error("Enter a username before joining!");
     socketRef.current.emit("join_room", { roomId, user: username, password });
     setJoined(true);
   };
@@ -212,100 +277,28 @@ const ChatRoom = () => {
           Online: {total}
         </h2>
       </div>
+
       <div className="flex-1 p-4 sm:p-4 overflow-y-auto space-y-3 custom-scrollbar bg-gray-900/90">
         {messages.length === 0 ? (
           <p className="text-gray-400 text-center italic mt-10">
             No messages yet in #{roomId}.
           </p>
         ) : (
-          messages.map((msg, idx) => (
-            <div
-              key={msg.id || idx}
-              className={`px-3 py-2 rounded-lg w-fit max-w-[90%] sm:max-w-xl break-words ${
-                msg.user === username
-                  ? "ml-auto bg-blue-500 text-white"
-                  : "bg-gray-700/60 text-gray-200"
-              }`}
-            >
-              <p className="text-xs font-semibold mb-1 opacity-80">
-                {msg.user}
-              </p>
-              <ReactMarkdown
-                children={msg.text}
-                remarkPlugins={[remarkGfm]}
-                components={{
-                  // a: ({ href, children }) => (
-                  //   <a
-                  //     href={href}
-                  //     target="_blank"
-                  //     rel="noopener noreferrer"
-                  //     className="text-blue-300 underline"
-                  //   >
-                  //     {children}
-                  //   </a>
-                  // ),
-                  a: ({ href, children }) => {
-                    if (href.includes("youtu")) {
-                      const videoId =
-                        href.split("youtu.be/")[1] || href.split("v=")[1];
-                      return (
-                        <iframe
-                          width="300"
-                          height="169"
-                          src={`https://www.youtube.com/embed/${videoId}`}
-                          frameBorder="0"
-                          allow="autoplay; encrypted-media"
-                          allowFullScreen
-                          title="YouTube video"
-                        />
-                      );
-                    }
-                    return (
-                      <a
-                        href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-300 underline"
-                      >
-                        {children}
-                      </a>
-                    );
-                  },
-
-                  code({ inline, className, children, ...props }) {
-                    const match = /language-(\w+)/.exec(className || "");
-                    return !inline && match ? (
-                      <SyntaxHighlighter
-                        style={oneDark}
-                        language={match[1]}
-                        PreTag="div"
-                        className="rounded-lg text-sm"
-                        {...props}
-                      >
-                        {String(children).replace(/\n$/, "")}
-                      </SyntaxHighlighter>
-                    ) : (
-                      <code className="bg-black/40 px-1 py-0.5 rounded text-pink-300">
-                        {children}
-                      </code>
-                    );
-                  },
-                }}
-              />
-            </div>
+          messages.map((msg) => (
+            <MessageItem key={msg.id} msg={msg} username={username} />
           ))
         )}
         {typingUsers.length > 0 && <TypingIndicator users={typingUsers} />}
         <div ref={bottomRef} />
       </div>
+
       <div className="p-3 sm:p-4 border-t border-gray-700 flex gap-2 bg-gray-800/80">
         <input
-          type="text"
           value={input}
           onChange={handleTyping}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           placeholder={`Message #${roomId}`}
-          className="flex-1 px-3 py-2 rounded-lg bg-gray-700/60 text-white outline-none text-sm sm:text-base"
+          className="flex-1 px-3 py-2 rounded-lg bg-gray-700/60 text-white outline-none text-sm sm:text-base resize-none overflow-hidden "
         />
         <button
           onClick={sendMessage}
