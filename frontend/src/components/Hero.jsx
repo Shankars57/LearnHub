@@ -168,15 +168,15 @@ const Hero = () => {
           <ChevronDown size={22} />
         </motion.div>
 
-        {/* Dashboard Preview Mockup */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.6 }}
           className="mt-20 w-full flex justify-center"
         >
-          <div className="relative w-full max-w-5xl">
+          <div className="relative w-full max-w-6xl">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur-3xl opacity-25"></div>
+
             <div className="relative bg-gradient-to-br from-gray-900/60 to-gray-800/60 backdrop-blur-xl border border-white/10 rounded-3xl p-2 shadow-2xl">
               <div className="bg-gray-900 rounded-2xl overflow-hidden">
                 <div className="flex items-center gap-2 px-4 py-3 bg-gray-800 border-b border-gray-700">
@@ -189,15 +189,9 @@ const Hero = () => {
                     LearnHub Dashboard
                   </div>
                 </div>
-                <div className="h-80 
-                sm:h-96 bg-gradient-to-br
-                 from-gray-800 to-gray-900 
-                 flex items-center
-                  justify-center">
-                  <div className="text-gray-500 text-base sm:text-lg">
-                    Dashboard Preview
-                    <DashBoardData />
-                  </div>
+
+                <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 sm:p-8">
+                  <DashBoardData />
                 </div>
               </div>
             </div>

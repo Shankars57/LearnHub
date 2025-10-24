@@ -6,15 +6,70 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import toast from "react-hot-toast";
 
+// Typing indicator component
+const TypingIndicator = ({ users }) => {
+  return (
+    <div className="flex items-center gap-1 text-sm text-gray-400 italic">
+      <span>
+        {users.join(", ")} {users.length > 1 ? "are" : "is"} typing
+      </span>
+      <span className="typing-dots">
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+      </span>
+      <style jsx>{`
+        .typing-dots span {
+          animation: blink 1.4s infinite both;
+          display: inline-block;
+        }
+        .typing-dots span:nth-child(1) {
+          animation-delay: 0s;
+        }
+        .typing-dots span:nth-child(2) {
+          animation-delay: 0.2s;
+        }
+        .typing-dots span:nth-child(3) {
+          animation-delay: 0.4s;
+        }
+
+        @keyframes blink {
+          0%,
+          80%,
+          100% {
+            opacity: 0;
+          }
+          40% {
+            opacity: 1;
+          }
+        }
+      `}</style>
+    </div>
+  );
+};
+
 const ChatRoom = () => {
   const { roomId } = useParams();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [joined, setJoined] = useState(false);
   const [total, setTotal] = useState(0);
+  const [typingUsers, setTypingUsers] = useState([]);
   const socketRef = useRef(null);
   const bottomRef = useRef(null);
+  const typingTimeoutRef = useRef(null);
+
+  // Reset join state when room changes
+  useEffect(() => {
+    setJoined(false);
+    setUsername("");
+    setPassword("");
+    setMessages([]);
+    setTotal(0);
+    setTypingUsers([]);
+  }, [roomId]);
 
   useEffect(() => {
     if (!socketRef.current) {
@@ -31,27 +86,55 @@ const ChatRoom = () => {
 
     const handleHistory = (history) => {
       setMessages(history || []);
-      toast(`Loaded ${history?.length || 0} messages in #${roomId}`);
+      toast.success(`Joined #${roomId} with ${history?.length || 0} messages`);
     };
 
     const handleMessage = (msg) => {
       setMessages((prev) => [...prev, msg]);
-      if (msg.user !== username) toast.success(`New message from ${msg.user}`);
+      if (msg.user !== username) {
+        toast.custom(() => (
+          <div className="bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg border border-blue-500">
+            <b>{msg.user}</b> sent a new message in <b>#{roomId}</b>
+          </div>
+        ));
+      }
+    };
+
+    const handleError = (msg) => {
+      toast.error(msg);
+      setJoined(false);
+    };
+
+    const handleUserTyping = ({ user }) => {
+      setTypingUsers((prev) => {
+        if (!prev.includes(user) && user !== username) return [...prev, user];
+        return prev;
+      });
+    };
+
+    const handleUserStopTyping = ({ user }) => {
+      setTypingUsers((prev) => prev.filter((u) => u !== user));
     };
 
     socket.on("channels_list", handleChannelsList);
     socket.on("receive_history", handleHistory);
     socket.on("receive_message", handleMessage);
+    socket.on("room_error", handleError);
+    socket.on("user_typing", handleUserTyping);
+    socket.on("user_stop_typing", handleUserStopTyping);
 
     return () => {
-      socket.emit("leave_room", { roomId, user: username });
+      if (joined) socket.emit("leave_room", { roomId, user: username });
       socket.off("channels_list", handleChannelsList);
       socket.off("receive_history", handleHistory);
       socket.off("receive_message", handleMessage);
-      setMessages([]);
+      socket.off("room_error", handleError);
+      socket.off("user_typing", handleUserTyping);
+      socket.off("user_stop_typing", handleUserStopTyping);
     };
-  }, [roomId, username]);
+  }, [roomId, username, joined]);
 
+  // Auto-scroll
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -61,8 +144,7 @@ const ChatRoom = () => {
       toast.error("Enter a username before joining!");
       return;
     }
-    socketRef.current.emit("join_room", { roomId, user: username });
-    toast.success(`You joined #${roomId} as ${username}`);
+    socketRef.current.emit("join_room", { roomId, user: username, password });
     setJoined(true);
   };
 
@@ -74,21 +156,38 @@ const ChatRoom = () => {
       text: input,
     };
     socketRef.current.emit("send_message", { roomId, message: newMsg });
-    setMessages((prev) => [...prev, newMsg]);
     setInput("");
+    socketRef.current.emit("stop_typing", { roomId, user: username });
+  };
+
+  const handleTyping = (e) => {
+    setInput(e.target.value);
+    socketRef.current.emit("typing", { roomId, user: username });
+
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+
+    typingTimeoutRef.current = setTimeout(() => {
+      socketRef.current.emit("stop_typing", { roomId, user: username });
+    }, 1000);
   };
 
   if (!joined) {
     return (
-      <div className="flex flex-col items-center justify-center h-full w-full bg-gray-900 text-white p-6 text-center">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-4">Join #{roomId}</h2>
+      <div className="flex flex-col items-center justify-center h-full w-full bg-gray-900 text-white p-6 text-center space-y-3">
+        <h2 className="text-2xl sm:text-3xl font-bold">Join #{roomId}</h2>
         <input
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && joinRoom()}
           placeholder="Enter your username"
-          className="px-4 py-2 rounded-lg bg-gray-700 w-full max-w-xs text-white mb-4 outline-none"
+          className="px-4 py-2 rounded-lg bg-gray-700 w-full max-w-xs text-white outline-none"
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Enter room code (if any)"
+          className="px-4 py-2 rounded-lg bg-gray-700 w-full max-w-xs text-white outline-none"
         />
         <button
           onClick={joinRoom}
@@ -101,15 +200,13 @@ const ChatRoom = () => {
   }
 
   return (
-    <div className="flex flex-col h-full w-full ">
-      <div className="p-4 border-b border-gray-700 bg-gray-800/90 text-white  
-       flex items-center justify-between flex-wrap gap-2">
+    <div className="flex flex-col h-full w-full">
+      <div className="p-4 border-b border-gray-700 bg-gray-800/90 text-white flex items-center justify-between flex-wrap gap-2">
         <h2 className="font-semibold text-lg capitalize">#{roomId}</h2>
         <h2 className="font-semibold text-sm sm:text-base text-green-400">
           Online: {total}
         </h2>
       </div>
-
       <div className="flex-1 p-3 sm:p-4 overflow-y-auto space-y-3 custom-scrollbar bg-gray-900/90">
         {messages.length === 0 ? (
           <p className="text-gray-400 text-center italic mt-10">
@@ -154,14 +251,14 @@ const ChatRoom = () => {
             </div>
           ))
         )}
+        {typingUsers.length > 0 && <TypingIndicator users={typingUsers} />}
         <div ref={bottomRef} />
       </div>
-
       <div className="p-3 sm:p-4 border-t border-gray-700 flex gap-2 bg-gray-800/80">
         <input
           type="text"
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={handleTyping}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           placeholder={`Message #${roomId}`}
           className="flex-1 px-3 py-2 rounded-lg bg-gray-700/60 text-white outline-none text-sm sm:text-base"

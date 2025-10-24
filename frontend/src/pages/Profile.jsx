@@ -1,4 +1,4 @@
-import { Camera, Flame, Medal, MoveLeft, Timer, X } from "lucide-react";
+import { Camera, Flame, Medal, MoveLeft, Timer, X, LogOut } from "lucide-react";
 import Settings from "../components/Settings";
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
@@ -68,106 +68,117 @@ const Profile = () => {
   }, [userData?._id]);
 
   const studentStatusData = [
-    { icon: Medal, level: "Level", xp: stats.level },
-    { icon: Flame, level: "Days", xp: stats.streak },
-    { icon: Timer, level: "Hours", xp: stats.studyTime },
+    { icon: Medal, label: "Level", value: stats.level },
+    { icon: Flame, label: "Streak", value: stats.streak },
+    { icon: Timer, label: "Watch Time", value: stats.studyTime + " mins" },
   ];
 
   return (
-    <section className="relative max-w-full bg-gradient-to-tr from-black-900 via-black-800 to-blue-950 sm:px-10 sm:py-5 lg:px-34 py-15">
-      <div className="relative opacity-100 top-10 bg-grid-pattern"></div>
-      <div className="relative opacity-100 bottom-10 bg-grid-pattern"></div>
-      <div className="group inline-block mb-5">
+    <section className="relative w-full px-4 sm:px-6 lg:px-10 py-10 bg-gradient-to-tr from-gray-950 via-gray-900 to-blue-950 min-h-screen">
+      <div className="flex items-center mb-6">
         <button
           onClick={() => navigate("/")}
-          className="flex text-xl items-center text-gray-300 gap-2"
+          className="flex items-center gap-2 text-gray-300 hover:text-white transition"
         >
-          <MoveLeft className="relative group-hover:-left-2" /> Back
+          <MoveLeft size={18} />
+          <span>Back</span>
         </button>
       </div>
-      <div className="sm:px-5 lg:px-5 relative sm:w-full py-8 bg-violet-600/10 shadow-xs shadow-blue-700 rounded-lg flex flex-wrap items-center justify-center gap-4">
-        <div className="relative group px-1 py-1 shadow-xl shadow-blue-600/20 bg-white/40 w-42 h-42 flex items-center justify-center rounded-full">
-          <img
-            src={
-              image
-                ? URL.createObjectURL(image)
-                : user?.profile
-                ? user.profile
-                : avatarUrl
-            }
-            alt="Profile Preview"
-            className="w-40 h-40 rounded-full object-cover select-none pointer-events-none"
-          />
-          {image && (
-            <span className="opacity-0 flex items-center justify-center group-hover:opacity-100 absolute inset-0 w-full h-full bg-black/30 text-white rounded-full">
-              <X onClick={() => setImage(null)} className="cursor-pointer" />
-            </span>
-          )}
-          <span className="absolute cursor-pointer bottom-2 right-5 bg-white px-1 py-1 rounded-full">
-            <input
-              onChange={handleImage}
-              type="file"
-              title="select picture"
-              className="w-full h-full absolute opacity-0"
-            />
-            <Camera size={20} className="text-blue-500" />
-          </span>
-        </div>
-        <div className="flex flex-col flex-wrap items-center justify-center">
-          <div className="flex flex-wrap justify-center gap-3 items-center">
-            <h1 className="capitalize text-center flex gap-2 text-2xl text-white font-bold">
-              {userData.firstName}
-              <span className="capitalize">
-                {userData.lastName + " ".toUpperCase()}
+
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="relative w-full max-w-5xl mx-auto"
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur-3xl opacity-25"></div>
+
+        <div className="relative bg-gradient-to-br from-gray-900/70 to-gray-800/70 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-10 shadow-2xl">
+        
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8">
+          
+            <div className="relative group">
+              <img
+                src={
+                  image
+                    ? URL.createObjectURL(image)
+                    : user?.profile
+                    ? user.profile
+                    : avatarUrl
+                }
+                alt="Profile"
+                className="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-2 border-white/20 shadow-lg object-cover"
+              />
+              {image && (
+                <span className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-full opacity-0 group-hover:opacity-100 transition">
+                  <X
+                    onClick={() => setImage(null)}
+                    className="cursor-pointer text-white"
+                  />
+                </span>
+              )}
+              <span className="absolute cursor-pointer bottom-2 right-4 bg-white px-1 py-1 rounded-full">
+                <input
+                  onChange={handleImage}
+                  type="file"
+                  title="Select picture"
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                />
+                <Camera size={20} className="text-blue-500" />
               </span>
-            </h1>
-            <p className="px-2 bg-white/30 text-white rounded-lg">
-              @
-              {userData.userName
-                ? userData.userName
-                : userData.firstName + "".toLowerCase()}
-            </p>
+            </div>
+
+            <div className="text-center sm:text-left flex-1">
+              <h1 className="text-3xl font-semibold text-white">
+                {userData.firstName} {userData.lastName}
+              </h1>
+              <p className="text-blue-400">@{userData.userName}</p>
+              <p className="text-gray-400 mt-1 text-sm max-w-md">
+                {userData.bio ||
+                  "Hey! Welcome to LearnHub. Update your bio in settings."}
+              </p>
+              <div className="mt-2 text-gray-500 text-sm">
+                {userData.college} | Year {userData.year}
+              </div>
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={handleLogout}
+                className="mt-4  flex items-center gap-2 text-sm bg-red-500/80 hover:bg-red-600 px-4 py-2 rounded-md text-white shadow-md"
+              >
+                <LogOut size={16} /> Logout
+              </motion.button>
+            </div>
           </div>
-          <p className="sm:text-xs px-4 w-100 mx-auto text-center lg:text-lg text-white/70">
-            {userData.bio
-              ? userData.bio
-              : "Hey! Welcome to LearnHub, Please updated your bio in settings."}
-          </p>
-          <div className="flex gap-3 sm:gap-4 md:gap-5 lg:gap-6 mt-4 flex-nowrap overflow-x-auto">
-            {studentStatusData.map((item, idx) => {
+
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {studentStatusData.map((item, i) => {
               const Icon = item.icon;
               return (
-                <div
-                  key={idx}
-                  className="flex items-center gap-2 sm:gap-3 bg-white/20 hover:bg-white/30 transition-colors rounded-lg px-3 sm:px-4 py-2 min-w-[90px] sm:min-w-[110px] md:min-w-[120px] lg:min-w-[130px]"
+                <motion.div
+                  key={i}
+                  whileHover={{ scale: 1.05 }}
+                  className="bg-gradient-to-br from-gray-800/70 to-gray-900/70 backdrop-blur-md rounded-2xl border border-white/10 p-4 text-center shadow-lg hover:shadow-blue-500/20 hover:border-blue-400/20"
                 >
-                  <div className="bg-white/30 p-1.5 sm:p-2 rounded-full flex items-center justify-center">
-                    <Icon size={16} className="text-white" />
+                  <div className="flex justify-center text-blue-400 mb-2">
+                    <Icon size={22} />
                   </div>
-                  <div className="flex flex-col text-white text-xs sm:text-sm md:text-base lg:text-base">
-                    <span className="font-semibold">{item.level}</span>
-                    <span className="text-gray-200">{item.xp}</span>
+                  <div className="text-lg font-semibold text-white">
+                    {item.value}
                   </div>
-                </div>
+                  <div className="text-gray-400 text-sm">{item.label}</div>
+                </motion.div>
               );
             })}
           </div>
         </div>
-        <div className="lg:hidden max-sm:block ">
-          <button
-            onClick={handleLogout}
-            className="px-4 py-2 text-sm absolute max-sm:top-5 top-1 max-sm:right-2 right-10 font-medium text-white rounded-md bg-red-500/70 hover:bg-red-600 transition-colors duration-200"
-          >
-            Logout
-          </button>
-        </div>
-      </div>
+      </motion.div>
+
       <motion.div
-        initial={{ opacity: 0, y: -10 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex justify-center py-4"
+        className="flex justify-center mt-10"
       >
-        <div className="bg-gray-800/40 backdrop-blur-md rounded-xl p-1 flex gap-1 shadow-md shadow-black/50">
+        <div className="bg-gray-800/40 backdrop-blur-md rounded-xl p-1 flex gap-1 shadow-md shadow-black/40">
           {["ov", "set"].map((key) => (
             <motion.button
               key={key}
@@ -185,18 +196,19 @@ const Profile = () => {
           ))}
         </div>
       </motion.div>
-      {state === "ov" ? (
-        <UserOverview />
-      ) : (
-        <div className="py-10">
+
+      <div className="mt-8">
+        {state === "ov" ? (
+          <UserOverview />
+        ) : (
           <Settings
             user={user}
             setUserData={setUserData}
             image={image ? image : ""}
             setImage={setImage}
           />
-        </div>
-      )}
+        )}
+      </div>
     </section>
   );
 };

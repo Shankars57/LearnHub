@@ -144,7 +144,7 @@ const Settings = ({ user, setUserData, image, setImage }) => {
               whileTap={{ scale: 0.95 }}
               type="submit"
               disabled={loading}
-              className={`flex absolute  -top-10  items-center gap-2 px-4 py-2 rounded-lg font-semibold shadow-md text-white
+              className={`flex absolute -top-30 md:-top-10  items-center gap-2 px-4 py-2 rounded-lg font-semibold shadow-md text-white
     ${
       loading
         ? "bg-blue-400 cursor-not-allowed"

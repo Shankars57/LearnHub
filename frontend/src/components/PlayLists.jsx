@@ -42,7 +42,6 @@ const PlayLists = () => {
       transition={{ duration: 0.6 }}
       className="relative min-h-[90vh] flex flex-col bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white"
     >
-      
       <button
         onClick={() => setOpen(!open)}
         className="fixed top-20 right-4 z-50 p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
@@ -51,7 +50,6 @@ const PlayLists = () => {
       </button>
 
       <div className="flex w-full">
-       
         <div
           ref={moveUpRef}
           className={`flex-1 flex flex-col items-center transition-all duration-300 ${
