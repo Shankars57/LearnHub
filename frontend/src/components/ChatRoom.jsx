@@ -91,6 +91,7 @@ const MessageItem = memo(({ msg, username }) => (
       children={msg.text}
       remarkPlugins={[remarkGfm]}
       components={{
+        p: ({ node, children }) => <div className="mb-1">{children}</div>,
         a: ({ href, children }) => {
           if (href.includes("youtu"))
             return <YouTubeEmbed href={href}>{children}</YouTubeEmbed>;
