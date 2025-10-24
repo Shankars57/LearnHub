@@ -234,16 +234,44 @@ const ChatRoom = () => {
                 children={msg.text}
                 remarkPlugins={[remarkGfm]}
                 components={{
-                  a: ({ href, children }) => (
-                    <a
-                      href={href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-300 underline"
-                    >
-                      {children}
-                    </a>
-                  ),
+                  // a: ({ href, children }) => (
+                  //   <a
+                  //     href={href}
+                  //     target="_blank"
+                  //     rel="noopener noreferrer"
+                  //     className="text-blue-300 underline"
+                  //   >
+                  //     {children}
+                  //   </a>
+                  // ),
+                  a: ({ href, children }) => {
+                    if (href.includes("youtu")) {
+                      const videoId =
+                        href.split("youtu.be/")[1] || href.split("v=")[1];
+                      return (
+                        <iframe
+                          width="300"
+                          height="169"
+                          src={`https://www.youtube.com/embed/${videoId}`}
+                          frameBorder="0"
+                          allow="autoplay; encrypted-media"
+                          allowFullScreen
+                          title="YouTube video"
+                        />
+                      );
+                    }
+                    return (
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-300 underline"
+                      >
+                        {children}
+                      </a>
+                    );
+                  },
+
                   code({ inline, className, children, ...props }) {
                     const match = /language-(\w+)/.exec(className || "");
                     return !inline && match ? (
