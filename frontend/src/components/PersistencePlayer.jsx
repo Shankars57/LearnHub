@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const PersistentPlayer = () => {
-  const { currentVideo, clearVideo, recentPlayLists } = useVideoStore();
+  const { currentVideo, clearVideo } = useVideoStore();
   const playerRef = useRef();
   const location = useLocation();
   const navigate = useNavigate();
@@ -19,42 +19,55 @@ const PersistentPlayer = () => {
   const isInPlaylistPage = location.pathname.startsWith("/playlist");
 
   const handleNavigate = () => {
-    if (!recentPlayLists?.id) return;
-    navigate(`/playlist/${recentPlayLists.id}`);
+    if (!currentVideo?.snippet?.playlistId) {
+      console.log("Something wrong", currentVideo);
+      return;
+    }
+    navigate(`/playlist/${currentVideo.snippet.playlistId}`);
   };
 
   return (
     <AnimatePresence>
       {currentVideo && !isInPlaylistPage && (
         <motion.div
+          ref={playerRef}
+          drag
+          dragMomentum={false}
+          dragElastic={0.2}
+          dragConstraints={{
+            top: -window.innerHeight / 2,
+            left: -window.innerWidth / 2,
+            right: window.innerWidth / 2,
+            bottom: window.innerHeight / 2,
+          }}
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed bottom-4 right-4 bg-gray-900 border border-gray-700 shadow-xl rounded-xl overflow-hidden w-[400px] h-[225px] z-50 cursor-pointer"
-          ref={playerRef}
+          className="fixed bottom-4 right-4 bg-gray-900 border border-gray-700 shadow-xl rounded-xl overflow-hidden w-[400px] h-[225px] z-50 cursor-grab active:cursor-grabbing"
         >
-          <div className="relative flex justify-between items-center bg-gray-800 px-2 py-1 text-xs text-gray-300">
+          <div className="relative flex justify-between items-center bg-gray-800 px-2 py-1 text-xs text-gray-300 select-none">
             <p className="truncate">{currentVideo.snippet?.title}</p>
-            <button
-              onClick={handleNavigate}
-              className="px-2  flex items-center 
-             bg-black/70 
-             rounded-lg
-             "
-            >
-              Go To playList
-            </button>
 
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                clearVideo();
-              }}
-            >
-              <X size={14} />
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={handleNavigate}
+                className="px-2 py-1 bg-black/70 hover:text-white hover:bg-white/10 rounded-lg"
+              >
+                Go To Playlist
+              </button>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  clearVideo();
+                }}
+              >
+                <X size={14} />
+              </button>
+            </div>
           </div>
+
           <iframe
             src={`https://www.youtube.com/embed/${currentVideo.contentDetails.videoId}?autoplay=1&rel=0&modestbranding=1`}
             title={currentVideo.snippet?.title}

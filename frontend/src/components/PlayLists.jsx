@@ -5,6 +5,8 @@ import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { VideoIcon, Menu, X } from "lucide-react";
 import useVideoStore from "../../store/useVideoStore";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const PlayLists = () => {
   const { playlistId } = useParams();
@@ -95,25 +97,41 @@ const PlayLists = () => {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="mt-5 text-2xl font-semibold text-white"
+                  className="mt-5 text-2xl truncate font-semibold text-white"
                 >
                   {currentVideo.snippet.title}
                 </motion.h3>
-                <motion.p
+
+                <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
-                  className="hidden md:block max-w-3xl text-gray-400 mt-3 text-sm leading-relaxed"
+                  className="hidden md:block max-w-3xl mt-4 text-start text-gray-300 text-sm leading-relaxed prose prose-invert prose-a:text-blue-400 hover:prose-a:text-blue-300 prose-p:my-1 prose-ul:list-disc prose-ul:ml-5"
                 >
-                  {currentVideo.snippet.description ||
-                    "No description available for this video."}
-                </motion.p>
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      a: ({ href, children }) => (
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline hover:text-blue-300 transition-colors"
+                        >
+                          {children}
+                        </a>
+                      ),
+                    }}
+                  >
+                    {currentVideo.snippet.description ||
+                      "No description available for this video."}
+                  </ReactMarkdown>
+                </motion.div>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
 
-        {/* Sidebar Playlist */}
         <AnimatePresence>
           {open && (
             <motion.aside
@@ -126,7 +144,7 @@ const PlayLists = () => {
               <h2 className="text-lg font-bold mb-4 text-center">
                 Playlist Videos
               </h2>
-              {videos.map((v) => {
+              {videos.map((v, index) => {
                 const { snippet } = v;
                 if (!snippet || !snippet.thumbnails) return null;
 
@@ -141,7 +159,7 @@ const PlayLists = () => {
 
                 return (
                   <motion.div
-                    key={v.contentDetails.videoId}
+                    key={`${v.contentDetails.videoId}-${index}`}
                     onClick={() => {
                       setCurrentVideo(v);
                       setVideo(v);

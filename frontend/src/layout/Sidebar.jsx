@@ -67,8 +67,8 @@ const Sidebar = () => {
       )}
       <div
         className={`fixed md:static top-14 left-0  h-full w-72 bg-gray-800/90 border-r 
-        border-gray-700 shadow-lg flex flex-col transform transition-transform duration-300 z-40 ${
-          open ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        border-gray-700 shadow-lg flex flex-col transform transition-transform duration-300 z-40   rounded-lg ${
+          open ? "translate-x-0" : "-translate-x-full md:-translate-x-5"
         }`}
       >
         <div className="flex justify-between items-center p-4 border-b border-gray-700">
@@ -124,7 +124,9 @@ const Sidebar = () => {
 
         <div
           ref={scrollRef}
-          className="flex-1 px-3 space-y-2 overflow-y-auto custom-scrollbar pb-6 h-screen"
+          className="flex-1 px-3 
+          space-y-2 overflow-y-auto 
+          custom-scrollbar pb-6 h-screen"
         >
           {filteredData.length > 0 ? (
             filteredData.map((item, idx) => (
@@ -133,7 +135,8 @@ const Sidebar = () => {
                 to={`/chats/${item.id}`}
                 onClick={() => setOpen(false)}
                 className={({ isActive }) =>
-                  `block px-4 py-2 rounded-lg transition-all duration-200 ${
+                  `block px-4 py-2
+                   rounded-lg transition-all duration-200 ${
                     isActive
                       ? "bg-gradient-to-r from-blue-500/60 to-blue-400/40 text-white"
                       : "text-gray-300 hover:text-white hover:bg-gray-700/60"

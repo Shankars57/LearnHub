@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, memo } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -10,7 +10,11 @@ import { useAuthStore } from "../../store/useAuthStore";
 
 // --- Memoized YouTube Embed ---
 const YouTubeEmbed = memo(({ href, children }) => {
+  const navigate = useNavigate();
   const videoId = href.split("youtu.be/")[1] || href.split("v=")[1];
+  const handleNavigate = () => {
+    navigate(`/playlist`);
+  };
   return (
     <div className="flex flex-col gap-1">
       <iframe
@@ -22,14 +26,23 @@ const YouTubeEmbed = memo(({ href, children }) => {
         allowFullScreen
         title="YouTube video"
       />
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-blue-300 underline"
-      >
-        {children}
-      </a>
+      <div className="flex items-center gap-2">
+        {" "}
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-300 px-2 py-1 rounded-lg bg-black/10 block hover:text-white"
+        >
+          Youtube
+        </a>
+        <button
+          onClick={handleNavigate}
+          className="text-blue-300 px-2 py-1 rounded-lg bg-black/10 block hover:text-white"
+        >
+          on-site
+        </button>
+      </div>
     </div>
   );
 });
@@ -143,6 +156,7 @@ const ChatRoom = () => {
   const typingTimeoutRef = useRef(null);
   const { user } = useAuthStore();
   const [username, setUsername] = useState("");
+
   // Reset state on room change
   useEffect(() => {
     setJoined(false);
