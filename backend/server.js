@@ -9,7 +9,12 @@ import connectDB from "./config/DB.js";
 import pdfRouter from "./routes/materialRoute.js";
 import userRouter from "./routes/userRoutes.js";
 import ytRouter from "./routes/youtubeRoute.js";
-
+import {
+  createRoom,
+  deleteRoom,
+  addMessage,
+  getChatHistory,
+} from "./controller/channelController.js";
 dotenv.config();
 const app = express();
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
@@ -159,6 +164,34 @@ io.on("connection", (socket) => {
 
   socket.on("stop_typing", ({ roomId, user }) => {
     socket.to(roomId).emit("user_stop_typing", { user });
+  });
+
+  socket.on("delete_room", ({ roomId, user }) => {
+    const channelIndex = channels.findIndex((c) => c.id === roomId);
+    if (channelIndex === -1) {
+      socket.emit("room_error", "Room not found!");
+      return;
+    }
+
+    const channel = channels[channelIndex];
+
+    // Prevent deletion of default system rooms
+    const defaultRooms = ["general", "dsa", "web", "aiml", "system", "career"];
+    if (defaultRooms.includes(roomId)) {
+      socket.emit("room_error", "You cannot delete default rooms!");
+      return;
+    }
+
+    // Only admin can delete
+    if (channel.admin !== user) {
+      socket.emit("room_error", "Only the room creator can delete this room!");
+      return;
+    }
+
+    // Delete the room
+    channels.splice(channelIndex, 1);
+    io.emit("channels_list", channels);
+    io.emit("room_deleted", { roomId });
   });
 
   socket.on("disconnecting", () => {

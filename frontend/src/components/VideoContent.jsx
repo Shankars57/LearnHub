@@ -66,7 +66,7 @@ const VideoContent = ({ searchData }) => {
               <p className="text-gray-400 text-sm">Search & Explore Channels</p>
             </header>
 
-            <div className="flex items-center gap-2 mb-6">
+            <div className="flex flex-wrap justify-center items-center gap-2 mb-6">
               <input
                 type="text"
                 ref={inputRef}

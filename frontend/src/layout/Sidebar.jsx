@@ -1,20 +1,39 @@
-import { Search, Menu, X, PlusCircle, Lock } from "lucide-react";
+import {
+  Search,
+  Menu,
+  X,
+  PlusCircle,
+  Lock,
+  MoreVertical,
+  Trash,
+} from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import { io } from "socket.io-client";
 import toast from "react-hot-toast";
 
 const Sidebar = () => {
+  // --- State ---
   const [searchTerm, setSearchTerm] = useState("");
   const [open, setOpen] = useState(false);
   const [channels, setChannels] = useState([]);
   const [roomName, setRoomName] = useState("");
   const [roomPassword, setRoomPassword] = useState("");
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState(
+    () => localStorage.getItem("username") || ""
+  );
   const [socket, setSocket] = useState(null);
-
   const scrollRef = useRef(null);
 
+  // Default system rooms
+  const defaultRooms = ["general", "dsa", "web", "aiml", "system", "career"];
+
+  // --- Persist username ---
+  useEffect(() => {
+    if (username) localStorage.setItem("username", username);
+  }, [username]);
+
+  // --- Socket.IO connection ---
   useEffect(() => {
     const s = io(import.meta.env.VITE_BACKEND_URL || "http://localhost:5000");
     setSocket(s);
@@ -24,10 +43,15 @@ const Sidebar = () => {
       toast.success(`Room "${room.name}" created by ${room.admin}`)
     );
     s.on("room_error", (msg) => toast.error(msg));
+    s.on("room_deleted", ({ roomId }) => {
+      setChannels((prev) => prev.filter((ch) => ch.id !== roomId));
+      toast.success(`#${roomId} deleted`);
+    });
 
     return () => s.disconnect();
   }, []);
 
+  // --- Scroll to bottom on channels update ---
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({
@@ -37,26 +61,37 @@ const Sidebar = () => {
     }
   }, [channels]);
 
+  // Filter channels based on search term
   const filteredData = channels.filter((item) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // --- Create a new room ---
   const handleCreateRoom = () => {
     if (!roomName.trim() || !username.trim()) {
       toast.error("Enter both room name and username!");
       return;
     }
+
     socket.emit("create_room", {
       name: roomName,
       user: username,
       password: roomPassword,
     });
+
     setRoomName("");
     setRoomPassword("");
   };
 
+  // --- Delete a custom room ---
+  const handleDeleteRoom = (roomId) => {
+    if (!confirm(`Are you sure you want to delete #${roomId}?`)) return;
+    socket.emit("delete_room", { roomId, user: username });
+  };
+
   return (
     <>
+      {/* Mobile Menu Toggle */}
       {!open && (
         <button
           onClick={() => setOpen(true)}
@@ -65,12 +100,15 @@ const Sidebar = () => {
           <Menu size={22} />
         </button>
       )}
+
+      {/* Sidebar */}
       <div
-        className={`fixed md:static top-14 left-0  h-full w-72 bg-gray-800/90 border-r 
-        border-gray-700 shadow-lg flex flex-col transform transition-transform duration-300 z-40   rounded-lg ${
+        className={`fixed md:static top-14 left-0 h-full w-72 bg-gray-800/90 border-r 
+        border-gray-700 shadow-lg flex flex-col transform transition-transform duration-300 z-40 rounded-lg ${
           open ? "translate-x-0" : "-translate-x-full md:-translate-x-5"
         }`}
       >
+        {/* Header */}
         <div className="flex justify-between items-center p-4 border-b border-gray-700">
           <h1 className="text-white text-xl font-semibold">Channels</h1>
           <button
@@ -81,6 +119,7 @@ const Sidebar = () => {
           </button>
         </div>
 
+        {/* Create Room Inputs */}
         <div className="px-4 py-3 border-b border-gray-700 space-y-2">
           <input
             type="text"
@@ -111,6 +150,7 @@ const Sidebar = () => {
           </button>
         </div>
 
+        {/* Search Bar */}
         <div className="flex items-center mx-4 my-3 px-3 py-2 rounded-lg bg-gray-700/50 border border-gray-600">
           <Search className="text-gray-400 w-5 h-5" />
           <input
@@ -122,46 +162,68 @@ const Sidebar = () => {
           />
         </div>
 
+        {/* Channels List */}
         <div
           ref={scrollRef}
-          className="flex-1 px-3 
-          space-y-2 overflow-y-auto 
-          custom-scrollbar pb-6 h-screen"
+          className="flex-1 px-3 space-y-2 overflow-y-auto custom-scrollbar pb-10"
         >
           {filteredData.length > 0 ? (
-            filteredData.map((item, idx) => (
-              <NavLink
-                key={idx}
-                to={`/chats/${item.id}`}
-                onClick={() => setOpen(false)}
-                className={({ isActive }) =>
-                  `block px-4 py-2
-                   rounded-lg transition-all duration-200 ${
-                    isActive
-                      ? "bg-gradient-to-r from-blue-500/60 to-blue-400/40 text-white"
-                      : "text-gray-300 hover:text-white hover:bg-gray-700/60"
-                  }`
-                }
-              >
-                <div className="flex flex-col">
-                  <span className="font-medium truncate"># {item.name}</span>
-                  {item.password && (
-                    <span
-                      className="text-xs text-red-400
-                     flex items-center gap-1
-                    "
-                    >
-                      <Lock size={12} /> Protected
-                    </span>
-                  )}
-                  {item.admin && (
-                    <span className="text-xs text-gray-400">
-                      Admin: {item.admin}
-                    </span>
+            filteredData.map((item, idx) => {
+              // Only non-default rooms are custom
+              const isCustom = item.admin && !defaultRooms.includes(item.id);
+
+              return (
+                <div
+                  key={idx}
+                  className="group relative flex items-center justify-between px-4 py-2 rounded-lg hover:bg-gray-700/60 transition"
+                >
+                  {/* Channel Link */}
+                  <NavLink
+                    to={`/chats/${item.id}`}
+                    className={({ isActive }) =>
+                      `flex-1 text-left ${
+                        isActive
+                          ? "bg-gradient-to-r from-blue-500/60 to-blue-400/40 text-white px-2 py-1 rounded-lg"
+                          : "text-gray-300"
+                      }`
+                    }
+                  >
+                    <div className="flex flex-col">
+                      <span className="font-medium truncate">
+                        # {item.name}
+                      </span>
+                      {item.password && (
+                        <span className="text-xs text-red-400 flex items-center gap-1">
+                          <Lock size={12} /> Protected
+                        </span>
+                      )}
+                      {item.admin && (
+                        <span className="text-xs text-gray-400">
+                          Admin: {item.admin}
+                        </span>
+                      )}
+                    </div>
+                  </NavLink>
+
+                  {/* Options Button for Custom Rooms */}
+                  {isCustom && item.admin === username && (
+                    <div className="relative flex-shrink-0">
+                      <div className="cursor-pointer text-gray-400 hover:text-white">
+                        <MoreVertical size={16} />
+                      </div>
+                      <div className="absolute right-0 top-3 hidden group-hover:block bg-gray-800 rounded-md shadow-lg border border-gray-700 z-50 min-w-[120px]">
+                        <button
+                          onClick={() => handleDeleteRoom(item.id)}
+                          className="flex items-center px-4 py-2 text-xs text-red-400 hover:bg-gray-700 hover:text-red-600 rounded-md w-full text-left gap-2"
+                        >
+                          <Trash size={14} /> Delete
+                        </button>
+                      </div>
+                    </div>
                   )}
                 </div>
-              </NavLink>
-            ))
+              );
+            })
           ) : (
             <p className="text-gray-500 text-sm px-4">No channels found</p>
           )}
