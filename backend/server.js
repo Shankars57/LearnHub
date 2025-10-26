@@ -3,6 +3,7 @@ import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 import path from "path";
+import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import AIRouter from "./routes/aiRoute.js";
 import connectDB from "./config/DB.js";
@@ -19,6 +20,7 @@ dotenv.config();
 const app = express();
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
+app.use(bodyParser.json());
 
 const __dirname = path.resolve();
 const server = http.createServer(app);

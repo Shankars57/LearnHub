@@ -89,7 +89,7 @@ const MessageItem = memo(({ msg, username }) => {
   return (
     <div
       className={` ${
-        stickMessage && "sticky -top-12 overflow-x-hidden z-10"
+        stickMessage && "sticky -top-0 overflow-x-hidden z-10"
       } px-3 py-2 rounded-lg w-fit max-w-[90%] sm:max-w-xl break-words ${
         msg.user === username
           ? "ml-auto bg-blue-500 text-white"

@@ -8,6 +8,11 @@ const userSchema = new mongoose.Schema(
     college: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, required: true },
+    isVerified: { type: Boolean, default: false },
+    otp: {
+      code: String,
+      expiresAt: Date,
+    },
     year: { type: String, required: true },
     bio: {
       type: String,
@@ -17,10 +22,9 @@ const userSchema = new mongoose.Schema(
     profile: { type: String },
     bgImage: { type: String },
 
-  
     streak: { type: Number, default: 0 },
     lastActiveDate: { type: Date, default: null },
-    totalWatchTime: { type: Number, default: 0 }, 
+    totalWatchTime: { type: Number, default: 0 },
     level: { type: Number, default: 1 },
     xp: { type: Number, default: 0 },
   },

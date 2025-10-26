@@ -2,6 +2,21 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import userModel from "../models/user.js";
 import imagekit from "../config/ImageKit.js";
+import nodemailer from "nodemailer";
+
+// Configure Nodemailer
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+transporter.verify((err, success) => {
+  if (err) console.log("Mailer error:", err);
+  else console.log("Mailer is ready");
+});
 
 export const jwtGenerate = (userId, email) => {
   return jwt.sign({ userId, email }, process.env.JWT_SECRET, {
@@ -220,5 +235,74 @@ export const updateUserActivity = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const sendOtp = async (req, res) => {
+  const { email } = req.body;
+  if (!email)
+    return res
+      .status(400)
+      .json({ success: false, message: "Email is required" });
+
+  try {
+    const user = await userModel.findOne({ email: email.toLowerCase() });
+    if (!user)
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+
+    const otpCode = Math.floor(1000 + Math.random() * 9000).toString();
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); 
+
+    user.otp = { code: otpCode, expiresAt };
+    await user.save();
+
+    await transporter.sendMail({
+      from: `"LearnHub" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Your OTP Code for LearnHub",
+      html: `<p>Your OTP code is <b>${otpCode}</b>. It expires in 5 minutes.</p>`,
+    });
+
+    return res.json({ success: true, message: "OTP sent successfully" });
+  } catch (err) {
+    console.error("OTP send error:", err);
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to send OTP" });
+  }
+};
+
+export const verifyOtp = async (req, res) => {
+  const { email, otp } = req.body;
+  if (!email || !otp)
+    return res
+      .status(400)
+      .json({ success: false, message: "Email & OTP required" });
+
+  try {
+    const user = await userModel.findOne({ email: email.toLowerCase() });
+    if (!user || !user.otp)
+      return res
+        .status(400)
+        .json({ success: false, message: "OTP not sent or invalid" });
+
+    if (new Date() > user.otp.expiresAt)
+      return res.status(400).json({ success: false, message: "OTP expired" });
+
+    if (user.otp.code !== otp)
+      return res.status(400).json({ success: false, message: "Incorrect OTP" });
+
+    user.isVerified = true;
+    user.otp = null;
+    await user.save();
+
+    return res.json({ success: true, message: "Email verified successfully!" });
+  } catch (err) {
+    console.error("OTP verify error:", err);
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to verify OTP" });
   }
 };
