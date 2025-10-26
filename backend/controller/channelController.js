@@ -1,4 +1,4 @@
-import Channel from "../models/Channel.js";
+import Channel from "../models/channel.js";
 
 // Default system-created channels
 const defaultRooms = ["general", "dsa", "web", "aiml", "system", "career"];
