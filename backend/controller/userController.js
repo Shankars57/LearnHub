@@ -15,10 +15,10 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-transporter.verify((err, success) => {
-  if (err) console.log("Mailer error:", err);
-  else console.log("Mailer is ready");
-});
+// transporter.verify((err, success) => {
+//   if (err) console.log("Mailer error:", err);
+//   else console.log("Mailer is ready");
+// });
 
 export const jwtGenerate = (userId, email) => {
   return jwt.sign({ userId, email }, process.env.JWT_SECRET, {
