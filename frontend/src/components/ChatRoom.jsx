@@ -8,6 +8,7 @@ import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../../store/useAuthStore";
 import moment from "moment";
+import { MoreVertical, Pin, PinOff } from "lucide-react";
 
 const YouTubeEmbed = memo(({ href, children }) => {
   const navigate = useNavigate();
@@ -29,13 +30,13 @@ const YouTubeEmbed = memo(({ href, children }) => {
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-300 px-2 py-1 rounded-lg bg-black/10 block hover:text-white"
+          className="text-blue-300 px-2 py-1 rounded-lg bg-black/10 block hover:text-white text-xs"
         >
           Youtube
         </a>
         <button
           onClick={handleNavigate}
-          className="text-blue-300 px-2 py-1 rounded-lg bg-black/10 block hover:text-white"
+          className="text-blue-300 px-2 py-1 rounded-lg bg-black/10 block hover:text-white text-xs"
         >
           on-site
         </button>
@@ -82,71 +83,89 @@ const TypingIndicator = ({ users }) => (
   </div>
 );
 
-const MessageItem = memo(({ msg, username }) => (
-  <div
-    className={`px-3 py-2 rounded-lg w-fit max-w-[90%] sm:max-w-xl break-words ${
-      msg.user === username
-        ? "ml-auto bg-blue-500 text-white"
-        : "bg-gray-700/60 text-gray-200"
-    }`}
-  >
-    <p className="text-xs flex gap-5
-    justify-between font-semibold mb-1 opacity-80 px-2 py-1 rounded-lg bg-black/10 inline-block">
-      <span>{msg.user}</span>
-      <span className="pl-2">
-  {moment(msg.time).isSame(new Date(), "day")
-    ? moment(msg.time).format("hh:mm A")
-    : moment(msg.time).format("MMM D, hh:mm A")}
-</span>
+const MessageItem = memo(({ msg, username }) => {
+  const [stickMessage, setStickMessage] = useState(false);
 
-    </p>
-    <ReactMarkdown
-      children={msg.text}
-      remarkPlugins={[remarkGfm]}
-      components={{
-        p: ({ children }) => <div className="mb-1 flex">{children}</div>,
-        a: ({ href, children }) =>
-          href.includes("youtu") ? (
-            <YouTubeEmbed href={href}>{children}</YouTubeEmbed>
-          ) : (
-            <a
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-300 underline"
-            >
-              {children}
-            </a>
-          ),
-        code({ inline, className, children, ...props }) {
-          const match = /language-(\w+)/.exec(className || "");
-          return !inline && match ? (
-            <SyntaxHighlighter
-              style={oneDark}
-              language={match[1]}
-              PreTag="div"
-              className="rounded-lg text-sm"
-              {...props}
-            >
-              {String(children).replace(/\n$/, "")}
-            </SyntaxHighlighter>
-          ) : (
-            <code className="bg-black/40 px-1 py-0.5 rounded text-pink-300">
-              {children}
-            </code>
-          );
-        },
-      }}
-    />
-  </div>
-));
+  return (
+    <div
+      className={` ${
+        stickMessage && "sticky -top-12 overflow-x-hidden z-10"
+      } px-3 py-2 rounded-lg w-fit max-w-[90%] sm:max-w-xl break-words ${
+        msg.user === username
+          ? "ml-auto bg-blue-500 text-white"
+          : "bg-gray-700/60 text-gray-200"
+      }`}
+    >
+      <div className={` flex items-center justify-between`}>
+        <p
+          className="text-xs flex gap-5
+    justify-between font-semibold mb-1 opacity-80 px-2 py-1 rounded-lg bg-black/10 inline-block"
+        >
+          <span>{msg.user}</span>
+          <span className="pl-2">
+            {moment(msg.time).isSame(new Date(), "day")
+              ? moment(msg.time).format("hh:mm A")
+              : moment(msg.time).format("MMM D, hh:mm A")}
+          </span>
+        </p>
+        <div className="relative group ">
+          <MoreVertical size={14} />
+          <button
+            onClick={() => setStickMessage(!stickMessage)}
+            className="absolute px-2 py-1 bg-black/10   top-3 hidden group-hover:inline-block flex items-center"
+          >
+            {!stickMessage ? <Pin size={15} /> : <PinOff size={15} />}
+          </button>
+        </div>
+      </div>
+      <ReactMarkdown
+        children={msg.text}
+        remarkPlugins={[remarkGfm]}
+        components={{
+          p: ({ children }) => <div className="mb-1 flex">{children}</div>,
+          a: ({ href, children }) =>
+            href.includes("youtu") ? (
+              <YouTubeEmbed href={href}>{children}</YouTubeEmbed>
+            ) : (
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-300 underline"
+              >
+                {children}
+              </a>
+            ),
+          code({ inline, className, children, ...props }) {
+            const match = /language-(\w+)/.exec(className || "");
+            return !inline && match ? (
+              <SyntaxHighlighter
+                style={oneDark}
+                language={match[1]}
+                PreTag="div"
+                className="rounded-lg text-sm"
+                {...props}
+              >
+                {String(children).replace(/\n$/, "")}
+              </SyntaxHighlighter>
+            ) : (
+              <code className="bg-black/40 px-1 py-0.5 rounded text-pink-300">
+                {children}
+              </code>
+            );
+          },
+        }}
+      />
+    </div>
+  );
+});
 
 const ChatRoom = () => {
   const { roomId } = useParams();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [password, setPassword] = useState("");
-  const [joined, setJoined] = useState(false);
+  const [joined, setJoined] = useState(true);
   const [total, setTotal] = useState(0);
   const [typingUsers, setTypingUsers] = useState([]);
   const socketRef = useRef(null);
@@ -281,26 +300,26 @@ const ChatRoom = () => {
 
   return (
     <div className="flex flex-col h-full w-full">
-      <div className="p-4 border-b border-gray-700 bg-gray-800/90 text-white flex items-center justify-between flex-wrap gap-2">
+      <div className="p-2 border-b border-gray-700 bg-gray-800/90 text-white flex items-center justify-between flex-wrap gap-2">
         <h2 className="font-semibold text-lg capitalize">#{roomId}</h2>
         <h2 className="font-semibold text-sm sm:text-base text-green-400">
           Online: {total}
         </h2>
       </div>
-      <div className="flex-1 p-4 overflow-y-auto space-y-3 custom-scrollbar bg-gray-900/90">
+      <div className="relative flex-1 p-4 overflow-y-auto space-y-3 custom-scrollbar bg-gray-900/90">
         {messages.length === 0 ? (
           <p className="text-gray-400 text-center italic mt-10">
             No messages yet in #{roomId}.
           </p>
         ) : (
-          messages.map((msg) => (
-            <MessageItem key={msg.id} msg={msg} username={username} />
+          messages.map((msg, idx) => (
+            <MessageItem key={msg.id + idx} msg={msg} username={username} />
           ))
         )}
         {typingUsers.length > 0 && <TypingIndicator users={typingUsers} />}
         <div ref={bottomRef} />
       </div>
-      <div className="p-3 border-t border-gray-700 flex gap-2 bg-gray-800/80">
+      <div className="p-2 border-t border-gray-700 flex gap-2 bg-gray-800/80">
         <input
           value={input}
           onChange={handleTyping}

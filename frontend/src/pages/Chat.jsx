@@ -15,7 +15,10 @@ const Chat = () => {
         <div className="w-full md:w-64 mb-4 md:mb-0 md:mr-4">
           <Sidebar />
         </div>
-        <div className="flex-1 bg-gray-950 text-white p-4 sm:p-6 rounded-xl shadow-md shadow-blue-800/50 overflow-y-auto border border-gray-800">
+        <div className="flex-1
+         bg-gray-950 text-white p-2  
+         rounded-xl shadow-md shadow-blue-800/50 overflow-y-auto
+         border border-gray-800">
           <Outlet />
         </div>
       </div>

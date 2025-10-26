@@ -82,15 +82,17 @@ const PlayLists = () => {
                 transition={{ duration: 0.5 }}
                 className="flex flex-col items-center text-center w-full"
               >
-                <div className="w-full max-w-10xl aspect-video rounded-2xl overflow-hidden shadow-2xl shadow-blue-900/30 border border-gray-800">
-                  <iframe
-                    className="w-full h-full"
-                    src={`https://www.youtube.com/embed/${currentVideo.contentDetails.videoId}?rel=0&modestbranding=1`}
-                    title={currentVideo.snippet.title}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
+                <div className="w-full max-w-5xl mx-auto rounded-2xl overflow-hidden shadow-2xl shadow-blue-900/30 border border-gray-800">
+                  <div className="relative w-full aspect-video">
+                    <iframe
+                      className="absolute top-0 left-0 w-full h-full"
+                      src={`https://www.youtube.com/embed/${currentVideo.contentDetails.videoId}?rel=0&modestbranding=1`}
+                      title={currentVideo.snippet.title}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
                 </div>
 
                 <motion.h3

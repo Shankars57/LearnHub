@@ -60,7 +60,7 @@ const AIChatBot = () => {
       const { data } = await axios.post("http://localhost:5000/api/ai-chat", {
         prompt: input,
       });
-      if (data.success) toast.success("New response received ✅");
+      if (data.success) toast.success("New response received ");
       setMessages((prev) => [...prev, { sender: "bot", text: data.reply }]);
     } catch (error) {
       console.error(error);
@@ -71,7 +71,7 @@ const AIChatBot = () => {
       toast.error(errorMessage);
       setMessages((prev) => [
         ...prev,
-        { sender: "bot", text: `⚠️ ${errorMessage}` },
+        { sender: "bot", text: `${errorMessage}` },
       ]);
     } finally {
       setLoading(false);

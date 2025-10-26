@@ -169,7 +169,7 @@ const Sidebar = () => {
         >
           {filteredData.length > 0 ? (
             filteredData.map((item, idx) => {
-              // Only non-default rooms are custom
+
               const isCustom = item.admin && !defaultRooms.includes(item.id);
 
               return (
@@ -177,7 +177,7 @@ const Sidebar = () => {
                   key={idx}
                   className="group relative flex items-center justify-between px-4 py-2 rounded-lg hover:bg-gray-700/60 transition"
                 >
-                  {/* Channel Link */}
+                
                   <NavLink
                     to={`/chats/${item.id}`}
                     className={({ isActive }) =>
@@ -205,13 +205,13 @@ const Sidebar = () => {
                     </div>
                   </NavLink>
 
-                  {/* Options Button for Custom Rooms */}
+         
                   {isCustom && item.admin === username && (
-                    <div className="relative flex-shrink-0">
+                    <div className="group relative flex-shrink-0">
                       <div className="cursor-pointer text-gray-400 hover:text-white">
                         <MoreVertical size={16} />
                       </div>
-                      <div className="absolute right-0 top-3 hidden group-hover:block bg-gray-800 rounded-md shadow-lg border border-gray-700 z-50 min-w-[120px]">
+                      <div className="absolute top-4 -right-5 hidden group-hover:block bg-gray-800 rounded-md shadow-lg border border-gray-700 z-50 min-w-[120px]">
                         <button
                           onClick={() => handleDeleteRoom(item.id)}
                           className="flex items-center px-4 py-2 text-xs text-red-400 hover:bg-gray-700 hover:text-red-600 rounded-md w-full text-left gap-2"
