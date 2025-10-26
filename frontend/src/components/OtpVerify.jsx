@@ -13,12 +13,13 @@ const OtpVerify = ({ userEmail }) => {
   const navigate = useNavigate();
   useEffect(() => {
     inputRefs.current[0]?.focus();
+    console.log(userEmail);
   }, []);
 
   const handleChange = (e, idx) => {
     const value = e.target.value.replace(/[^0-9]/g, "");
     const newOtp = [...otp];
-    
+
     newOtp[idx] = value[0] || "";
     setOtp(newOtp);
 
@@ -57,7 +58,7 @@ const OtpVerify = ({ userEmail }) => {
     try {
       setIsSubmitting(true);
       const { data } = await axios.post("/api/user/verify-otp", {
-        email: user.email,
+        email: userEmail,
         otp: enteredOtp,
       });
 
