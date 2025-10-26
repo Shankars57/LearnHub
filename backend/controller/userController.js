@@ -6,7 +6,7 @@ import nodemailer from "nodemailer";
 
 // 1. Brevo (Sendinblue) Nodemailer Transport Configuration
 const transporter = nodemailer.createTransport({
-  host: "smtp-relay.sendinblue.com",
+  host: "smtp-relay.brevo.com",
   port: 587,
   secure: false,
   auth: {
