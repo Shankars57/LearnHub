@@ -4,12 +4,14 @@ import userModel from "../models/user.js";
 import imagekit from "../config/ImageKit.js";
 import nodemailer from "nodemailer";
 
-// Configure Nodemailer
+// 1. Brevo (Sendinblue) Nodemailer Transport Configuration
 const transporter = nodemailer.createTransport({
-  service: "Gmail",
+  host: "smtp-relay.sendinblue.com",
+  port: 587,
+  secure: false,
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    pass: process.env.BREVO_SMTP_KEY,
   },
 });
 
@@ -253,7 +255,7 @@ export const sendOtp = async (req, res) => {
         .json({ success: false, message: "User not found" });
 
     const otpCode = Math.floor(1000 + Math.random() * 9000).toString();
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); 
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
     user.otp = { code: otpCode, expiresAt };
     await user.save();
