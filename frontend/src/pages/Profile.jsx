@@ -77,6 +77,8 @@ const Profile = () => {
     fetchStats();
   }, [userData?._id]);
 
+
+
   const studentStatusData = [
     { icon: Medal, label: "Level", value: stats.level },
     { icon: Flame, label: "Streak", value: stats.streak },

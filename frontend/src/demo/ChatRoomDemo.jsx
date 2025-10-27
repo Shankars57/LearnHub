@@ -3,17 +3,17 @@ import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../../store/useAuthStore";
-import TypingIndicator from "./TypeIndicator";
-import MessageItem from "./MessageItem";
+import TypingIndicator from "../components/TypeIndicator";
+import MessageItem from "../components/MessageItem";
 import usePinnedMessage from "../../store/usePinnedMessage";
 
-const ChatRoom = () => {
+const ChatRoomDemo = () => {
   const { roomId } = useParams();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [password, setPassword] = useState("");
-  const [joined, setJoined] = useState(true);
-  const [total, setTotal] = useState(0);
+  const [joined, setJoined] = useState(false);
+  const [onlineUsers, setOnlineUsers] = useState([]);
   const [typingUsers, setTypingUsers] = useState([]);
   const socketRef = useRef(null);
   const bottomRef = useRef(null);
@@ -21,47 +21,53 @@ const ChatRoom = () => {
   const { user } = useAuthStore();
   const [username, setUsername] = useState("");
   const { pinnedMessages, clearPinnedMessage } = usePinnedMessage();
-
   const pinnedMessage = pinnedMessages[roomId];
+  const [roomName, setRoomName] = useState("");
 
   useEffect(() => {
     setJoined(false);
-    setUsername("");
+    setUsername(user?.userName || "");
     setPassword("");
     setMessages([]);
-    setTotal(0);
     setTypingUsers([]);
+    setOnlineUsers([]);
+    setRoomName("");
   }, [roomId]);
 
   useEffect(() => {
-    if (user.userName) setUsername(user.userName);
-  }, [roomId]);
-
-  useEffect(() => {
-    if (!socketRef.current)
+    if (!socketRef.current) {
       socketRef.current = io(
         import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"
       );
+    }
     const socket = socketRef.current;
 
     const handleChannelsList = (channels) => {
-      const current = channels.find((c) => c.id === roomId);
-      if (current) setTotal(current.members);
+      const current = channels.find((c) => c._id === roomId);
+      if (current) {
+        setRoomName(current.name);
+        setOnlineUsers(current.members || []);
+      }
     };
 
     const handleHistory = (history) => {
       setMessages(history || []);
-      toast.success(`Joined #${roomId}`);
+      toast.success(`Joined #${roomName || roomId}`);
     };
 
-    const handleMessage = (msg) => {
+    const handleNewMessage = (msg) => {
       setMessages((prev) => [...prev, msg]);
-      if (msg.user !== username)
+      if (msg.user !== username) {
         toast.custom(() => (
           <div className="bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg border border-blue-500">
-            <b>{msg.user}</b> sent a message in <b>#{roomId}</b>
+            <b>{msg.user}</b> sent a message in <b>#{roomName || roomId}</b>
           </div>
         ));
+      }
+    };
+
+    const handleRoomUsers = (users) => {
+      setOnlineUsers(users || []);
     };
 
     const handleError = (msg) => {
@@ -70,9 +76,11 @@ const ChatRoom = () => {
     };
 
     const handleUserTyping = ({ user }) => {
-      setTypingUsers((prev) =>
-        !prev.includes(user) && user !== username ? [...prev, user] : prev
-      );
+      if (user !== username) {
+        setTypingUsers((prev) =>
+          !prev.includes(user) ? [...prev, user] : prev
+        );
+      }
     };
 
     const handleUserStopTyping = ({ user }) => {
@@ -81,21 +89,24 @@ const ChatRoom = () => {
 
     socket.on("channels_list", handleChannelsList);
     socket.on("receive_history", handleHistory);
-    socket.on("receive_message", handleMessage);
+    socket.on("receive_message", handleNewMessage);
+    socket.on("room_users", handleRoomUsers);
     socket.on("room_error", handleError);
     socket.on("user_typing", handleUserTyping);
     socket.on("user_stop_typing", handleUserStopTyping);
 
     return () => {
-      if (joined) socket.emit("leave_room", { roomId, user: username });
+      if (joined && username)
+        socket.emit("leave_room", { roomId, user: username });
       socket.off("channels_list", handleChannelsList);
       socket.off("receive_history", handleHistory);
-      socket.off("receive_message", handleMessage);
+      socket.off("receive_message", handleNewMessage);
+      socket.off("room_users", handleRoomUsers);
       socket.off("room_error", handleError);
       socket.off("user_typing", handleUserTyping);
       socket.off("user_stop_typing", handleUserStopTyping);
     };
-  }, [roomId, username, joined]);
+  }, [roomId, username, joined, roomName]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -103,7 +114,8 @@ const ChatRoom = () => {
 
   const joinRoom = () => {
     if (!username.trim()) return toast.error("Enter a username");
-    socketRef.current.emit("join_room", { roomId, user: username, password });
+    const socket = socketRef.current;
+    socket.emit("join_room", { roomId, user: username, password });
     setJoined(true);
   };
 
@@ -112,7 +124,7 @@ const ChatRoom = () => {
     const newMsg = {
       id: Date.now(),
       user: username || "Anonymous",
-      text: input,
+      text: input.trim(),
       time: new Date().toISOString(),
     };
     socketRef.current.emit("send_message", { roomId, message: newMsg });
@@ -122,17 +134,20 @@ const ChatRoom = () => {
 
   const handleTyping = (e) => {
     setInput(e.target.value);
-    socketRef.current.emit("typing", { roomId, user: username });
+    const socket = socketRef.current;
+    socket.emit("typing", { roomId, user: username });
     if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     typingTimeoutRef.current = setTimeout(() => {
-      socketRef.current.emit("stop_typing", { roomId, user: username });
+      socket.emit("stop_typing", { roomId, user: username });
     }, 1000);
   };
 
   if (!joined)
     return (
       <div className="flex flex-col items-center justify-center h-full w-full p-6 text-center space-y-3">
-        <h2 className="text-2xl sm:text-3xl font-bold">Join #{roomId}</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold">
+          Join #{roomName || roomId}
+        </h2>
         <input
           type="text"
           value={username}
@@ -144,7 +159,7 @@ const ChatRoom = () => {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Enter room code (if any)"
+          placeholder="Enter room password (if any)"
           className="px-4 py-2 rounded-lg border w-full max-w-xs outline-none"
         />
         <button
@@ -159,9 +174,11 @@ const ChatRoom = () => {
   return (
     <div className="flex flex-col h-full w-full">
       <div className="p-2 border-b flex items-center justify-between flex-wrap gap-2">
-        <h2 className="font-semibold text-lg capitalize">#{roomId}</h2>
+        <h2 className="font-semibold text-lg capitalize">
+          #{roomName || roomId}
+        </h2>
         <h2 className="font-semibold text-sm sm:text-base text-green-600">
-          Online: {total}
+          Online: {onlineUsers.length}
         </h2>
       </div>
 
@@ -182,12 +199,12 @@ const ChatRoom = () => {
       <div className="relative flex-1 p-4 overflow-y-auto space-y-3 custom-scrollbar">
         {messages.length === 0 ? (
           <p className="text-gray-500 text-center italic mt-10">
-            No messages yet in #{roomId}.
+            No messages yet in #{roomName || roomId}.
           </p>
         ) : (
           messages.map((msg, idx) => (
             <MessageItem
-              key={msg.id + idx}
+              key={msg._id || msg.id || `${idx}-${msg.user}-${msg.time}`}
               msg={msg}
               username={username}
               roomId={roomId}
@@ -203,7 +220,7 @@ const ChatRoom = () => {
           value={input}
           onChange={handleTyping}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          placeholder={`Message #${roomId}`}
+          placeholder={`Message #${roomName || roomId}`}
           className="flex-1 px-3 py-2 rounded-lg border outline-none text-sm sm:text-base"
         />
         <button
@@ -217,4 +234,4 @@ const ChatRoom = () => {
   );
 };
 
-export default ChatRoom;
+export default ChatRoomDemo;

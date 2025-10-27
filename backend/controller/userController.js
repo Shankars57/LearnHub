@@ -4,8 +4,7 @@ import userModel from "../models/user.js";
 import imagekit from "../config/ImageKit.js";
 import nodemailer from "nodemailer";
 
-// 1. Brevo (Sendinblue) Nodemailer Transport Configuration
-const transporter = nodemailer.createTransport({
+export const transporter = nodemailer.createTransport({
   host: "smtp-relay.brevo.com",
   port: 587,
   secure: false,
@@ -15,10 +14,10 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// transporter.verify((err, success) => {
-//   if (err) console.log("Mailer error:", err);
-//   else console.log("Mailer is ready");
-// });
+transporter.verify((err, success) => {
+  if (err) console.log("Mailer error:", err);
+  else console.log("Mailer is ready");
+});
 
 export const jwtGenerate = (userId, email) => {
   return jwt.sign({ userId, email }, process.env.JWT_SECRET, {

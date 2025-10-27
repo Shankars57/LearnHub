@@ -18,6 +18,7 @@ const Uploader = ({ isOpen, setIsOpen }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const { axios, setUploadState, token } = useContext(LearnContext);
+  const {user} = useAuthStore();
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;

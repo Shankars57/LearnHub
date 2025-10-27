@@ -35,10 +35,10 @@ const PersistentPlayer = () => {
           dragMomentum={false}
           dragElastic={0.2}
           dragConstraints={{
-            top: -window.innerHeight / 2,
-            left: -window.innerWidth / 2,
-            right: window.innerWidth / 2,
-            bottom: window.innerHeight / 2,
+            top: -window.innerHeight * 0.8, 
+            left: -window.innerWidth * 0.8, 
+            right: window.innerWidth * 0.8, 
+            bottom: window.innerHeight * 0.5,
           }}
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}

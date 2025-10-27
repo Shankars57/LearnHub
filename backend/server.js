@@ -1,12 +1,11 @@
+
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
-import path from "path";
-import bodyParser from "body-parser";
 import dotenv from "dotenv";
-import AIRouter from "./routes/aiRoute.js";
 import connectDB from "./config/DB.js";
+import AIRouter from "./routes/aiRoute.js";
 import pdfRouter from "./routes/materialRoute.js";
 import userRouter from "./routes/userRoutes.js";
 import ytRouter from "./routes/youtubeRoute.js";
@@ -15,151 +14,94 @@ import {
   deleteRoom,
   addMessage,
   getChatHistory,
+  getChannels,
 } from "./controller/channelController.js";
+
 dotenv.config();
+connectDB();
+
 const app = express();
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
-app.use(bodyParser.json());
 
-const __dirname = path.resolve();
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: { origin: "*", methods: ["GET", "POST"] },
+  cors: {
+    origin: "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST"],
+  },
 });
 
-// ---------------- Chat System ----------------
-let channels = [
-  {
-    id: "general",
-    name: "General",
-    members: 0,
-    messages: [{ id: 1, user: "System", text: "Welcome to General channel!" }],
-  },
-  {
-    id: "dsa",
-    name: "DSA Group",
-    members: 0,
-    messages: [{ id: 1, user: "System", text: "Discuss DSA problems here." }],
-  },
-  {
-    id: "web",
-    name: "Web Dev",
-    members: 0,
-    messages: [{ id: 1, user: "System", text: "Talk about web development." }],
-  },
-  {
-    id: "aiml",
-    name: "AI/ML",
-    members: 0,
-    messages: [{ id: 1, user: "System", text: "Share AI/ML resources." }],
-  },
-  {
-    id: "system",
-    name: "System Design",
-    members: 0,
-    messages: [
-      { id: 1, user: "System", text: "Discuss system design concepts." },
-    ],
-  },
-  {
-    id: "career",
-    name: "Career Advice",
-    members: 0,
-    messages: [
-      { id: 1, user: "System", text: "Talk about career & interview tips." },
-    ],
-  },
-];
+const onlineUsers = {};
 
-// ---------------- Socket.io ----------------
-io.on("connection", (socket) => {
-  socket.emit("channels_list", channels);
+io.on("connection", async (socket) => {
+  try {
+    const channels = await getChannels();
+    socket.emit("channels_list", channels);
+  } catch (err) {
+    socket.emit("room_error", err.message);
+  }
 
-  socket.on("create_room", ({ name, user, password }) => {
-    const id = name.toLowerCase().replace(/\s+/g, "-");
-    if (channels.find((c) => c.id === id)) {
-      socket.emit("room_error", "Room already exists!");
-      return;
+  socket.data = { user: null, roomId: null };
+
+  socket.on("create_room", async ({ name, user, password }) => {
+    try {
+      const newRoom = await createRoom({ name, user, password });
+      const channels = await getChannels();
+      io.emit("channels_list", channels);
+      socket.emit("room_created", newRoom);
+    } catch (err) {
+      socket.emit("room_error", err.message);
     }
-    const newRoom = {
-      id,
-      name,
-      members: 0,
-      admin: user,
-      password: password || null,
-      messages: [
-        { id: 1, user: "System", text: `Welcome to ${name}! (Admin: ${user})` },
-      ],
-    };
-    channels.push(newRoom);
-    io.emit("channels_list", channels);
-    socket.emit("room_created", newRoom);
   });
 
-  socket.on("join_room", ({ roomId, user, password }) => {
-    const channel = channels.find((c) => c.id === roomId);
-    if (!channel) {
-      socket.emit("room_error", "Room not found!");
-      return;
-    }
-
-    // Password check
-    if (channel.password && channel.password !== password) {
-      socket.emit("room_error", "Incorrect password!");
-      return;
-    }
-
-    // Check if username already exists in the room
-    const room = io.sockets.adapter.rooms.get(roomId);
-    const usersInRoom = [];
-    if (room) {
-      for (const socketId of room) {
-        const s = io.sockets.sockets.get(socketId);
-        if (s?.data.user) usersInRoom.push(s.data.user);
+  socket.on("join_room", async ({ roomId, user, password }) => {
+    try {
+      const channels = await getChannels();
+      const channel = channels.find((c) => c._id.toString() === roomId);
+      if (!channel) throw new Error("Room not found!");
+      if (channel.password && channel.password !== password) {
+        socket.emit("room_error", "Incorrect password!");
+        return;
       }
+
+      if (!onlineUsers[roomId]) onlineUsers[roomId] = new Map();
+
+      if (onlineUsers[roomId].has(user)) {
+        const oldSocketId = onlineUsers[roomId].get(user);
+        const oldSocket = io.sockets.sockets.get(oldSocketId);
+        if (oldSocket && oldSocket.id !== socket.id) {
+          try {
+            oldSocket.disconnect(true);
+          } catch (e) {}
+        }
+        onlineUsers[roomId].delete(user);
+      }
+
+      socket.join(roomId);
+      socket.data.user = user;
+      socket.data.roomId = roomId;
+      onlineUsers[roomId].set(user, socket.id);
+
+      const messages = await getChatHistory(roomId);
+      socket.emit("receive_history", messages);
+
+      io.to(roomId).emit("room_users", Array.from(onlineUsers[roomId].keys()));
+    } catch (err) {
+      socket.emit("room_error", err.message);
     }
+  });
 
-    if (usersInRoom.includes(user)) {
-      socket.emit("room_error", "Username is already in use in this room!");
-      return;
+  socket.on("send_message", async ({ roomId, message }) => {
+    try {
+      const savedMessage = await addMessage({ roomId, message });
+      io.to(roomId).emit("receive_message", savedMessage);
+    } catch (err) {
+      socket.emit("room_error", err.message);
     }
-
-    // Join room
-    socket.join(roomId);
-    socket.data.user = user;
-
-    // Update member count
-    const updatedRoom = io.sockets.adapter.rooms.get(roomId);
-    channel.members = updatedRoom ? updatedRoom.size : 1;
-
-    // Send chat history to the new user
-    socket.emit("receive_history", channel.messages);
-
-    // Update channels list for all clients
-    io.emit("channels_list", channels);
   });
 
-  socket.on("leave_room", ({ roomId }) => {
-    const channel = channels.find((c) => c.id === roomId);
-    if (!channel) return;
-
-    socket.leave(roomId);
-
-    const updatedRoom = io.sockets.adapter.rooms.get(roomId);
-    channel.members = updatedRoom ? updatedRoom.size : 0;
-
-    io.emit("channels_list", channels);
-  });
-
-  socket.on("send_message", ({ roomId, message }) => {
-    const channel = channels.find((c) => c.id === roomId);
-    if (!channel) return;
-
-    channel.messages.push(message);
-    io.in(roomId).emit("receive_message", message);
-  });
-  //Typing indicator
   socket.on("typing", ({ roomId, user }) => {
     socket.to(roomId).emit("user_typing", { user });
   });
@@ -168,56 +110,54 @@ io.on("connection", (socket) => {
     socket.to(roomId).emit("user_stop_typing", { user });
   });
 
-  socket.on("delete_room", ({ roomId, user }) => {
-    const channelIndex = channels.findIndex((c) => c.id === roomId);
-    if (channelIndex === -1) {
-      socket.emit("room_error", "Room not found!");
-      return;
+  socket.on("delete_room", async ({ roomId, user }) => {
+    try {
+      const deletedRoomId = await deleteRoom({ roomId, user });
+      if (onlineUsers[deletedRoomId]) delete onlineUsers[deletedRoomId];
+      const channels = await getChannels();
+      io.emit("channels_list", channels);
+      io.emit("room_deleted", { roomId: deletedRoomId });
+    } catch (err) {
+      socket.emit("room_error", err.message);
     }
-
-    const channel = channels[channelIndex];
-
-    // Prevent deletion of default system rooms
-    const defaultRooms = ["general", "dsa", "web", "aiml", "system", "career"];
-    if (defaultRooms.includes(roomId)) {
-      socket.emit("room_error", "You cannot delete default rooms!");
-      return;
-    }
-
-    // Only admin can delete
-    if (channel.admin !== user) {
-      socket.emit("room_error", "Only the room creator can delete this room!");
-      return;
-    }
-
-    // Delete the room
-    channels.splice(channelIndex, 1);
-    io.emit("channels_list", channels);
-    io.emit("room_deleted", { roomId });
   });
 
-  socket.on("disconnecting", () => {
-    socket.rooms.forEach((roomId) => {
-      const channel = channels.find((c) => c.id === roomId);
-      if (!channel) return;
-      const room = io.sockets.adapter.rooms.get(roomId);
-      channel.members = room ? room.size - 1 : 0;
-    });
-    io.emit("channels_list", channels);
+  socket.on("leave_room", ({ roomId, user }) => {
+    if (!roomId || !user) return;
+    socket.leave(roomId);
+    if (onlineUsers[roomId]) {
+      const mappedId = onlineUsers[roomId].get(user);
+      if (mappedId === socket.id) {
+        onlineUsers[roomId].delete(user);
+      }
+      io.to(roomId).emit("room_users", Array.from(onlineUsers[roomId].keys()));
+    }
+    socket.data = { user: null, roomId: null };
+  });
+
+  socket.on("disconnect", () => {
+    const { roomId, user } = socket.data;
+    if (roomId && user && onlineUsers[roomId]) {
+      const mappedId = onlineUsers[roomId].get(user);
+      if (mappedId === socket.id) {
+        onlineUsers[roomId].delete(user);
+        io.to(roomId).emit(
+          "room_users",
+          Array.from(onlineUsers[roomId].keys())
+        );
+      }
+    }
   });
 });
 
-// ---------------- Routes ----------------
-connectDB();
 app.use("/api", AIRouter);
 app.use("/api/material", pdfRouter);
 app.use("/api/user", userRouter);
 app.use("/api/yt", ytRouter);
 
 app.get("/", (req, res) =>
-  res.send("🚀 Server is running and ready for connections!")
+  res.send("Server is running and ready for connections.")
 );
 
-// ---------------- Start Server ----------------
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

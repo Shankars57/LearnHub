@@ -21,6 +21,7 @@ import Playlists from "./components/PlayLists";
 import VideoContent from "./components/VideoContent";
 import PersistentPlayer from "./components/PersistencePlayer";
 import OtpVerify from "./components/OtpVerify";
+import ChatRoomDemo from "./demo/ChatRoomDemo";
 const NotFound = () => (
   <div className="h-screen flex items-center justify-center">
     <h1 className="text-white text-5xl">Page Not Found 404.</h1>
@@ -47,7 +48,7 @@ const App = () => {
           <Route path="/materials" element={<Materials />} />
           <Route path="/chats" element={<Chat />}>
             <Route index element={<Navigate to="general" replace />} />
-            <Route path=":roomId" element={<ChatRoom />} />
+            <Route path=":roomId" element={<ChatRoomDemo />} />
           </Route>
           <Route path="/ai" element={<AI />} />
           <Route path="/profile" element={<Profile />} />
