@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bot, Send, Zap } from "lucide-react";
+import { SendHorizonal, BrainCircuit, Activity } from "lucide-react";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -24,22 +24,16 @@ const AIChatBot = () => {
 
   const handleSend = async () => {
     if (!input.trim()) return;
-
     const userMsg = { sender: "user", text: input };
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setLoading(true);
-
     try {
-      const { data } = await axios.post("http://localhost:5000/api/ai-chat", {
-        prompt: input,
-      });
-
+      const { data } = await axios.post("api/ai-chat", { prompt: input });
       const botMsg = { sender: "bot", text: data.reply || "⚠️ No response." };
       setMessages((prev) => [...prev, botMsg]);
     } catch (err) {
-      const errorMsg =
-        "Error: " + (err.response?.data?.message || err.message);
+      const errorMsg = "Error: " + (err.response?.data?.message || err.message);
       setMessages((prev) => [...prev, { sender: "bot", text: errorMsg }]);
       toast.error("Failed to get response");
     } finally {
@@ -48,26 +42,26 @@ const AIChatBot = () => {
   };
 
   return (
-    <div className="w-full sm:w-[70%] lg:w-[60%] mx-auto mt-10 mb-20">
-      {/* Header */}
-      <div className="flex items-center justify-between bg-[#0b0b0b] border border-gray-800/50 rounded-t-2xl px-5 py-4 backdrop-blur-xl">
+    <div className="w-full sm:w-[70%] lg:w-[60%] mx-auto mt-10 mb-20 font-[Inter]">
+      <div className="flex items-center justify-between bg-[#1e1e1e] border border-[#2d2d2d] rounded-t-2xl px-5 py-4 shadow-lg">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-gradient-to-br from-purple-600 to-indigo-600 shadow-lg">
-            <Bot size={22} className="text-white" />
+          <div className="p-2 rounded-lg bg-gradient-to-br from-[#007acc] to-[#005fa3]">
+            <BrainCircuit size={22} className="text-white" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-white">AI Assistant</h2>
+            <h2 className="text-lg font-semibold text-gray-100">
+              AI Assistant
+            </h2>
             <p className="text-xs text-gray-400">Always ready to chat 💬</p>
           </div>
         </div>
-        <div className="text-sm text-green-400 flex items-center gap-1">
-          <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></span>
+        <div className="text-sm text-emerald-400 flex items-center gap-1">
+          <Activity size={14} className="animate-pulse" />
           Online
         </div>
       </div>
 
-      {/* Chat Window */}
-      <div className="bg-[#0b0b0e]/95 border-x border-gray-800/50 backdrop-blur-lg overflow-y-auto h-[550px] p-5 space-y-5 text-white shadow-2xl rounded-b-2xl">
+      <div className="bg-[#1e1e1e] border-x border-b border-[#2d2d2d] overflow-y-auto h-[550px] p-5 space-y-5 text-white shadow-2xl rounded-b-2xl">
         <AnimatePresence>
           {messages.map((msg, i) => (
             <motion.div
@@ -82,8 +76,8 @@ const AIChatBot = () => {
               <div
                 className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm leading-relaxed ${
                   msg.sender === "user"
-                    ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg"
-                    : "bg-[#1a1a1d]/90 border border-gray-700/50 text-gray-100 shadow-inner"
+                    ? "bg-[#0e639c] text-white shadow-md"
+                    : "bg-[#252526] text-gray-200 border border-[#333333]"
                 }`}
               >
                 <ReactMarkdown
@@ -99,7 +93,7 @@ const AIChatBot = () => {
                           {String(children).replace(/\n$/, "")}
                         </SyntaxHighlighter>
                       ) : (
-                        <code className="bg-gray-800 px-1 rounded text-pink-400">
+                        <code className="bg-[#333333] px-1 rounded text-[#569cd6]">
                           {children}
                         </code>
                       );
@@ -114,21 +108,21 @@ const AIChatBot = () => {
         </AnimatePresence>
 
         {loading && (
-          <div className="flex items-center gap-2 text-gray-400 text-sm">
+          <div className="flex items-center gap-2 text-gray-400 text-sm pl-1">
             <motion.div
-              animate={{ opacity: [0.5, 1, 0.5] }}
+              animate={{ opacity: [0.4, 1, 0.4] }}
               transition={{ repeat: Infinity, duration: 1 }}
-              className="w-2 h-2 rounded-full bg-gray-400"
+              className="w-2 h-2 rounded-full bg-[#007acc]"
             />
             <motion.div
-              animate={{ opacity: [0.5, 1, 0.5] }}
+              animate={{ opacity: [0.4, 1, 0.4] }}
               transition={{ repeat: Infinity, duration: 1, delay: 0.2 }}
-              className="w-2 h-2 rounded-full bg-gray-400"
+              className="w-2 h-2 rounded-full bg-[#007acc]"
             />
             <motion.div
-              animate={{ opacity: [0.5, 1, 0.5] }}
+              animate={{ opacity: [0.4, 1, 0.4] }}
               transition={{ repeat: Infinity, duration: 1, delay: 0.4 }}
-              className="w-2 h-2 rounded-full bg-gray-400"
+              className="w-2 h-2 rounded-full bg-[#007acc]"
             />
           </div>
         )}
@@ -136,11 +130,10 @@ const AIChatBot = () => {
         <div ref={messageEndRef} />
       </div>
 
-      {/* Input */}
-      <div className="mt-4 flex items-center gap-3 bg-[#0b0b0b]/90 border border-gray-800/60 rounded-xl px-3 py-2 backdrop-blur-xl">
+      <div className="mt-4 flex items-center gap-3 bg-[#1e1e1e] border border-[#2d2d2d] rounded-xl px-3 py-2 shadow-lg">
         <input
           type="text"
-          placeholder="Type something awesome..."
+          placeholder="Ask me anything..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
@@ -149,9 +142,9 @@ const AIChatBot = () => {
         <motion.button
           whileTap={{ scale: 0.9 }}
           onClick={handleSend}
-          className="p-2.5 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-80 transition-all shadow-md"
+          className="p-2.5 rounded-lg bg-[#007acc] hover:bg-[#0088ff] transition-all shadow-md"
         >
-          <Send size={18} className="text-white" />
+          <SendHorizonal size={18} className="text-white" />
         </motion.button>
       </div>
     </div>

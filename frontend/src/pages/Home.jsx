@@ -1,14 +1,12 @@
 import React from "react";
-import Navbar from "../components/Navbar";
-import Hero from "../components/Hero";
-import Playlists from "../components/PlayLists";
-import Materials from "../components/Materials";
-import Footer from "../components/Footer";
-import Features from "../components/Features";
-import VideoLessons from "../components/VideoLessons";
-import Community from "../components/Community";
-import AIMentor from "../components/AIMentor";
-import ScrollHome from "../components/ScrollHome";
+import Hero from "../components/HomeComponents/Hero";
+import Materials from "../components/HomeComponents/Materials";
+import Footer from "../components/HomeComponents/Footer";
+import Features from "../components/HomeComponents/Features";
+import VideoLessons from "../components/HomeComponents/VideoLessons";
+import Community from "../components/HomeComponents/Community";
+import AIMentor from "../components/HomeComponents/AIMentor";
+import ScrollHome from "../components/HomeComponents/ScrollHome";
 const Home = () => {
   return (
     <div className="relative">

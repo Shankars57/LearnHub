@@ -1,4 +1,3 @@
-
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
@@ -13,6 +12,7 @@ import {
   createRoom,
   deleteRoom,
   addMessage,
+  deleteMessage,
   getChatHistory,
   getChannels,
 } from "./controller/channelController.js";
@@ -21,13 +21,13 @@ dotenv.config();
 connectDB();
 
 const app = express();
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: process.env.VITE_FRONTEND_URL, credentials: true }));
 app.use(express.json());
 
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: process.env.VITE_FRONTEND_URL,
     credentials: true,
     methods: ["GET", "POST"],
   },
@@ -65,28 +65,23 @@ io.on("connection", async (socket) => {
         socket.emit("room_error", "Incorrect password!");
         return;
       }
-
       if (!onlineUsers[roomId]) onlineUsers[roomId] = new Map();
-
       if (onlineUsers[roomId].has(user)) {
         const oldSocketId = onlineUsers[roomId].get(user);
         const oldSocket = io.sockets.sockets.get(oldSocketId);
         if (oldSocket && oldSocket.id !== socket.id) {
           try {
             oldSocket.disconnect(true);
-          } catch (e) {}
+          } catch {}
         }
         onlineUsers[roomId].delete(user);
       }
-
       socket.join(roomId);
       socket.data.user = user;
       socket.data.roomId = roomId;
       onlineUsers[roomId].set(user, socket.id);
-
       const messages = await getChatHistory(roomId);
       socket.emit("receive_history", messages);
-
       io.to(roomId).emit("room_users", Array.from(onlineUsers[roomId].keys()));
     } catch (err) {
       socket.emit("room_error", err.message);
@@ -97,6 +92,15 @@ io.on("connection", async (socket) => {
     try {
       const savedMessage = await addMessage({ roomId, message });
       io.to(roomId).emit("receive_message", savedMessage);
+    } catch (err) {
+      socket.emit("room_error", err.message);
+    }
+  });
+
+  socket.on("delete_message", async ({ roomId, messageId, user }) => {
+    try {
+      const deletedId = await deleteMessage({ roomId, messageId, user });
+      io.to(roomId).emit("message_deleted", deletedId);
     } catch (err) {
       socket.emit("room_error", err.message);
     }

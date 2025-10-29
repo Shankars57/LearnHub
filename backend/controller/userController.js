@@ -265,7 +265,7 @@ export const sendOtp = async (req, res) => {
       subject: "Your OTP Code for LearnHub",
       html: `<p>Your OTP code is <b>${otpCode}</b>. It expires in 5 minutes.</p>`,
     });
-
+    console.log("Otp sent successfully");
     return res.json({ success: true, message: "OTP sent successfully" });
   } catch (err) {
     console.error("OTP send error:", err);

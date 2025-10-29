@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import useVideoStore from "../../store/useVideoStore";
 import { motion, AnimatePresence } from "framer-motion";
-import { X } from "lucide-react";
+import { ChevronLeft, MoveRight, X } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const PersistentPlayer = () => {
@@ -47,14 +47,17 @@ const PersistentPlayer = () => {
           className="fixed bottom-4 right-4 bg-gray-900 border border-gray-700 shadow-xl rounded-xl overflow-hidden w-[400px] h-[225px] z-50 cursor-grab active:cursor-grabbing"
         >
           <div className="relative flex justify-between items-center bg-gray-800 px-2 py-1 text-xs text-gray-300 select-none">
-            <p className="truncate">{currentVideo.snippet?.title}</p>
+            <p className="truncate prose">{currentVideo.snippet?.title}</p>
 
             <div className="flex items-center gap-1">
               <button
                 onClick={handleNavigate}
-                className="px-2 py-1 bg-black/70 hover:text-white hover:bg-white/10 rounded-lg"
+                className="px-2 py-1 bg-black/70 hover:text-white hover:bg-white/10 rounded-lg flex group"
               >
-                Go To Playlist
+                <span><ChevronLeft size={15} className="relative
+                 group-hover:right-1 transition ease 
+                duration-600"
+                /></span> Playlist
               </button>
 
               <button

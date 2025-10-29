@@ -3,21 +3,20 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { MoreVertical, Pin, PinOff } from "lucide-react";
+import { MoreVertical, Pin, PinOff, Trash } from "lucide-react";
 import moment from "moment";
 import toast from "react-hot-toast";
 import usePinnedMessage from "../../store/usePinnedMessage";
 import YouTubeEmbed from "./YouTubeEmbed";
 
-const MessageItem = memo(({ msg, username, roomId }) => {
+const MessageItem = memo(({ msg, username, roomId, onDelete, id }) => {
   const { pinnedMessages, setPinnedMessage, clearPinnedMessage } =
     usePinnedMessage();
-
-  const msgId = msg._id || msg.id || `${msg.user}-${msg.time}`;
+  const msgId = msg._id || `${msg.user}-${msg.time}`;
   const pinnedMessage = pinnedMessages[roomId];
   const pinnedId = pinnedMessage?._id || pinnedMessage?.id;
   const isPinned = pinnedId === msgId;
-
+  console.log(id);
   const togglePin = () => {
     if (isPinned) {
       clearPinnedMessage(roomId);
@@ -46,7 +45,7 @@ const MessageItem = memo(({ msg, username, roomId }) => {
           : "bg-gray-100 text-gray-800"
       } ${isPinned ? "sticky top-0 border-2 border-blue-500 z-10" : ""}`}
     >
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between">
         <p className="text-xs flex gap-5 justify-between font-semibold mb-1 px-2 py-1 rounded-lg bg-white/40 inline-block">
           <span>{msg.user}</span>
           <span className="pl-2 text-gray-600">
@@ -55,14 +54,24 @@ const MessageItem = memo(({ msg, username, roomId }) => {
               : moment(msg.time).format("MMM D, hh:mm A")}
           </span>
         </p>
-        <div className="relative group">
+        <div className="relative group flex gap-1 h-10">
           <MoreVertical size={14} />
-          <button
-            onClick={togglePin}
-            className="absolute px-2 py-1 bg-white/80 rounded-lg shadow-lg  top-3 hidden group-hover:inline-block"
-          >
-            {!isPinned ? <Pin size={15} /> : <PinOff size={15} />}
-          </button>
+          <div className="absolute hidden group-hover:inline-block right-0">
+            <button
+              onClick={togglePin}
+              className="px-2 py-1 bg-white/80 rounded-lg shadow-lg mr-2"
+            >
+              {!isPinned ? <Pin size={15} /> : <PinOff size={15} />}
+            </button>
+            {msg.user === username && (
+              <button
+                onClick={() => onDelete(msgId)}
+                className="px-2 py-1 bg-white/80 rounded-lg shadow-lg"
+              >
+                <Trash size={15} />
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

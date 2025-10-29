@@ -2,10 +2,10 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import toast from "react-hot-toast";
-import { useAuthStore } from "../../store/useAuthStore";
-import TypingIndicator from "./TypeIndicator";
-import MessageItem from "./MessageItem";
-import usePinnedMessage from "../../store/usePinnedMessage";
+import { useAuthStore } from "../../../store/useAuthStore";
+import TypingIndicator from "../TypeIndicator";
+import MessageItem from "../MessageItem";
+import usePinnedMessage from "../../../store/usePinnedMessage";
 
 const ChatRoom = () => {
   const { roomId } = useParams();

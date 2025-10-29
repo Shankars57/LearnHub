@@ -56,6 +56,17 @@ export const addMessage = async ({ roomId, message }) => {
   return message;
 };
 
+export const deleteMessage = async ({ roomId, messageId, user }) => {
+  const channel = await Channel.findById(roomId);
+  if (!channel) throw new Error("Room not found!");
+  const msg = channel.messages.id(messageId);
+  if (!msg) throw new Error("Message not found!");
+  
+  msg.deleteOne();
+  await channel.save();
+  return messageId;
+};
+
 export const getChatHistory = async (roomId) => {
   const channel = await Channel.findById(roomId);
   if (!channel) throw new Error("Room not found!");

@@ -16,6 +16,7 @@ import { LearnContext } from "../../context/LearnContextProvider";
 import { motion } from "framer-motion";
 import axios from "axios";
 import UserOverview from "../components/UserOverView";
+import DashBoardData from "../components/DashBoardData";
 
 const Profile = () => {
   const { userData, setToken, setUserData } = useContext(LearnContext);
@@ -33,7 +34,6 @@ const Profile = () => {
   const initials = userData?.firstName
     ? userData.firstName.slice(0, 2).toUpperCase()
     : "U";
-
   const avatarUrl = `https://ui-avatars.com/api/?name=${initials}&background=random&color=fff&size=128`;
 
   const handleLogout = () => {
@@ -76,8 +76,6 @@ const Profile = () => {
     };
     fetchStats();
   }, [userData?._id]);
-
-
 
   const studentStatusData = [
     { icon: Medal, label: "Level", value: stats.level },
@@ -148,23 +146,13 @@ const Profile = () => {
               <h1 className="relative text-3xl font-semibold text-white flex">
                 {userData.firstName} {userData.lastName}
                 {user.isVerified && (
-                  <p
-                    className="absolute right-0 -top-2 flex
-                  text-sm font-small
-                   items-center gap-1 px-2 
-                   py-1
-                    bg-black/10
-                   text-blue-400
-                   rounded-lg
-                   "
-                  >
+                  <p className="absolute right-0 -top-5 md:-top-2 flex text-sm items-center gap-1 px-2 py-1 bg-black/10 text-blue-400 rounded-lg">
                     <VerifiedIcon size={15} className="text-blue-600" />
                     verified
                   </p>
                 )}
               </h1>
-              <p className="text-blue-400 ">@{userData.userName}</p>
-
+              <p className="text-blue-400">@{userData.userName}</p>
               <p className="text-gray-400 mt-1 text-sm max-w-md">
                 {userData.bio ||
                   "Hey! Welcome to LearnHub. Update your bio in settings."}
@@ -172,7 +160,7 @@ const Profile = () => {
               <div className="mt-2 text-gray-500 text-sm">
                 {userData.college} | Year {userData.year}
               </div>
-              <div className="flex gap-3">
+              <div className="flex gap-3 justify-center md:justify-start">
                 <motion.button
                   whileTap={{ scale: 0.95 }}
                   onClick={handleLogout}
@@ -180,7 +168,7 @@ const Profile = () => {
                 >
                   <LogOut size={16} /> Logout
                 </motion.button>
-                {!userData.isVerified ? (
+                {!userData.isVerified && (
                   <motion.button
                     onClick={() => navigate("/otp")}
                     whileTap={{ scale: 0.95 }}
@@ -188,8 +176,6 @@ const Profile = () => {
                   >
                     <Mail size={16} /> Verify Mail
                   </motion.button>
-                ) : (
-                  <></>
                 )}
               </div>
             </div>
@@ -224,7 +210,7 @@ const Profile = () => {
         className="flex justify-center mt-10"
       >
         <div className="bg-gray-800/40 backdrop-blur-md rounded-xl p-1 flex gap-1 shadow-md shadow-black/40">
-          {["ov", "set"].map((key) => (
+          {["ov", "db", "set"].map((key) => (
             <motion.button
               key={key}
               onClick={() => setState(key)}
@@ -236,7 +222,11 @@ const Profile = () => {
                   : "text-white/70 hover:text-white"
               }`}
             >
-              {key === "ov" ? "Overview" : "Settings"}
+              {key === "ov"
+                ? "Overview"
+                : key === "db"
+                ? "Dashboard"
+                : "Settings"}
             </motion.button>
           ))}
         </div>
@@ -245,6 +235,34 @@ const Profile = () => {
       <div className="mt-8">
         {state === "ov" ? (
           <UserOverview />
+        ) : state === "db" ? (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.3 }}
+            className="mt-20 w-full flex justify-center"
+          >
+            <div className="relative w-full max-w-6xl">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur-3xl opacity-25"></div>
+              <div className="relative bg-gradient-to-br from-gray-900/60 to-gray-800/60 backdrop-blur-xl border border-white/10 rounded-3xl p-2 shadow-2xl">
+                <div className="bg-gray-900 rounded-2xl overflow-hidden">
+                  <div className="flex items-center gap-2 px-4 py-3 bg-gray-800 border-b border-gray-700">
+                    <div className="flex gap-2">
+                      <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                      <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                      <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                    <div className="flex-1 text-center text-gray-400 text-sm">
+                      LearnHub Dashboard
+                    </div>
+                  </div>
+                  <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 sm:p-8">
+                    <DashBoardData />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         ) : (
           <Settings
             user={user}

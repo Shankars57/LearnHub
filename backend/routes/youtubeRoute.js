@@ -4,7 +4,7 @@ import axios from "axios";
 const ytRouter = express.Router();
 const apiKey = process.env.YT_CLIENT_AUTH;
 
-// 🔍 Search playlists + enrich with extra data
+
 ytRouter.get("/search", async (req, res) => {
   const query = req.query.q || "dsa course";
 

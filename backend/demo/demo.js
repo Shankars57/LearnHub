@@ -5,17 +5,17 @@ import cors from "cors";
 import path from "path";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
-import AIRouter from "./routes/aiRoute.js";
-import connectDB from "./config/DB.js";
-import pdfRouter from "./routes/materialRoute.js";
-import userRouter from "./routes/userRoutes.js";
-import ytRouter from "./routes/youtubeRoute.js";
+import AIRouter from "../routes/aiRoute.js";
+import connectDB from "../config/DB.js";
+import pdfRouter from "../routes/materialRoute.js";
+import userRouter from "../routes/userRoutes.js";
+import ytRouter from "../routes/youtubeRoute.js";
 import {
   createRoom,
   deleteRoom,
   addMessage,
   getChatHistory,
-} from "./controller/channelController.js";
+} from "../controller/channelController.js";
 dotenv.config();
 const app = express();
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));

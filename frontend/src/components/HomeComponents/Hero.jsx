@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { TypeAnimation } from "react-type-animation";
-import DashBoardData from "./DashBoardData";
+import DashBoardData from "../DashBoardData";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 40 },
@@ -168,35 +168,6 @@ const Hero = () => {
           <ChevronDown size={22} />
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.6 }}
-          className="mt-20 w-full flex justify-center"
-        >
-          <div className="relative w-full max-w-6xl">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur-3xl opacity-25"></div>
-
-            <div className="relative bg-gradient-to-br from-gray-900/60 to-gray-800/60 backdrop-blur-xl border border-white/10 rounded-3xl p-2 shadow-2xl">
-              <div className="bg-gray-900 rounded-2xl overflow-hidden">
-                <div className="flex items-center gap-2 px-4 py-3 bg-gray-800 border-b border-gray-700">
-                  <div className="flex gap-2">
-                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                  </div>
-                  <div className="flex-1 text-center text-gray-400 text-sm">
-                    LearnHub Dashboard
-                  </div>
-                </div>
-
-                <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 sm:p-8">
-                  <DashBoardData />
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
       </div>
     </section>
   );
