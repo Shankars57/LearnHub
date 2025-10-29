@@ -12,7 +12,7 @@ const Chat = () => {
       <div className="absolute top-0 right-0 bg-grid-pattern opacity-5 -z-1"></div>
       <div className="absolute inset-0 bg-grid-pattern opacity-5 -z-1"></div>
       <div className="absolute top-0 left-0 bg-grid-pattern "></div>
-      <div className="flex flex-col md:flex-row w-[95%] md:w-[80%] mx-auto h-[90vh] pb-4 ">
+      <div className="flex flex-col md:flex-row md:pl-8 mx-auto h-[90vh]  ">
         <div className="w-full md:w-64 mb-4 md:mb-0 md:mr-4">
           <SideBarDemo />
         </div>

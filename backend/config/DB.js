@@ -1,11 +1,17 @@
 import mongoose from "mongoose";
+import dotenv from "dotenv";
+
+dotenv.config(); 
+
+const DBs = process.env.MONGO_DB_LOCAL || process.env.MONGO_DB;
 
 async function connectDB() {
   try {
-    await mongoose.connect(process.env.MONGO_DB_LOCAL);
-    console.log("DB connected");
+    await mongoose.connect(DBs);
+    console.log("MongoDB connected successfully");
   } catch (error) {
-    console.log(error.message);
+    console.error("MongoDB connection error:", error.message);
+    process.exit(1);
   }
 }
 

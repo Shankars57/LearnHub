@@ -11,15 +11,12 @@ const OtpVerify = () => {
   const [email, setEmail] = useState("");
   const [resendTimer, setResendTimer] = useState(0);
   const [shake, setShake] = useState(false);
-
   const navigate = useNavigate();
 
- 
   useEffect(() => {
     if (otpSent) inputRefs.current[0]?.focus();
   }, [otpSent]);
 
- 
   useEffect(() => {
     if (resendTimer > 0) {
       const timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
@@ -56,7 +53,6 @@ const OtpVerify = () => {
     }
   };
 
-  
   const handlePaste = (e) => {
     const paste = e.clipboardData.getData("text").trim().slice(0, 4);
     if (/^\d+$/.test(paste)) setOtp(paste.split(""));
@@ -71,7 +67,7 @@ const OtpVerify = () => {
         toast.success(data.message);
         setOtpSent(true);
         setOtp(["", "", "", ""]);
-        setResendTimer(30); 
+        setResendTimer(30);
       } else {
         toast.error(data.message);
       }
@@ -87,7 +83,6 @@ const OtpVerify = () => {
       toast.error("Please enter complete OTP");
       return;
     }
-
     try {
       setIsSubmitting(true);
       const { data } = await axios.post("/api/user/verify-otp", {
@@ -128,14 +123,12 @@ const OtpVerify = () => {
     }
   };
 
-  const maskedEmail = email
-    ? email.replace(/(.{2}).+(@.+)/, "$1****$2")
-    : "";
+  const maskedEmail = email ? email.replace(/(.{2}).+(@.+)/, "$1****$2") : "";
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
-      <div className="bg-gray-800/70 backdrop-blur-xl p-8 rounded-2xl shadow-2xl w-full max-w-sm border border-gray-700 transition-all duration-300">
-        <h1 className="text-3xl font-bold text-center mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+    <div className="flex items-center justify-center min-h-screen bg-[#1E1E1E] text-white">
+      <div className="bg-[#252526]/90 backdrop-blur-lg p-8 rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.5)] w-full max-w-sm border border-[#3C3C3C] transition-all duration-300">
+        <h1 className="text-3xl font-bold text-center mb-4 bg-gradient-to-r from-[#007ACC] to-[#AE81FF] bg-clip-text text-transparent">
           {otpSent ? "Verify OTP" : "Email Verification"}
         </h1>
 
@@ -149,12 +142,12 @@ const OtpVerify = () => {
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border border-gray-600 bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+              className="w-full px-4 py-2 rounded-lg border border-[#3C3C3C] bg-[#2D2D2D] text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#007ACC] transition-all"
             />
             <button
               type="submit"
               disabled={!email}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-2 rounded-lg font-semibold transition-all disabled:opacity-50"
+              className="bg-gradient-to-r from-[#007ACC] to-[#AE81FF] hover:from-[#0064B1] hover:to-[#9E6FFF] text-white py-2 rounded-lg font-semibold transition-all disabled:opacity-50"
             >
               Send OTP
             </button>
@@ -163,7 +156,9 @@ const OtpVerify = () => {
           <>
             <p className="text-sm text-center mb-4 text-gray-300">
               Enter the 4-digit OTP sent to{" "}
-              <span className="font-semibold text-blue-400">{maskedEmail}</span>
+              <span className="font-semibold text-[#007ACC]">
+                {maskedEmail}
+              </span>
             </p>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-5">
@@ -182,7 +177,7 @@ const OtpVerify = () => {
                     onChange={(e) => handleChange(e, idx)}
                     onKeyDown={(e) => handleKeyDown(e, idx)}
                     onPaste={idx === 0 ? handlePaste : undefined}
-                    className="w-12 h-12 text-center text-2xl font-bold rounded-lg border border-gray-600 bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                    className="w-12 h-12 text-center text-2xl font-bold rounded-lg border border-[#3C3C3C] bg-[#2D2D2D] text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#007ACC] transition-all"
                   />
                 ))}
               </div>
@@ -190,7 +185,7 @@ const OtpVerify = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-2 rounded-lg font-semibold transition-all ${
+                className={`bg-gradient-to-r from-[#007ACC] to-[#AE81FF] hover:from-[#0064B1] hover:to-[#9E6FFF] text-white py-2 rounded-lg font-semibold transition-all ${
                   isSubmitting ? "animate-pulse opacity-80" : ""
                 }`}
               >
@@ -205,7 +200,7 @@ const OtpVerify = () => {
               ) : (
                 <button
                   onClick={handleResend}
-                  className="text-blue-400 hover:text-blue-300 underline transition-all"
+                  className="text-[#007ACC] hover:text-[#0098FF] underline transition-all"
                 >
                   Resend
                 </button>
@@ -215,7 +210,6 @@ const OtpVerify = () => {
         )}
       </div>
 
-      
       <style>{`
         @keyframes shake {
           10%, 90% { transform: translateX(-1px); }
@@ -224,7 +218,6 @@ const OtpVerify = () => {
           40%, 60% { transform: translateX(4px); }
         }
         .animate-shake { animation: shake 0.5s; }
-
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(10px); }
           to { opacity: 1; transform: translateY(0); }

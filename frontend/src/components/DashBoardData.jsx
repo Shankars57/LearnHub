@@ -13,10 +13,12 @@ import {
   BarChart,
   Bar,
 } from "recharts";
+import { useContext } from "react";
+import { LearnContext } from "../../context/LearnContextProvider";
 
 const DashBoardData = () => {
   const { user } = useAuthStore();
-
+  const { userData } = useContext(LearnContext);
   if (!user) return null;
 
   const xpData = [
@@ -59,7 +61,7 @@ const DashBoardData = () => {
     >
       <div className="flex flex-col sm:flex-row items-center gap-6 mb-8">
         <motion.img
-          src={user.profile}
+          src={user.profile }
           alt="Profile"
           className="w-24 h-24 rounded-full border-2 border-white/20 shadow-lg object-cover"
           whileHover={{ scale: 1.1 }}
@@ -71,7 +73,7 @@ const DashBoardData = () => {
           <p className="text-blue-400">@{user.userName}</p>
           <p className="text-gray-400 mt-1 text-sm">{user.bio}</p>
           <div className="mt-2 text-sm text-gray-500">
-             {user.college} | Year {user.year}
+            {user.college} | Year {user.year}
           </div>
         </div>
       </div>
