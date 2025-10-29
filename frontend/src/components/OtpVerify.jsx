@@ -126,7 +126,7 @@ const OtpVerify = () => {
   const maskedEmail = email ? email.replace(/(.{2}).+(@.+)/, "$1****$2") : "";
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#1E1E1E] text-white">
+    <div className="flex items-center justify-center min-h-[91vh] bg-[#1E1E1E] text-white">
       <div className="bg-[#252526]/90 backdrop-blur-lg p-8 rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.5)] w-full max-w-sm border border-[#3C3C3C] transition-all duration-300">
         <h1 className="text-3xl font-bold text-center mb-4 bg-gradient-to-r from-[#007ACC] to-[#AE81FF] bg-clip-text text-transparent">
           {otpSent ? "Verify OTP" : "Email Verification"}

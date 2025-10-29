@@ -21,13 +21,15 @@ dotenv.config();
 connectDB();
 
 const app = express();
-app.use(cors({ origin: process.env.VITE_FRONTEND_URL, credentials: true }));
+app.use(
+  cors({ origin: [process.env.VITE_FRONTEND_URL, "*"], credentials: true })
+);
 app.use(express.json());
 
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: process.env.VITE_FRONTEND_URL,
+    origin: [process.env.VITE_FRONTEND_URL, "*"],
     credentials: true,
     methods: ["GET", "POST"],
   },
