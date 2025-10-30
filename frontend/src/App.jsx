@@ -23,7 +23,7 @@ const NotFound = () => (
 );
 const App = () => {
   const { token, userData } = useContext(LearnContext);
-  console.log(userData.isVerified)
+
   return (
     <>
       <Toaster />

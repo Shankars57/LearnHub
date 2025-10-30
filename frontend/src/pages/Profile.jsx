@@ -31,9 +31,7 @@ const Profile = () => {
     streak: "-",
     studyTime: "-",
   });
-  useEffect(() => {
-    console.log(isVerify);
-  }, [isVerify]);
+
   const initials = userData?.firstName
     ? userData.firstName.slice(0, 2).toUpperCase()
     : "U";
@@ -98,6 +96,9 @@ const Profile = () => {
         </button>
         {!isVerify && (
           <p className="text-white">
+            <span className="px-2 py-2 w-[20px] h-[20px] text-red-500 border rounded-full font-bold">
+              !
+            </span>{" "}
             Please verify your Mail by using{" "}
             <b className="text-green-600 hover:underline">Verify button</b>
           </p>

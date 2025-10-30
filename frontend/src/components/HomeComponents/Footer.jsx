@@ -98,6 +98,10 @@ const Footer = () => {
               ))}
             </ul>
           </div>
+          <p className="text-white">
+            Please Contact me if any issues will occurred.{" "}
+            <span className="text-blue-800">+91 9110560147</span>
+          </p>
         </div>
 
         <div className="pt-8 border-t border-gray-800">
