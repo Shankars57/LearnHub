@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -16,6 +16,7 @@ const MessageItem = ({ msg, username, roomId, onDelete }) => {
   const pinnedMessage = pinnedMessages[roomId];
   const pinnedId = pinnedMessage?._id || pinnedMessage?.id;
   const isPinned = pinnedId === msgId;
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const togglePin = () => {
     if (isPinned) {
@@ -35,18 +36,19 @@ const MessageItem = ({ msg, username, roomId, onDelete }) => {
         </div>
       ));
     }
+    setMenuOpen(false);
   };
 
   return (
     <div
-      className={`px-3 py-2 rounded-lg w-fit max-w-[90%] sm:max-w-xl break-words ${
+      className={`px-3 py-2 rounded-lg w-fit max-w-[90%] sm:max-w-xl break-words relative ${
         msg.user === username
           ? "ml-auto bg-blue-100 text-gray-700"
           : "bg-gray-100 text-gray-800"
       } ${isPinned ? "sticky top-0 border-2 border-blue-500 z-10" : ""}`}
     >
-      <div className="flex flex-wrap items-center justify-between">
-        <p className="text-xs flex gap-5 justify-between font-semibold mb-1 px-2 py-1 rounded-lg bg-white/40 inline-block">
+      <div className="flex justify-between items-center">
+        <p className="text-xs font-semibold mb-1 px-2 py-1 rounded-lg bg-white/40 inline-block">
           <span>{msg.user}</span>
           <span className="pl-2 text-gray-600">
             {moment(msg.time).isSame(new Date(), "day")
@@ -54,24 +56,48 @@ const MessageItem = ({ msg, username, roomId, onDelete }) => {
               : moment(msg.time).format("MMM D, hh:mm A")}
           </span>
         </p>
-        <div className="relative group flex gap-1 h-10">
-          <MoreVertical size={14} />
-          <div className="absolute hidden group-hover:inline-block right-0">
-            <button
-              onClick={togglePin}
-              className="px-2 py-1 bg-white/80 rounded-lg shadow-lg mr-2"
+
+        {/* Menu Button (works on mobile + desktop) */}
+        <div className="relative">
+          <button
+            onClick={() => setMenuOpen((prev) => !prev)}
+            className="text-gray-500 hover:text-gray-700 focus:outline-none"
+          >
+            <MoreVertical size={16} />
+          </button>
+
+          {menuOpen && (
+            <div
+              className="absolute right-0 mt-1 bg-white rounded-md shadow-lg border border-gray-200 z-50 w-28"
+              onMouseLeave={() => setMenuOpen(false)}
             >
-              {!isPinned ? <Pin size={15} /> : <PinOff size={15} />}
-            </button>
-            {msg.user === username && (
               <button
-                onClick={() => onDelete(msgId)}
-                className="px-2 py-1 bg-white/80 rounded-lg shadow-lg"
+                onClick={togglePin}
+                className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 flex items-center gap-2"
               >
-                <Trash size={15} />
+                {!isPinned ? (
+                  <>
+                    <Pin size={14} /> Pin
+                  </>
+                ) : (
+                  <>
+                    <PinOff size={14} /> Unpin
+                  </>
+                )}
               </button>
-            )}
-          </div>
+              {msg.user === username && (
+                <button
+                  onClick={() => {
+                    onDelete(msgId);
+                    setMenuOpen(false);
+                  }}
+                  className="w-full text-left px-3 py-2 text-sm text-red-500 hover:bg-gray-100 flex items-center gap-2"
+                >
+                  <Trash size={14} /> Delete
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

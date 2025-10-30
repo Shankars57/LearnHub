@@ -271,7 +271,7 @@ const ChatRoomDemo = () => {
               sendMessage();
             }
           }}
-          placeholder={`Message #${roomName || roomId}`}
+          placeholder={`Send Message...`}
           onChange={(e) => {
             e.target.style.height = "auto";
             e.target.style.height = `${Math.min(e.target.scrollHeight, 50)}px`;
