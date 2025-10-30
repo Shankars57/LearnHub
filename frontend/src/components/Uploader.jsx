@@ -18,7 +18,8 @@ const Uploader = ({ isOpen, setIsOpen }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const { axios, setUploadState, token } = useContext(LearnContext);
-  const {user} = useAuthStore();
+  const { user } = useAuthStore();
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -47,14 +48,8 @@ const Uploader = ({ isOpen, setIsOpen }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedFile) {
-      toast.error("Please select a file first!");
-      return;
-    }
-    if (!token) {
-      toast.error("Please login");
-      return;
-    }
+    if (!selectedFile) return toast.error("Please select a file first!");
+    if (!token) return toast.error("Please login");
 
     setLoading(true);
     const formData = new FormData();
@@ -69,7 +64,6 @@ const Uploader = ({ isOpen, setIsOpen }) => {
       const res = await axios.post("/api/material/upload", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-
           "Content-Type": "multipart/form-data",
         },
       });
@@ -91,8 +85,6 @@ const Uploader = ({ isOpen, setIsOpen }) => {
     }
   };
 
-  console.log(token);
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -100,18 +92,18 @@ const Uploader = ({ isOpen, setIsOpen }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/60 flex items-center justify-center z-[999]"
+          className="fixed inset-0 bg-black/60 flex items-center justify-center z-[999] p-4"
         >
           <motion.div
             initial={{ scale: 0.8, opacity: 0, y: 30 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.8, opacity: 0, y: 30 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="w-[600px] bg-gray-800/90 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-700 relative p-8"
+            className="w-full max-w-lg md:max-w-2xl bg-gray-800/90 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-700 relative p-6 sm:p-8 overflow-y-auto max-h-[90vh]"
           >
             <button
               onClick={() => setIsOpen(false)}
-              className="text-gray-300 hover:text-white absolute top-5 right-5"
+              className="text-gray-300 hover:text-white absolute top-4 right-4"
             >
               <X size={22} />
             </button>
@@ -119,24 +111,27 @@ const Uploader = ({ isOpen, setIsOpen }) => {
             <motion.h2
               initial={{ y: -10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              className="text-xl font-semibold text-white mb-6 text-center"
+              className="text-lg sm:text-xl font-semibold text-white mb-5 text-center"
             >
               Upload Your Study Material
             </motion.h2>
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-              <div className="flex gap-3">
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col gap-4 sm:gap-5"
+            >
+              <div className="flex flex-col sm:flex-row gap-3">
                 <input
                   name="title"
                   type="text"
-                  placeholder="Enter material title e.g. DSA Notes"
+                  placeholder="Material title e.g. DSA Notes"
                   className="flex-1 border border-gray-600 bg-gray-900/40 text-gray-200 placeholder-gray-400 placeholder:text-sm rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-600 outline-none"
                   required
                 />
                 <input
                   name="uploadedBy"
                   type="text"
-                  placeholder="Your name e.g. John"
+                  placeholder="Your name"
                   className="flex-1 border border-gray-600 bg-gray-900/40 text-gray-200 placeholder-gray-400 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-600 outline-none"
                   required
                 />
@@ -145,22 +140,22 @@ const Uploader = ({ isOpen, setIsOpen }) => {
               <input
                 name="subject"
                 type="text"
-                placeholder="Enter subject e.g. Web Development"
+                placeholder="Subject e.g. Web Development"
                 className="w-full border border-gray-600 bg-gray-900/40 text-gray-200 placeholder-gray-400 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-600 outline-none"
                 required
               />
 
               <textarea
                 name="desc"
-                placeholder="Write a short description about your material..."
-                className="w-full border border-gray-600 bg-gray-900/40 text-gray-200 placeholder-gray-400 rounded-lg px-4 py-3 h-32 resize-none focus:ring-2 focus:ring-blue-600 outline-none"
+                placeholder="Write a short description..."
+                className="w-full border border-gray-600 bg-gray-900/40 text-gray-200 placeholder-gray-400 rounded-lg px-4 py-3 h-28 sm:h-32 resize-none focus:ring-2 focus:ring-blue-600 outline-none"
                 required
               />
 
-              <div className="flex items-center gap-3">
+              <div className="flex flex-col sm:flex-row items-center gap-3">
                 <select
                   name="fileType"
-                  className="border border-gray-600 bg-gray-900/40 text-gray-200 px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none"
+                  className="border border-gray-600 bg-gray-900/40 text-gray-200 px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none w-full sm:w-auto"
                   required
                 >
                   <option value="pdf">PDF</option>
@@ -172,7 +167,7 @@ const Uploader = ({ isOpen, setIsOpen }) => {
 
                 <label
                   htmlFor="file-upload"
-                  className="cursor-pointer flex items-center gap-2 border border-blue-600 bg-blue-600/10 text-blue-400 px-4 py-2 rounded-lg hover:bg-blue-600/20 transition"
+                  className="cursor-pointer flex items-center justify-center gap-2 border border-blue-600 bg-blue-600/10 text-blue-400 px-4 py-2 rounded-lg hover:bg-blue-600/20 transition w-full sm:w-auto"
                 >
                   <UploadCloud size={18} />
                   {fileName ? "Change File" : "Upload File"}
@@ -191,11 +186,11 @@ const Uploader = ({ isOpen, setIsOpen }) => {
                   <img
                     src={preview}
                     alt="Preview"
-                    className="max-h-48 rounded-lg border border-gray-700 shadow-lg"
+                    className="max-h-48 rounded-lg border border-gray-700 shadow-lg object-contain"
                   />
                 </div>
               ) : fileName ? (
-                <div className="flex justify-center mt-3 text-gray-300 gap-2 items-center">
+                <div className="flex justify-center mt-3 text-gray-300 gap-2 items-center text-sm sm:text-base">
                   {fileType === "pdf" && <FileText className="text-red-400" />}
                   {fileType === "docx" && (
                     <FileSpreadsheet className="text-green-400" />
@@ -203,7 +198,7 @@ const Uploader = ({ isOpen, setIsOpen }) => {
                   {fileType === "image" && (
                     <FileImage className="text-yellow-400" />
                   )}
-                  <span className="text-sm">
+                  <span>
                     Selected: <span className="text-blue-400">{fileName}</span>
                   </span>
                 </div>
@@ -212,7 +207,7 @@ const Uploader = ({ isOpen, setIsOpen }) => {
               <motion.button
                 whileTap={{ scale: 0.95 }}
                 disabled={loading}
-                className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition-all duration-200 disabled:opacity-50"
+                className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition-all duration-200 disabled:opacity-50 w-full"
               >
                 {loading ? "Uploading..." : "Submit Material"}
               </motion.button>
