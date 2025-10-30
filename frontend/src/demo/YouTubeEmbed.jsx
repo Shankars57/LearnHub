@@ -24,29 +24,28 @@ const YouTubeEmbed = memo(({ href }) => {
   if (!videoId) return null;
 
   return (
-    <div className="flex flex-col gap-1 items-start">
-      <iframe
-        width="300"
-        height="169"
-        src={`https://www.youtube.com/embed/${videoId}`}
-        frameBorder="0"
-        allow="autoplay; encrypted-media"
-        allowFullScreen
-        title="YouTube video"
-        className="rounded-lg"
-      />
+    <div className="flex flex-col gap-2 w-full items-start">
+      <div className="w-full aspect-video rounded-lg overflow-hidden">
+        <iframe
+          src={`https://www.youtube.com/embed/${videoId}`}
+          allow="autoplay; encrypted-media"
+          allowFullScreen
+          title="YouTube video"
+          className="w-full h-full"
+        />
+      </div>
       <div className="flex items-center gap-2">
         <a
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-300 px-2 py-1 rounded-lg bg-black/70 block hover:text-white text-xs"
+          className="text-blue-300 px-2 py-1 rounded-lg bg-black/70 hover:text-white text-xs"
         >
           Youtube
         </a>
         <button
           onClick={handleNavigate}
-          className="text-blue-300 px-2 py-1 rounded-lg bg-black/70 block hover:text-white text-xs"
+          className="text-blue-300 px-2 py-1 rounded-lg bg-black/70 hover:text-white text-xs"
         >
           on-site
         </button>

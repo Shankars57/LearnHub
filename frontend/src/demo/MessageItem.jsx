@@ -16,6 +16,7 @@ const MessageItem = memo(({ msg, username, roomId, onDelete, id }) => {
   const pinnedMessage = pinnedMessages[roomId];
   const pinnedId = pinnedMessage?._id || pinnedMessage?.id;
   const isPinned = pinnedId === msgId;
+
   const togglePin = () => {
     if (isPinned) {
       clearPinnedMessage(roomId);
@@ -78,7 +79,9 @@ const MessageItem = memo(({ msg, username, roomId, onDelete, id }) => {
         children={msg.text}
         remarkPlugins={[remarkGfm]}
         components={{
-          p: ({ children }) => <div className="mb-1 flex">{children}</div>,
+          p: ({ children }) => (
+            <div className="mb-1 flex flex-col">{children}</div>
+          ),
           a: ({ href, children }) => {
             const isYouTube = href.includes("youtu");
             if (isYouTube)
@@ -88,7 +91,7 @@ const MessageItem = memo(({ msg, username, roomId, onDelete, id }) => {
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 underline"
+                className="text-blue-600 underline break-all"
               >
                 {children}
               </a>
