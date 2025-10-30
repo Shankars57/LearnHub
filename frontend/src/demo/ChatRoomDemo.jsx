@@ -67,7 +67,7 @@ const ChatRoomDemo = () => {
       if (msg.user !== username) {
         toast.custom(() => (
           <div className="bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg border border-blue-500">
-            <b>{msg.user}</b> sent a message in <b>#{roomName || roomId}</b>
+            <b>{msg.user}</b> sent a message.
           </div>
         ));
       }
