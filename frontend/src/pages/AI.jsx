@@ -19,7 +19,7 @@ import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import toast from "react-hot-toast";
-import { useAIThemeStore } from "../../store/useAIThemeStore";
+import { useAIThemeStore } from "../../store/useAiThemeStore";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -112,9 +112,8 @@ const AI = () => {
   const messageEndRef = useRef(null);
   const inputRef = useRef(null);
   const { theme, setTheme } = useAIThemeStore();
-
-  const t = themes[theme] || themes["vs-dark"];
   const [openDrop, setOpenDrop] = useState(false);
+  const t = themes[theme] || themes["vs-dark"];
 
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -143,7 +142,6 @@ const AI = () => {
 
   const CodeBlock = ({ code, lang = "text" }) => {
     const [copied, setCopied] = useState(false);
-
     const copyToClipboard = async () => {
       try {
         await navigator.clipboard.writeText(code);
@@ -154,20 +152,18 @@ const AI = () => {
         toast.error("Failed to copy!");
       }
     };
-
     return (
       <div className="relative group rounded-xl overflow-hidden my-3">
-        <button
+        <div
           onClick={copyToClipboard}
-          className={`absolute top-2 right-2 p-2 bg-[#2c2c2c]/80 text-gray-300 rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-[#3a3a3a]`}
+          className="absolute top-2 right-2 p-2 bg-[#2c2c2c]/80 text-gray-300 rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-[#3a3a3a] cursor-pointer"
         >
           {copied ? (
             <CheckCircle2 size={16} className="text-green-400" />
           ) : (
             <Copy size={16} />
           )}
-        </button>
-
+        </div>
         <SyntaxHighlighter
           language={lang}
           style={oneDark}
@@ -199,7 +195,7 @@ const AI = () => {
           </div>
           <div>
             <h1 className="text-lg font-semibold text-gray-100 flex items-center gap-2">
-              AI Assistant
+              AI Assistant{" "}
               <TerminalSquare size={16} className="text-gray-400" />
             </h1>
             <p className="text-xs text-gray-400 flex items-center gap-1">
@@ -213,32 +209,31 @@ const AI = () => {
             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
             Gemini-Flash-lite-2.5
           </span>
-
-          <button
+          <div
             onClick={() => setOpenDrop(!openDrop)}
-            className="relative p-2 rounded-lg hover:bg-white/10 transition"
+            className="relative p-2 rounded-lg hover:bg-white/10 transition cursor-pointer"
           >
             <Palette size={18} className="text-gray-300" />
             {openDrop && (
               <div className="absolute right-0 top-10 w-52 bg-[#1E1E1E] border border-gray-700 rounded-lg shadow-lg overflow-hidden z-50">
                 {Object.keys(themes).map((k) => (
-                  <button
+                  <div
                     key={k}
                     onClick={() => {
                       setTheme(k);
                       setOpenDrop(false);
                     }}
-                    className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between hover:bg-white/10 transition ${
+                    className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between hover:bg-white/10 transition cursor-pointer ${
                       theme === k ? "text-blue-400" : "text-gray-300"
                     }`}
                   >
                     {k.replaceAll("-", " ")}
                     {theme === k && <Check size={16} />}
-                  </button>
+                  </div>
                 ))}
               </div>
             )}
-          </button>
+          </div>
         </div>
       </div>
 
