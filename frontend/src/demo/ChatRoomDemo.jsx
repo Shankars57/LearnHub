@@ -266,7 +266,7 @@ const ChatRoomDemo = () => {
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           placeholder={`Message #${roomName || roomId}`}
           onChange={(e) => {
-            e.target.style.height = "50px";
+            e.target.style.height = "auto";
             e.target.style.height = `${Math.min(e.target.scrollHeight, 50)}px`;
             handleTyping(e);
           }}

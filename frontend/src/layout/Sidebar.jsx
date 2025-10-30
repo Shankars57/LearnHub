@@ -13,7 +13,6 @@ import { io } from "socket.io-client";
 import toast from "react-hot-toast";
 
 const Sidebar = () => {
-  // --- State ---
   const [searchTerm, setSearchTerm] = useState("");
   const [open, setOpen] = useState(false);
   const [channels, setChannels] = useState([]);
@@ -25,7 +24,7 @@ const Sidebar = () => {
   const [socket, setSocket] = useState(null);
   const scrollRef = useRef(null);
 
-  // Default system rooms
+
   const defaultRooms = ["general", "dsa", "web", "aiml", "system", "career"];
 
   // --- Persist username ---
@@ -65,7 +64,7 @@ const Sidebar = () => {
   const filteredData = channels.filter((item) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
+  const filteredDataSet = [new Set([...filteredData])];
   // --- Create a new room ---
   const handleCreateRoom = () => {
     if (!roomName.trim() || !username.trim()) {
@@ -167,9 +166,8 @@ const Sidebar = () => {
           ref={scrollRef}
           className="flex-1 px-3 space-y-2 overflow-y-auto custom-scrollbar pb-10"
         >
-          {filteredData.length > 0 ? (
-            filteredData.map((item, idx) => {
-
+          {filteredDataSet.length > 0 ? (
+            filteredDataSet.map((item, idx) => {
               const isCustom = item.admin && !defaultRooms.includes(item.id);
 
               return (
@@ -177,7 +175,6 @@ const Sidebar = () => {
                   key={idx}
                   className="group relative flex items-center justify-between px-4 py-2 rounded-lg hover:bg-gray-700/60 transition"
                 >
-                
                   <NavLink
                     to={`/chats/${item.id}`}
                     className={({ isActive }) =>
@@ -205,7 +202,6 @@ const Sidebar = () => {
                     </div>
                   </NavLink>
 
-         
                   {isCustom && item.admin === username && (
                     <div className="group relative flex-shrink-0">
                       <div className="cursor-pointer text-gray-400 hover:text-white">
