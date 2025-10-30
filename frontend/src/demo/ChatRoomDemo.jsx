@@ -277,7 +277,7 @@ const ChatRoomDemo = () => {
             e.target.style.height = `${Math.min(e.target.scrollHeight, 50)}px`;
             handleTyping(e);
           }}
-          className={`flex-1 px-4 py-2 h-[50px] bg-[#1E1E1E]/90 custom-scrollbar text-gray-100 rounded-lg border border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-none resize-none shadow-inner`}
+          className={`flex-1 px-4 py-2 h-[50px] bg-[#1E1E1E]/90 custom-scrollbar text-gray-100 rounded-lg border border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-none resize-none shadow-inner sm:placeholder:text-xs md:placeholder:text-sm placeholder:truncate`}
         />
         <button
           onClick={sendMessage}
