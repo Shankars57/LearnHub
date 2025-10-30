@@ -82,18 +82,58 @@ export const signup = async (req, res) => {
     }
 
     const strongPasswordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!#^&*?])[A-Za-z\d@$!#^&*?]{8,}$/;
+
+    const invalidCharsRegex = /[~%"']/;
 
     if (password.length < 8) {
       return res.json({
         success: false,
-        message: "Password length must be have 8 characters",
+        message: "Password must be at least 8 characters long",
       });
     }
+
+    if (invalidCharsRegex.test(password)) {
+      return res.json({
+        success: false,
+        message:
+          "Password contains invalid characters (~, %, \", or ' are not allowed)",
+      });
+    }
+
+    if (!/[A-Z]/.test(password)) {
+      return res.json({
+        success: false,
+        message: "Password must contain at least one uppercase letter",
+      });
+    }
+
+    if (!/[a-z]/.test(password)) {
+      return res.json({
+        success: false,
+        message: "Password must contain at least one lowercase letter",
+      });
+    }
+
+    if (!/\d/.test(password)) {
+      return res.json({
+        success: false,
+        message: "Password must contain at least one number",
+      });
+    }
+
+    if (!/[@$!#^&*?]/.test(password)) {
+      return res.json({
+        success: false,
+        message:
+          "Password must contain at least one special character (e.g. @, $, !, #, ^, &, *, ?)",
+      });
+    }
+
     if (!strongPasswordRegex.test(password)) {
       return res.json({
         success: false,
-        message: "Password must require strong with mixed characters",
+        message: "Password does not meet security requirements",
       });
     }
 
