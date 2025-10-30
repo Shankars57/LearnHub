@@ -19,7 +19,7 @@ import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import toast from "react-hot-toast";
-import { useAIThemeStore } from "../../store/useAiThemeStore";
+import { useAIThemeStore } from "../../store/useAIThemeStore";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -190,7 +190,6 @@ const AI = () => {
       id="ai"
       className={`relative min-h-[90vh] ${t.bg} text-white flex flex-col font-[Inter]`}
     >
-      
       <div
         className={`border-b ${t.border} px-6 py-4 flex items-center justify-between ${t.chatBg} backdrop-blur-md`}
       >
@@ -209,7 +208,6 @@ const AI = () => {
           </div>
         </div>
 
-      
         <div className="flex items-center gap-4 relative">
           <span className="text-xs text-green-400 flex items-center gap-1">
             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
@@ -244,7 +242,6 @@ const AI = () => {
         </div>
       </div>
 
-     
       <div
         className={`flex-1 overflow-y-auto p-6 space-y-5 custom-scrollbar ${t.bg}`}
       >
@@ -336,7 +333,6 @@ const AI = () => {
         <div ref={messageEndRef} />
       </div>
 
-   
       <div
         className={`sticky bottom-0 left-0 w-full border-t ${t.border} ${t.chatBg} p-4 flex items-center`}
       >
