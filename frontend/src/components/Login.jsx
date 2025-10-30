@@ -1,15 +1,17 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import { LearnContext } from "../../context/LearnContextProvider";
 import toast from "react-hot-toast";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
-import {jwtDecode} from "jwt-decode";
-
+import { jwtDecode } from "jwt-decode";
+import { Eye, EyeClosed } from "lucide-react";
 const client_id = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const Login = () => {
   const [state, setState] = useState("login");
   const [loading, setLoading] = useState(false);
   const { token, setToken, axios, setUserData } = useContext(LearnContext);
+  const [checkPassword, setCheckPassword] = useState("password");
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -167,15 +169,25 @@ const Login = () => {
               placeholder="Email e.g. user@gmail.com"
               className="border border-gray-100/20 text-white px-3 py-2 rounded-lg placeholder-white/60 outline-none bg-transparent focus:ring-2 focus:ring-blue-500 w-full"
             />
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={onChangeHandler}
-              placeholder="Password"
-              className="border border-gray-100/20 text-white px-3 py-2 rounded-lg placeholder-white/60 outline-none bg-transparent focus:ring-2 focus:ring-blue-500 w-full"
-              required
-            />
+            <label className="relative flex items-center  ">
+              <input
+                type={checkPassword}
+                name="password"
+                value={formData.password}
+                onChange={onChangeHandler}
+                placeholder="Password"
+                className="border border-gray-100/20 text-white px-3 py-2 rounded-lg placeholder-white/60 outline-none bg-transparent focus:ring-2 focus:ring-blue-500 w-full"
+                required
+              />
+              <span className="absolute right-0 px-2  z-1 cursor-pointer text-white ">
+                {" "}
+                {checkPassword === "password" ? (
+                  <Eye onClick={() => setCheckPassword("text")} />
+                ) : (
+                  <EyeClosed onClick={() => setCheckPassword("password")} />
+                )}
+              </span>
+            </label>
 
             <button
               type="submit"
