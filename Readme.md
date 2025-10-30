@@ -73,7 +73,7 @@ Deployment Vercel (Frontend), Render (Backend)
 To run LearnHub locally:
 
 1️⃣ Clone the repository
-git clone https://github.com/your-username/LearnHub.git
+git clone https://github.com/Shankars57/LearnHub.git
 cd LearnHub
 
 2️⃣ Setup Backend
