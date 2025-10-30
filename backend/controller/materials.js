@@ -92,7 +92,7 @@ const sendMaterialNotification = async (uploadedBy) => {
         <p>Hello Learner 👋,</p>
         <p>New study material has been uploaded by <b>${uploadedBy}</b>.</p>
         <p>Click here to check it out 👉 
-        <a href="http://localhost:5173/materials" target="_blank">View Materials</a></p>
+        <a href="https://learn-hub-rho.vercel.app/materials" target="_blank">View Materials</a></p>
         <br/>
         <p>— LearnHub Team</p>
       `,
