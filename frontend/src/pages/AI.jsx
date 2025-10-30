@@ -20,7 +20,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import toast from "react-hot-toast";
 import { useAIThemeStore } from "../../store/AIStore/useAiThemeStore";
-import { useAiThemeStore } from "../../store/useAiThemeStore";
+import { useAiThemeStore } from "../../store/useAIThemeStore";
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
   visible: (i = 0) => ({
