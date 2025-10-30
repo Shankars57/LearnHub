@@ -1,7 +1,7 @@
-import { memo } from "react";
+import React, { memo } from "react";
 import { useNavigate } from "react-router-dom";
 
-const YouTubeEmbed = memo(({ href }) => {
+const YouTubeEmbed = ({ href }) => {
   const navigate = useNavigate();
 
   const extractId = (url) => {
@@ -19,14 +19,14 @@ const YouTubeEmbed = memo(({ href }) => {
   };
 
   const videoId = extractId(href);
-  const handleNavigate = () => navigate(`/playlist`);
-
+  const handleNavigate = () => navigate("/playlist");
   if (!videoId) return null;
 
   return (
     <div className="flex flex-col gap-2 w-full items-start">
       <div className="w-full aspect-video rounded-lg overflow-hidden">
         <iframe
+          key={videoId}
           src={`https://www.youtube.com/embed/${videoId}`}
           allow="autoplay; encrypted-media"
           allowFullScreen
@@ -52,6 +52,6 @@ const YouTubeEmbed = memo(({ href }) => {
       </div>
     </div>
   );
-});
+};
 
-export default YouTubeEmbed;
+export default memo(YouTubeEmbed, (prev, next) => prev.href === next.href);

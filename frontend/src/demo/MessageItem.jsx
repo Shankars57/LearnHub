@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 import usePinnedMessage from "../../store/usePinnedMessage";
 import YouTubeEmbed from "./YouTubeEmbed";
 
-const MessageItem = memo(({ msg, username, roomId, onDelete, id }) => {
+const MessageItem = ({ msg, username, roomId, onDelete }) => {
   const { pinnedMessages, setPinnedMessage, clearPinnedMessage } =
     usePinnedMessage();
   const msgId = msg._id || `${msg.user}-${msg.time}`;
@@ -84,8 +84,7 @@ const MessageItem = memo(({ msg, username, roomId, onDelete, id }) => {
           ),
           a: ({ href, children }) => {
             const isYouTube = href.includes("youtu");
-            if (isYouTube)
-              return <YouTubeEmbed href={href}>{children}</YouTubeEmbed>;
+            if (isYouTube) return <YouTubeEmbed href={href} />;
             return (
               <a
                 href={href}
@@ -119,6 +118,9 @@ const MessageItem = memo(({ msg, username, roomId, onDelete, id }) => {
       />
     </div>
   );
-});
+};
 
-export default MessageItem;
+export default memo(
+  MessageItem,
+  (prev, next) => prev.msg.text === next.msg.text
+);
