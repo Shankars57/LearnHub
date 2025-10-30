@@ -81,10 +81,19 @@ export const signup = async (req, res) => {
       return res.json({ success: false, message: "Please fill all fields" });
     }
 
+    const strongPasswordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
     if (password.length < 8) {
       return res.json({
         success: false,
         message: "Password length must be have 8 characters",
+      });
+    }
+    if (!strongPasswordRegex.test(password)) {
+      return res.json({
+        success: false,
+        message: "Password must require strong with mixed characters",
       });
     }
 
