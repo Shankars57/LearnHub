@@ -114,10 +114,10 @@ npm run dev
 
 Bonam Chandra Durga Gowri Shankar
 📍 B.Tech CSE | Aditya College of Engineering and Technology
-🔗 LinkedIn
+
 
 🌐 Portfolio
-(optional)
+https://shankar-portfolio-lac.vercel.app
 
 ⭐ Show Your Support
 
