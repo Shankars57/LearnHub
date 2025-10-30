@@ -7,7 +7,7 @@ import { MoreVertical, Pin, PinOff, Trash } from "lucide-react";
 import moment from "moment";
 import toast from "react-hot-toast";
 import usePinnedMessage from "../../store/usePinnedMessage";
-import YouTubeEmbed from "./YoutubeEmbed";
+import YouTubeEmbed from "./YouTubeEmbed";
 
 const MessageItem = memo(({ msg, username, roomId, onDelete, id }) => {
   const { pinnedMessages, setPinnedMessage, clearPinnedMessage } =

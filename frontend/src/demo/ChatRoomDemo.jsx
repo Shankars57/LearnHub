@@ -4,7 +4,7 @@ import { io } from "socket.io-client";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../../store/useAuthStore";
 import TypingIndicator from "../components/TypeIndicator";
-import MessageItem from "../components/MessageItem";
+import MessageItem from "./MessageItem";
 import usePinnedMessage from "../../store/usePinnedMessage";
 import { Palette } from "lucide-react";
 import { useChatRoomTheme } from "../../store/useChatRoomTheme";
