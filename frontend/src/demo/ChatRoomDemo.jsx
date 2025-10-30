@@ -22,6 +22,7 @@ const ChatRoomDemo = () => {
   const socketRef = useRef(null);
   const bottomRef = useRef(null);
   const typingTimeoutRef = useRef(null);
+  const inputRef = useRef(null);
   const { user } = useAuthStore();
   const [username, setUsername] = useState("");
   const { pinnedMessages, clearPinnedMessage } = usePinnedMessage();
@@ -262,8 +263,14 @@ const ChatRoomDemo = () => {
 
       <div className={`p-2 border-t ${currentTheme.border} flex gap-2`}>
         <textarea
+          ref={inputRef}
           value={input}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              sendMessage();
+            }
+          }}
           placeholder={`Message #${roomName || roomId}`}
           onChange={(e) => {
             e.target.style.height = "auto";

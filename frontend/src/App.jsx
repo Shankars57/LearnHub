@@ -23,6 +23,7 @@ const NotFound = () => (
 );
 const App = () => {
   const { token, userData } = useContext(LearnContext);
+  console.log(userData.isVerified)
   return (
     <>
       <Toaster />
@@ -34,7 +35,7 @@ const App = () => {
           <Route path="/" element={token ? <Home /> : <Login />} />
           <Route
             path="/otp"
-            element={userData.isVerified ? <OtpVerify /> : <Profile />}
+            element={!userData.isVerified ? <OtpVerify /> : <Profile />}
           />
           <Route path="/login" element={<Login />} />
           <Route path="/playlist" element={<PlayList />}>
@@ -52,12 +53,14 @@ const App = () => {
           </Route>
           <Route path="/ai" element={<AI />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/testing" element={memo(()=>(
-            <div>
+          <Route
+            path="/testing"
+            element={memo(() => (
+              <div>
                 <h1 className="testing">testing</h1>
-            </div>
-
-          ))} />
+              </div>
+            ))}
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

@@ -24,13 +24,16 @@ const Profile = () => {
   const user = { ...userData };
   const [state, setState] = useState("ov");
   const [image, setImage] = useState(null);
+  const isVerify = userData.isVerified;
   const [stats, setStats] = useState({
     level: "-",
     xp: "-",
     streak: "-",
     studyTime: "-",
   });
-
+  useEffect(() => {
+    console.log(isVerify);
+  }, [isVerify]);
   const initials = userData?.firstName
     ? userData.firstName.slice(0, 2).toUpperCase()
     : "U";
@@ -85,7 +88,7 @@ const Profile = () => {
 
   return (
     <section className="relative w-full px-4 sm:px-6 lg:px-10 py-10 bg-gradient-to-tr from-gray-950 via-gray-900 to-blue-950 min-h-screen">
-      <div className="flex items-center mb-6">
+      <div className="flex items-center justify-between mb-6">
         <button
           onClick={() => navigate("/")}
           className="flex items-center gap-2 text-gray-300 hover:text-white transition"
@@ -93,6 +96,12 @@ const Profile = () => {
           <MoveLeft size={18} />
           <span>Back</span>
         </button>
+        {!isVerify && (
+          <p className="text-white">
+            Please verify your Mail by using{" "}
+            <b className="text-green-600 hover:underline">Verify button</b>
+          </p>
+        )}
       </div>
 
       <motion.div

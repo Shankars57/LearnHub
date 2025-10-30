@@ -180,9 +180,11 @@ const Materials = () => {
                         src={item.url}
                         className="w-full h-full  object-fit rounded-md shadow-lg shadow-black/40 hover:shadow-white"
                       />
-                      <span className="absolute 
+                      <span
+                        className="absolute 
                       flex items-center justify-center text-white transition ease duration-200
-                      w-full h-full opacity-0 group-hover:opacity-100 bg-black/20  top-0">
+                      w-full h-full opacity-0 group-hover:opacity-100 bg-black/20  top-0"
+                      >
                         sample
                       </span>
                     </div>
@@ -215,7 +217,7 @@ const Materials = () => {
           );
         })}
       </motion.div>
-      {filteredMaterials.length === 0 && (
+      {filteredMaterials.length === 0 && type !== "all" ? (
         <h1 className="text-2xl text-center text-red-500 ">
           {/*Not Found {"   :("}*/}
           <TypeAnimation
@@ -234,6 +236,13 @@ const Materials = () => {
             }}
           />
         </h1>
+      ) : (
+        type === "all" && (
+          <h1 className="text-center">
+            Please upload new Materials by using the{" "}
+            <b className="text-blue-600  hover:underline">Upload button.</b>
+          </h1>
+        )
       )}
     </div>
   );
