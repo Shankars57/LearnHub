@@ -94,7 +94,7 @@ const Profile = () => {
           <MoveLeft size={18} />
           <span>Back</span>
         </button>
-        {isVerify && (
+        {!isVerify && (
           <p className="text-white text-xs md:text-lg text-center">
             <span className="px-2 py-2 w-[20px] h-[20px] text-red-500 border rounded-full font-bold">
               !
