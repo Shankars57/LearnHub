@@ -211,9 +211,9 @@ const AI = () => {
           </span>
           <div
             onClick={() => setOpenDrop(!openDrop)}
-            className="relative p-2 rounded-lg hover:bg-white/10 transition cursor-pointer"
+            className="relative p-2 rounded-lg hover:bg-white/10 transition cursor-pointer "
           >
-            <Palette size={18} className="text-gray-300" />
+            <Palette size={18} className="text-gray-300 sticky top-10" />
             {openDrop && (
               <div className="absolute right-0 top-10 w-52 bg-[#1E1E1E] border border-gray-700 rounded-lg shadow-lg overflow-hidden z-50">
                 {Object.keys(themes).map((k) => (

@@ -86,7 +86,7 @@ const Profile = () => {
 
   return (
     <section className="relative w-full px-4 sm:px-6 lg:px-10 py-10 bg-gradient-to-tr from-gray-950 via-gray-900 to-blue-950 min-h-screen">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-evenly mb-6">
         <button
           onClick={() => navigate("/")}
           className="flex items-center gap-2 text-gray-300 hover:text-white transition"
@@ -94,8 +94,8 @@ const Profile = () => {
           <MoveLeft size={18} />
           <span>Back</span>
         </button>
-        {!isVerify && (
-          <p className="text-white">
+        {isVerify && (
+          <p className="text-white text-xs md:text-lg text-center">
             <span className="px-2 py-2 w-[20px] h-[20px] text-red-500 border rounded-full font-bold">
               !
             </span>{" "}
