@@ -5,9 +5,13 @@ import { transporter } from "./userController.js";
 
 export const pdfUpload = async (req, res) => {
   try {
-    const { title, desc, fileType, uploadedBy, subject } = req.body;
+    const userDetails = await userModel
+      .findOne({ email: req.user.email })
+      .select("-password");
 
-    if (!title || !desc || !uploadedBy || !subject || !req.file) {
+    const { title, desc, fileType, subject } = req.body;
+
+    if (!title || !desc || !subject || !req.file) {
       return res.status(400).json({
         success: false,
         message: "All required fields and file must be provided",
@@ -21,7 +25,6 @@ export const pdfUpload = async (req, res) => {
       else detectedFileType = "notes";
     }
 
-    // Convert file to base64
     const base64File = `data:${
       req.file.mimetype
     };base64,${req.file.buffer.toString("base64")}`;
@@ -32,19 +35,21 @@ export const pdfUpload = async (req, res) => {
       folder: "/materials",
     });
 
+    const uploadedBy = userDetails.name || userDetails.email;
+
     const pdf = await pdfModel.create({
       title,
       desc,
       fileType: detectedFileType,
       subject,
       uploadedBy,
+      user: userDetails._id,
       url: uploadResponse.url,
       mimeType: uploadResponse.mime || req.file.mimetype,
       fileSize: uploadResponse.size,
     });
 
     sendMaterialNotification(uploadedBy);
-
     res.status(201).json({
       success: true,
       message: "Material uploaded successfully",
@@ -61,7 +66,11 @@ export const pdfUpload = async (req, res) => {
 
 export const getAllMaterials = async (req, res) => {
   try {
-    const data = await pdfModel.find().sort({ createdAt: -1 });
+    const data = await pdfModel
+      .find()
+      .populate("user", "name email _id")
+      .sort({ createdAt: -1 });
+
     res.status(200).json({
       success: true,
       message: "All materials fetched successfully",
@@ -76,33 +85,30 @@ export const getAllMaterials = async (req, res) => {
 };
 
 const sendMaterialNotification = async (uploadedBy) => {
-  try {
-    const users = await userModel.find({}, "email");
+  const users = await userModel.find({}, "email");
+  if (!users.length) return console.log("No users to notify.");
 
-    if (!users.length) return console.log("No users to notify.");
+  const emailList = users.map((u) => u.email);
 
-    const emailList = users.map((u) => u.email);
-
-    emailList.forEach(async (email) => {
+  emailList.forEach(async (email) => {
+    try {
       await transporter.sendMail({
         from: `"LearnHub" <${process.env.EMAIL_USER}>`,
         to: email,
         subject: "New Material Uploaded on LearnHub",
         html: `
-        <p>Hello Learner 👋,</p>
-        <p>New study material has been uploaded by <b>${uploadedBy}</b>.</p>
-        <p>Click here to check it out 👉 
-        <a href="https://learn-hub-rho.vercel.app/materials" target="_blank">View Materials</a></p>
-        <br/>
-        <p>— LearnHub Team</p>
-      `,
+         <p>Hello Learner 👋,</p>
+         <p>New study material has been uploaded by <b>${uploadedBy}</b>.</p>
+         <p>Click here to check it out 👉 
+         <a href="https://learn-hub-rho.vercel.app/materials" target="_blank">View Materials</a></p>
+         <br/>
+         <p>— LearnHub Team</p>
+       `,
       });
-    });
+    } catch (error) {
+      console.log(error.message);
+    }
+  });
 
-    console.log("Material upload notification sent successfully.");
-  } catch (error) {
-    console.error("Error sending notification emails:", error);
-  }
+  console.log("Material upload notification sent successfully.");
 };
-
-//sendMaterialNotification("shankar");

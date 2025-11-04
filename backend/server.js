@@ -16,6 +16,7 @@ import {
   getChatHistory,
   getChannels,
 } from "./controller/channelController.js";
+import channelRoutes from "./routes/channelsRoute.js";
 
 dotenv.config();
 connectDB();
@@ -23,7 +24,11 @@ connectDB();
 const app = express();
 app.use(
   cors({
-    origin: ["http://localhost:5173", process.env.VITE_FRONTEND_URL],
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5174",
+      process.env.VITE_FRONTEND_URL,
+    ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
@@ -34,7 +39,11 @@ app.use(express.json());
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173", process.env.VITE_FRONTEND_URL],
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5174",
+      process.env.VITE_FRONTEND_URL,
+    ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   },
@@ -165,6 +174,7 @@ app.use("/api", AIRouter);
 app.use("/api/material", pdfRouter);
 app.use("/api/user", userRouter);
 app.use("/api/yt", ytRouter);
+app.use("/api/channel", channelRoutes);
 
 app.get("/", (req, res) =>
   res.send("Server is running and ready for connections.")

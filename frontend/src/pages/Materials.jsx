@@ -23,7 +23,6 @@ const Materials = () => {
   const [input, setInput] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const { materialsData } = useContext(LearnContext);
-
   const filteredMaterials = materialsData.filter((item) => {
     const matchesType =
       type === "all" || item.fileType.toLowerCase() === type.toLowerCase();

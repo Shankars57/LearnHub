@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 const pdfSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
-    desc: { type: String }, 
-    subject: { type: String  , required:true},
+    desc: { type: String },
+    subject: { type: String, required: true },
     url: { type: String, required: true },
     fileType: {
       type: String,
@@ -13,6 +13,7 @@ const pdfSchema = new mongoose.Schema(
     },
     mimeType: { type: String },
     fileSize: { type: Number },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     uploadedBy: { type: String, required: true },
   },
   { timestamps: true }
