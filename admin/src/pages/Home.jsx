@@ -22,7 +22,7 @@ const Home = () => {
     window.addEventListener("scroll", handleSticky);
     return () => window.removeEventListener("scroll", handleSticky);
   }, []);
-  console.log(sticky);
+  
   
   return (
     <div className="flex h-screen">

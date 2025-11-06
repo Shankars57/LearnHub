@@ -35,16 +35,17 @@ const PersistentPlayer = () => {
           dragMomentum={false}
           dragElastic={0.2}
           dragConstraints={{
-            top: -window.innerHeight * 0.8, 
-            left: -window.innerWidth * 0.8, 
-            right: window.innerWidth * 0.8, 
+            top: -window.innerHeight * 0.8,
+            left: -window.innerWidth * 0.8,
+            right: window.innerWidth * 0.8,
             bottom: window.innerHeight * 0.5,
           }}
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed bottom-4 right-4 bg-gray-900 border border-gray-700 shadow-xl rounded-xl overflow-hidden w-[400px] h-[225px] z-50 cursor-grab active:cursor-grabbing"
+          className="fixed bottom-4 right-4 bg-gray-900 border border-gray-700 shadow-xl
+           rounded-xl overflow-hidden sm:w-[350px] md:w-[400px] h-[225px] z-50 cursor-grab active:cursor-grabbing"
         >
           <div className="relative flex justify-between items-center bg-gray-800 px-2 py-1 text-xs text-gray-300 select-none">
             <p className="truncate prose">{currentVideo.snippet?.title}</p>
@@ -54,10 +55,15 @@ const PersistentPlayer = () => {
                 onClick={handleNavigate}
                 className="px-2 py-1 bg-black/70 hover:text-white hover:bg-white/10 rounded-lg flex group"
               >
-                <span><ChevronLeft size={15} className="relative
+                <span>
+                  <ChevronLeft
+                    size={15}
+                    className="relative
                  group-hover:right-1 transition ease 
                 duration-600"
-                /></span> Playlist
+                  />
+                </span>{" "}
+                Playlist
               </button>
 
               <button

@@ -8,7 +8,7 @@ const Users = lazy(() => import("./components/Users"));
 const Materials = lazy(() => import("./components/Materials"));
 const ChatRoom = lazy(() => import("./components/ChatRoom"));
 const Setting = lazy(() => import("./components/Setting"));
-
+const UserProfile = lazy(() => import("./pages/UserProfile"));
 const Spinner = () => (
   <div className="flex justify-center items-center h-screen">
     <div className="w-12 h-12 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
@@ -28,6 +28,7 @@ const App = () => {
             <Route path="materials" element={<Materials />} />
             <Route path="chatroom" element={<ChatRoom />} />
             <Route path="settings" element={<Setting />} />
+            <Route path="/profile/:id" element={<UserProfile />} />
           </Route>
         </Routes>
       </Suspense>

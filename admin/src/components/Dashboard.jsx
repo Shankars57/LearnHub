@@ -45,9 +45,9 @@ const Dashboard = () => {
       const date = new Date(item.createdAt).toLocaleDateString("en-CA");
       map[date] = (map[date] || 0) + 1;
     });
+    console.log(map);
     return map;
   };
-
   const chartData = useMemo(() => {
     const userData = groupByDate(extractCreatedAt(users || []));
     const materialData = groupByDate(extractCreatedAt(materials || []));

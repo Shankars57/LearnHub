@@ -15,6 +15,7 @@ import { motion } from "framer-motion";
 import Uploader from "../components/Uploader";
 import { LearnContext } from "../../context/LearnContextProvider";
 import { TypeAnimation } from "react-type-animation";
+import { useRef } from "react";
 
 const bookType = ["all", "notes", "pdf", "docx", "books", "jpg"];
 
@@ -23,6 +24,7 @@ const Materials = () => {
   const [input, setInput] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const { materialsData } = useContext(LearnContext);
+  const moveUpRef = useRef(null);
   const filteredMaterials = materialsData.filter((item) => {
     const matchesType =
       type === "all" || item.fileType.toLowerCase() === type.toLowerCase();
@@ -98,6 +100,7 @@ const Materials = () => {
           >
             Upload
           </motion.button>
+          <div ref={moveUpRef} />
         </div>
       </motion.div>
       <motion.div
@@ -239,7 +242,12 @@ const Materials = () => {
         type === "all" && (
           <h1 className="text-center">
             Please upload new Materials by using the{" "}
-            <b className="text-blue-600  hover:underline">Upload button.</b>
+            <b
+              className="text-blue-600  hover:underline"
+              onClick={() => moveUpRef?.current}
+            >
+              Upload button.
+            </b>
           </h1>
         )
       )}

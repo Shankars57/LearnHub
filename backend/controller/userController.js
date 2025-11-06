@@ -182,6 +182,13 @@ export const login = async (req, res) => {
     if (!isMatch) {
       return res.json({ success: false, message: "Invalid password" });
     }
+
+    if (user.ban) {
+      return res.json({
+        success: false,
+        message: "User in Ban please contact admin",
+      });
+    }
     const userId = user._id;
     const token = jwtGenerate(userId, email);
     const { password: _, ...userData } = user._doc;
@@ -354,5 +361,22 @@ export const verifyOtp = async (req, res) => {
     return res
       .status(500)
       .json({ success: false, message: "Failed to verify OTP" });
+  }
+};
+
+export const banUser = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await userModel.findById(id);
+    user.ban = !user.ban;
+    await user.save();
+    if (user.ban) {
+      res.json({
+        success: true,
+        message: user.ban ? "User successfully ban" : "User successfully unban",
+      });
+    }
+  } catch (error) {
+    res.json({ success: false, message: error.message });
   }
 };

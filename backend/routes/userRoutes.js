@@ -6,6 +6,7 @@ import {
   googleLogin,
   sendOtp,
   verifyOtp,
+  banUser,
 } from "../controller/userController.js";
 import { verify } from "../middleware/auth.js";
 import userModel from "../models/user.js";
@@ -60,5 +61,7 @@ userRouter.get("/total-users", async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 });
+
+userRouter.post("/profile/:id", banUser);
 
 export default userRouter;

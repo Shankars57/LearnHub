@@ -9,9 +9,9 @@ export const pdfUpload = async (req, res) => {
       .findOne({ email: req.user.email })
       .select("-password");
 
-    const { title, desc, fileType, subject } = req.body;
+    const { title, desc, fileType, subject, uploadedBy } = req.body;
 
-    if (!title || !desc || !subject || !req.file) {
+    if (!title || !desc || !subject || !req.file || !uploadedBy) {
       return res.status(400).json({
         success: false,
         message: "All required fields and file must be provided",
@@ -34,8 +34,6 @@ export const pdfUpload = async (req, res) => {
       fileName: req.file.originalname,
       folder: "/materials",
     });
-
-    const uploadedBy = userDetails.name || userDetails.email;
 
     const pdf = await pdfModel.create({
       title,

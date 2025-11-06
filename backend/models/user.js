@@ -27,6 +27,7 @@ const userSchema = new mongoose.Schema(
     totalWatchTime: { type: Number, default: 0 },
     level: { type: Number, default: 1 },
     xp: { type: Number, default: 0 },
+    ban: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
