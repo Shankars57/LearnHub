@@ -210,10 +210,13 @@ export const userUpdate = async (req, res) => {
     const { id } = req.params;
     const { firstName, lastName, bio, userName } = req.body;
     const file = req.file;
-    const exists = await userModel.findOne({ userName });
-    if (exists)
-      return res.status(400).json({ message: "Username already taken" });
+    const user = await userModel.findById(id);
 
+    if (user.userName !== userName) {
+      const exists = await userModel.findOne({ userName });
+      if (exists)
+        return res.status(400).json({ message: "Username already taken" });
+    }
     let updateData = { firstName, lastName, bio, userName };
     if (file) {
       const uploaded = await imagekit.upload({
