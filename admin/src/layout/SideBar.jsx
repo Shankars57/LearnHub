@@ -41,7 +41,7 @@ const SideBar = () => {
         whileTap={{ scale: 0.95 }}
         animate={!open ? { rotate: 180 } : { rotate: 0 }}
         onClick={() => setOpen(!open)}
-        className="absolute -right-3 top-8 bg-gray-700 text-white p-1.5 rounded-full border border-gray-600 shadow-md"
+        className="absolute -right-3 top-8 bg-gray-700 text-white p-1.5 rounded-full border z-9999 border-gray-600 shadow-md"
       >
         <motion.div
           animate={{ rotate: open ? 0 : 180 }}

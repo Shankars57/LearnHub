@@ -8,6 +8,7 @@ import {
   LogOut,
   Mail,
   VerifiedIcon,
+  Edit,
 } from "lucide-react";
 import Settings from "../components/Settings";
 import React, { useEffect, useState, useContext } from "react";
@@ -17,6 +18,7 @@ import { motion } from "framer-motion";
 import axios from "axios";
 import UserOverview from "../components/UserOverView";
 import DashBoardData from "../components/DashBoardData";
+import { useRef } from "react";
 
 const Profile = () => {
   const { userData, setToken, setUserData } = useContext(LearnContext);
@@ -24,6 +26,7 @@ const Profile = () => {
   const user = { ...userData };
   const [state, setState] = useState("ov");
   const [image, setImage] = useState(null);
+  const moveDownRef = useRef(null);
   const isVerify = userData.isVerified;
   const [stats, setStats] = useState({
     level: "-",
@@ -114,6 +117,24 @@ const Profile = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur-3xl opacity-25"></div>
 
         <div className="relative bg-gradient-to-br from-gray-900/70 to-gray-800/70 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-10 shadow-2xl">
+          <button
+            onClick={() => {
+              moveDownRef.current?.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
+              setState("set");
+            }}
+            className="absolute right-10 
+           top-15
+           flex items-center px-4 rounded-lg text-sm py-2 gap-2 text-white shadow-lg shadow-gray-900 "
+          >
+            <span>
+              <Edit size={15} />
+            </span>{" "}
+            Edit
+          </button>
+
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8">
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -153,7 +174,7 @@ const Profile = () => {
             </motion.div>
 
             <div className="text-center sm:text-left flex-1">
-              <h1 className="relative text-3xl font-semibold text-white flex">
+              <h1 className="relative text-3xl text-center font-semibold text-white flex items-center sm:justify-start justify-center">
                 {userData.firstName} {userData.lastName}
                 {user.isVerified && (
                   <p className="absolute right-0 -top-5 md:-top-2 flex text-sm items-center gap-1 px-2 py-1 bg-black/10 text-blue-400 rounded-lg">
@@ -274,12 +295,15 @@ const Profile = () => {
             </div>
           </motion.div>
         ) : (
-          <Settings
-            user={user}
-            setUserData={setUserData}
-            image={image || ""}
-            setImage={setImage}
-          />
+          <>
+            <Settings
+              user={user}
+              setUserData={setUserData}
+              image={image || ""}
+              setImage={setImage}
+            />
+            <div ref={moveDownRef} />
+          </>
         )}
       </div>
     </section>

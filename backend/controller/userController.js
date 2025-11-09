@@ -369,17 +369,26 @@ export const verifyOtp = async (req, res) => {
 
 export const banUser = async (req, res) => {
   const { id } = req.params;
+
   try {
     const user = await userModel.findById(id);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
     user.ban = !user.ban;
     await user.save();
-    if (user.ban) {
-      res.json({
-        success: true,
-        message: user.ban ? "User successfully ban" : "User successfully unban",
-      });
-    }
+
+    res.json({
+      success: true,
+      message: user.ban
+        ? "User successfully banned"
+        : "User successfully unbanned",
+      user,
+    });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
