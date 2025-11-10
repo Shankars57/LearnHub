@@ -5,7 +5,15 @@ import { useColors } from "../hooks/useColors";
 import { useStore } from "../store/useStore";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { Mail, Trash2, Ban, Download, Eye, FileText } from "lucide-react";
+import {
+  Mail,
+  Trash2,
+  Ban,
+  Download,
+  Eye,
+  FileText,
+  Trash,
+} from "lucide-react";
 import {
   ResponsiveContainer,
   BarChart,
@@ -59,7 +67,7 @@ const UserProfile = () => {
 
   const handleBan = async (id) => {
     try {
-      const { data } = await axios.put(`/api/admin/ban/${id}`);
+      const { data } = await axios.put(`/api/user/profile/${id}`);
       if (data.success) {
         toast.success(data.message);
         setUsers((prev) =>
@@ -251,6 +259,15 @@ const UserProfile = () => {
                       <Download size={16} /> Download
                     </a>
                   </div>
+                  <button
+                    className={`${colors.bg}/90 shadow-lg shadow-${colors.bg}/10 text-red-500 rounded-lg mt-2 hover:opacity-70 py-2 flex items-center justify-center gap-2`}
+                  >
+                    {" "}
+                    <span>
+                      <Trash className="w-4 h-4" />
+                    </span>
+                    Delete
+                  </button>
                 </motion.div>
               ))}
             </div>

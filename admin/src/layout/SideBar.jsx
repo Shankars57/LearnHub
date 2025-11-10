@@ -22,7 +22,7 @@ const items = [
 ];
 
 const SideBar = () => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   return (
     <motion.div
