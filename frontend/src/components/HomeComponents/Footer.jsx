@@ -4,10 +4,10 @@ import { BookOpen, Github, Twitter, Linkedin, Mail, Heart } from "lucide-react";
 const Footer = () => {
   const currentYear = new Date().getFullYear();
   const socialLinks = [
-    { icon: Github, href: "#", label: "GitHub" },
+    { icon: Github, href: "https://github.com/Shankars57", label: "GitHub" },
     { icon: Twitter, href: "#", label: "Twitter" },
     { icon: Linkedin, href: "#", label: "LinkedIn" },
-    { icon: Mail, href: "mailto:contact@learnhub.com", label: "Email" },
+    { icon: Mail, href: "mailto:bonamgshankar@gmail.com", label: "Email" },
   ];
 
   const quickLinks = [
@@ -100,7 +100,11 @@ const Footer = () => {
           </div>
           <p className="text-white">
             Please Contact me if any issues will occurred.{" "}
-            <span className="text-blue-800">+91 9110560147</span>
+            <a
+            href="tel:9110560147"
+             className="text-blue-800">
+              +91 9110560147
+            </a>
           </p>
         </div>
 

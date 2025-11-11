@@ -62,6 +62,26 @@ export const pdfUpload = async (req, res) => {
   }
 };
 
+export const featured = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const material = await pdfModel.findById(id);
+    if (!material) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Material not found" });
+    }
+    material.featured = !material.featured;
+    await material.save();
+    res.json({
+      success: true,
+      message: material.featured ? "Material featured ⭐" : "Remove Featured ⭐",
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
 export const getAllMaterials = async (req, res) => {
   try {
     const data = await pdfModel

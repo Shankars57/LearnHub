@@ -7,6 +7,7 @@ import {
   sendOtp,
   verifyOtp,
   banUser,
+  adminLogin,
 } from "../controller/userController.js";
 import { verify } from "../middleware/auth.js";
 import userModel from "../models/user.js";
@@ -14,6 +15,7 @@ import { upload } from "../middleware/multer.js";
 const userRouter = express.Router();
 userRouter.post("/signup", signup);
 userRouter.post("/login", login);
+userRouter.post("/admin-login", adminLogin);
 userRouter.post("/google-login", googleLogin);
 userRouter.post("/send-otp", sendOtp);
 userRouter.post("/verify-otp", verifyOtp);

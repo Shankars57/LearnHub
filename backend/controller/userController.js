@@ -392,3 +392,44 @@ export const banUser = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+export const adminLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required",
+      });
+    }
+
+    if (email !== process.env.ADMIN_EMAIL) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized: Only admin can access the dashboard",
+      });
+    }
+
+    if (password !== process.env.ADMIN_PASSWORD) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid admin password",
+      });
+    }
+    const user = await userModel.findOne({ email });
+    const userId = user._id;
+    const token = jwtGenerate(userId, email);
+
+    res.status(200).json({
+      success: true,
+      message: "Welcome Admin",
+      token,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

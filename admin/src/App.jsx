@@ -2,6 +2,9 @@ import React, { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Home from "./pages/Home";
+import { useContext } from "react";
+import { AdminContext } from "./context/AdminProvider";
+import Login from "./components/Login";
 
 const Dashboard = lazy(() => import("./components/Dashboard"));
 const Users = lazy(() => import("./components/Users"));
@@ -16,12 +19,13 @@ const Spinner = () => (
 );
 
 const App = () => {
+  const { token } = useContext(AdminContext);
   return (
     <div>
       <Toaster />
       <Suspense fallback={<Spinner />}>
         <Routes>
-          <Route path="/" element={<Home />}>
+          <Route path="/" element={token ? <Home /> : <Login />}>
             <Route index element={<Dashboard />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="users" element={<Users />} />

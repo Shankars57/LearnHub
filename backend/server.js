@@ -133,6 +133,7 @@ io.on("connection", async (socket) => {
   socket.on("delete_room", async ({ roomId, user }) => {
     try {
       const deletedRoomId = await deleteRoom({ roomId, user });
+      
       if (onlineUsers[deletedRoomId]) delete onlineUsers[deletedRoomId];
       const channels = await getChannels();
       io.emit("channels_list", channels);
@@ -169,6 +170,8 @@ io.on("connection", async (socket) => {
     }
   });
 });
+
+
 
 app.use("/api", AIRouter);
 app.use("/api/material", pdfRouter);

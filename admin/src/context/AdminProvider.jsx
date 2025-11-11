@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useUserData } from "../store/useUsersData";
 import { useStore } from "../store/useStore";
-
+import { useNavigate } from "react-router-dom";
 axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
 
 export const AdminContext = createContext();
@@ -11,9 +11,10 @@ export const AdminContext = createContext();
 const AdminProvider = ({ children }) => {
   const { setTotalUsers, setUsers } = useUserData();
   const { setMaterials, setChatRooms } = useStore();
-
+  const [uploadState, setUploadState] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const [token, setToken] = useState("");
+  const navigate = useNavigate();
   const getTotalUsers = async () => {
     try {
       const { data } = await axios.get("/api/user/total-users");
@@ -34,7 +35,9 @@ const AdminProvider = ({ children }) => {
       toast.error(error.message);
     }
   };
-
+  useEffect(() => {
+    getMaterials();
+  }, [uploadState]);
   const getChatRooms = async () => {
     try {
       const { data } = await axios.get("/api/channel/get-channels");
@@ -43,6 +46,21 @@ const AdminProvider = ({ children }) => {
       toast.error(error.message);
     }
   };
+
+  useEffect(() => {
+    const storedToken = localStorage
+      .getItem("adminToken")
+      ?.replace(/"/g, "")
+      .trim();
+    if (storedToken) {
+      setToken(storedToken);
+      axios.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
+    } else {
+      localStorage.removeItem("adminToken");
+      setToken("");
+      navigate("/");
+    }
+  }, []);
 
   const refreshAll = async () => {
     setLoading(true);
@@ -58,6 +76,9 @@ const AdminProvider = ({ children }) => {
     axios,
     refreshAll,
     loading,
+    token,
+    setToken,
+    setUploadState,
   };
 
   return (

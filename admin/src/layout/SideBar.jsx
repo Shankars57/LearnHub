@@ -12,6 +12,8 @@ import {
   User,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useContext } from "react";
+import { AdminContext } from "../context/AdminProvider";
 
 const items = [
   { name: "Dashboard", icon: <Home size={20} /> },
@@ -23,7 +25,12 @@ const items = [
 
 const SideBar = () => {
   const [open, setOpen] = useState(false);
+  const { token, setToken } = useContext(AdminContext);
 
+  const handleLogout = () => {
+    setToken("");
+    localStorage.removeItem("adminToken");
+  };
   return (
     <motion.div
       animate={{
@@ -135,7 +142,8 @@ const SideBar = () => {
         {!open && (
           <AnimatePresence>
             <LogOut
-              className="text-white w-7 h-7 relative -left-5"
+            onClick={handleLogout}
+              className="text-white w-7 h-7 relative -left-5 cursor-pointer"
               initial={{ rotate: 0 }}
               animate={{ rotate: 270 }}
             />
@@ -144,15 +152,26 @@ const SideBar = () => {
         <AnimatePresence>
           {open && (
             <motion.button
+              onClick={handleLogout}
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -10 }}
               transition={{ duration: 0.3, type: "spring" }}
-              className="text-white text-md font-small tracking-wide flex items-center gap-2 bg-red-500 px-2 py-2 rounded-md"
+              className="text-white
+               text-md 
+              font-small 
+              cursor-pointer
+              tracking-wide 
+              flex items-center
+               gap-2 bg-red-500
+                px-2 py-2 rounded-md"
             >
-              <span>
+              <span onClick={handleLogout}>
                 {" "}
-                <LogOut className="text-white w-4 h-4" />
+                <LogOut
+                  onClick={handleLogout}
+                  className="text-white w-4 h-4 cursor-pointer "
+                />
               </span>{" "}
               Logout
             </motion.button>

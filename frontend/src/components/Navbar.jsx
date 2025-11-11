@@ -29,9 +29,9 @@ const childVariants = {
 };
 
 const variants2 = {
-  initial: { y: -20, opacity: 0 },
+  initial: { x: -20, opacity: 0 },
   animate: {
-    y: 0,
+    x: 0,
     opacity: 1,
     transition: { type: "spring", duration: 0.2, staggerChildren: 0.1 },
   },
@@ -217,17 +217,21 @@ const Navbar = () => {
             animate="animate"
             className="md:hidden 
              pb-4 flex flex-col 
-
+               
             space-y-3 bg-black/70
              backdrop-blur-xl"
           >
             {navItems.map((item) => (
               <motion.div key={item.path} variants={childVariants2}>
                 {item.dropdown ? (
-                  <div className="flex flex-col">
+                  <div className="flex flex-col   ">
                     <div
                       onClick={() => setIsMaterialsOpen(!isMaterialsOpen)}
-                      className={`flex items-center justify-between px-3 py-2 rounded text-sm font-medium cursor-pointer transition-colors duration-200 ${
+                      className={`flex items-center justify-between px-3 py-2 rounded text-sm font-medium cursor-pointer transition-colors duration-200 
+                        
+                        hover:bg-blue-800 hover:text-white
+                      
+                      ${
                         active === item.path
                           ? isScrolled
                             ? "text-white bg-blue-800 rounded"
@@ -235,7 +239,7 @@ const Navbar = () => {
                           : "text-gray-400 hover:text-blue-600"
                       }`}
                     >
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 ">
                         {item.icon}
                         {item.label}
                       </div>
@@ -266,13 +270,16 @@ const Navbar = () => {
                       setActive(item.path);
                       setIsMenuOpen(false);
                     }}
-                    className={`flex items-center gap-2 px-3 py-2 rounded text-sm font-medium transition-colors duration-200 ${
-                      active === item.path
-                        ? isScrolled
-                          ? "text-white bg-blue-800 rounded"
-                          : "text-blue-600 font-semibold"
-                        : "text-gray-400 hover:text-blue-600"
-                    }`}
+                    className={`flex items-center gap-2 px-3 py-2 rounded text-sm font-medium transition-colors
+                     duration-200
+                     hover:bg-blue-800 hover:text-white
+                      ${
+                        active === item.path
+                          ? isScrolled
+                            ? "text-white bg-blue-800 rounded"
+                            : "text-blue-600 font-semibold"
+                          : "text-gray-400 hover:text-blue-600"
+                      }`}
                   >
                     {item.icon}
                     {item.label}
@@ -288,7 +295,7 @@ const Navbar = () => {
               }}
               className="px-3 flex gap-2 items-center py-1 text-sm text-gray-200 hover:text-white hover:bg-blue-600 rounded transition-colors duration-200"
             >
-              <User size={18}/> Profile
+              <User size={18} /> Profile
             </Link>
           </motion.div>
         )}

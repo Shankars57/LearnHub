@@ -155,11 +155,12 @@ const Materials = () => {
                     {item.fileType.toUpperCase()}
                   </span>
                 </p>
-
-                <p className="flex items-center bg-orange-600 px-2 rounded-full text-sm text-white gap-1">
-                  <Star size={15} className="text-yellow-100" />
-                  Feature
-                </p>
+                {item?.featured && (
+                  <p className="flex items-center bg-orange-600 px-2 rounded-full text-sm text-white gap-1">
+                    <Star size={15} className="text-yellow-100" />{" "}
+                    <span>Feature</span>
+                  </p>
+                )}
               </div>
 
               <div className="flex flex-col gap-1">

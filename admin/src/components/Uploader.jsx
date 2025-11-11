@@ -7,9 +7,8 @@ import {
 } from "lucide-react";
 import React, { useContext, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LearnContext } from "../../context/LearnContextProvider";
 import toast from "react-hot-toast";
-
+import { AdminContext } from "../context/AdminProvider";
 
 const Uploader = ({ isOpen, setIsOpen }) => {
   const [fileName, setFileName] = useState("");
@@ -17,8 +16,7 @@ const Uploader = ({ isOpen, setIsOpen }) => {
   const [fileType, setFileType] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { axios, setUploadState, token } = useContext(LearnContext);
- 
+  const { axios, setUploadState, token } = useContext(AdminContext);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];

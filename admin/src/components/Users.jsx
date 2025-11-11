@@ -89,7 +89,9 @@ const Users = () => {
         className={`w-full md:w-1/3 p-2 rounded-lg border border-[#30363d] focus:outline-none focus:ring-2 focus:ring-blue-500 mb-6 placeholder:text-gray-400 ${colors.text} ${colors.bg}`}
       />
 
-      <div className={`overflow-x-auto rounded-xl ${colors.shadow}`}>
+      <div
+        className={`overflow-x-auto rounded-xl custom-scroll ${colors.shadow}`}
+      >
         <table className="w-full text-left border-collapse">
           <thead className={`${colors.text} bg-opacity-70`}>
             <tr>
@@ -169,7 +171,7 @@ const Users = () => {
 
                     {open && idx === i && (
                       <div
-                        className={`absolute right-0 top-10 w-44 z-50 ${colors.card} ${colors.shadow} border border-[#30363d] rounded-lg p-2 flex flex-col gap-1`}
+                        className={`absolute right-0 top-11 w-44 z-50 ${colors.card} ${colors.shadow} border border-[#30363d] rounded-lg p-2 flex flex-col gap-1`}
                       >
                         <button
                           onClick={() => navigate(`/profile/${user._id}`)}

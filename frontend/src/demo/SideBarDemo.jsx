@@ -164,6 +164,7 @@ const SideBarDemo = () => {
                   className="relative flex items-center justify-between px-4 py-2 rounded-lg hover:bg-gray-700/60 transition"
                 >
                   <NavLink
+                    onClick={() => setOpen(false)}
                     to={`/chats/${item._id}`}
                     className={({ isActive }) =>
                       `flex-1 text-left ${

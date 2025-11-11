@@ -24,13 +24,15 @@ import {
   CartesianGrid,
 } from "recharts";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 const UserProfile = () => {
   const { id } = useParams();
   const { users = [], setUsers } = useUserData();
   const { materials = [] } = useStore();
+  const [localUsers, setLocalUsers] = useState(users);
   const colors = useColors();
-
+  const [ban, setBan] = useState(false);
   if (!Array.isArray(users)) {
     return (
       <div
@@ -67,16 +69,19 @@ const UserProfile = () => {
 
   const handleBan = async (id) => {
     try {
-      const { data } = await axios.put(`/api/user/profile/${id}`);
+      const { data } = await axios.post(`/api/user/profile/${id}`);
       if (data.success) {
         toast.success(data.message);
-        setUsers((prev) =>
-          prev.map((u) => (u._id === id ? { ...u, ban: !u.ban } : u))
+        setBan(!ban);
+        const updated = localUsers.map((u) =>
+          u._id === id ? { ...u, ban: !u.ban } : u
         );
+        setLocalUsers(updated);
+      } else {
+        toast.error(data.message);
       }
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to update ban status");
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
     }
   };
 
@@ -141,6 +146,7 @@ const UserProfile = () => {
             <h2 className={`${colors.text} text-2xl font-semibold mt-4`}>
               {user?.firstName} {user?.lastName}
             </h2>
+            <p>{user?.email}</p>
             <p className={`${colors.textMuted} text-sm mt-1`}>
               @{user?.userName}
             </p>
@@ -191,7 +197,8 @@ const UserProfile = () => {
                     : "bg-red-600 hover:bg-red-700"
                 } text-white py-2 rounded-lg transition`}
               >
-                <Ban size={16} /> {user?.ban ? "Unban" : "Ban"}
+                <Ban size={16} />
+                {ban ? "Unban" : "Ban"}
               </motion.button>
               <motion.button
                 onClick={handleDelete}

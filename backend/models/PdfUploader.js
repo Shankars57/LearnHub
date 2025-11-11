@@ -13,6 +13,7 @@ const pdfSchema = new mongoose.Schema(
     },
     mimeType: { type: String },
     fileSize: { type: Number },
+    featured: { type: Boolean, default: false },
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     uploadedBy: { type: String, required: true },
   },
