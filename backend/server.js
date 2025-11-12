@@ -28,6 +28,7 @@ app.use(
       "http://localhost:5173",
       "http://localhost:5174",
       process.env.VITE_FRONTEND_URL,
+      process.env.VITE_ADMIN_URL,
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -43,6 +44,7 @@ const io = new Server(server, {
       "http://localhost:5173",
       "http://localhost:5174",
       process.env.VITE_FRONTEND_URL,
+      process.env.VITE_ADMIN_URL,
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -133,7 +135,7 @@ io.on("connection", async (socket) => {
   socket.on("delete_room", async ({ roomId, user }) => {
     try {
       const deletedRoomId = await deleteRoom({ roomId, user });
-      
+
       if (onlineUsers[deletedRoomId]) delete onlineUsers[deletedRoomId];
       const channels = await getChannels();
       io.emit("channels_list", channels);
@@ -170,8 +172,6 @@ io.on("connection", async (socket) => {
     }
   });
 });
-
-
 
 app.use("/api", AIRouter);
 app.use("/api/material", pdfRouter);
