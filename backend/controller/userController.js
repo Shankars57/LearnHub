@@ -36,6 +36,12 @@ export const googleLogin = async (req, res) => {
     }
 
     let user = await userModel.findOne({ email });
+    if (user.ban) {
+      return res.json({
+        success: false,
+        message: "User in Ban please contact Admin",
+      });
+    }
 
     if (!user) {
       user = await userModel.create({
