@@ -8,6 +8,7 @@ import {
   verifyOtp,
   banUser,
   adminLogin,
+  deleteUser,
 } from "../controller/userController.js";
 import { verify } from "../middleware/auth.js";
 import userModel from "../models/user.js";
@@ -20,6 +21,7 @@ userRouter.post("/google-login", googleLogin);
 userRouter.post("/send-otp", sendOtp);
 userRouter.post("/verify-otp", verifyOtp);
 userRouter.put("/update/:id", verify, upload.single("profile_pic"), userUpdate);
+userRouter.delete("/delete/:id", deleteUser);
 userRouter.get("/stats/:id", verify, async (req, res) => {
   try {
     const { id } = req.params;

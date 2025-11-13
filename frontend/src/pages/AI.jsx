@@ -281,7 +281,8 @@ const AI = () => {
               }`}
             >
               <div
-                className={`px-4 py-3 rounded-2xl text-sm max-w-[95%] md:max-w-[70%] shadow-md ${
+                className={`px-4 py-3 rounded-2xl text-sm max-w-[95%] md:max-w-[70%] shadow-md leading-loose
+                 ${
                   msg.sender === "user"
                     ? `${t.msgUser} text-white rounded-br-none`
                     : `${t.msgBot} text-gray-200 rounded-bl-none`

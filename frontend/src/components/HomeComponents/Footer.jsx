@@ -11,18 +11,18 @@ const Footer = () => {
   ];
 
   const quickLinks = [
-    { label: "About Us", href: "#" },
+    { label: "About Us", href: "/about" },
     { label: "Privacy Policy", href: "#" },
     { label: "Terms of Service", href: "#" },
-    { label: "Contact", href: "#" },
+    { label: "Contact", href: "/contact" },
     { label: "Help Center", href: "#" },
     { label: "Community Guidelines", href: "#" },
   ];
   const products = [
-    { label: "About Us", href: "#" },
+    { label: "About Us", href: "/about" },
     { label: "Privacy Policy", href: "#" },
     { label: "Terms of Service", href: "#" },
-    { label: "Contact", href: "#" },
+    { label: "Contact", href: "/contact" },
     { label: "Help Center", href: "#" },
     { label: "Community Guidelines", href: "#" },
   ];

@@ -17,6 +17,7 @@ const Users = () => {
   const [page, setPage] = useState(1);
   const usersPerPage = 7;
   const navigate = useNavigate();
+
   useEffect(() => {
     setLocalUsers(users);
   }, [users]);
@@ -39,7 +40,6 @@ const Users = () => {
       const { data } = await axios.post(`/api/user/profile/${id}`);
       if (data.success) {
         toast.success(data.message);
-
         const updated = localUsers.map((u) =>
           u._id === id ? { ...u, ban: !u.ban } : u
         );
@@ -51,12 +51,12 @@ const Users = () => {
       toast.error(error.response?.data?.message || error.message);
     }
   };
+
   const handleUnBan = async (id) => {
     try {
       const { data } = await axios.post(`/api/user/profile/${id}`);
       if (data.success) {
         toast.success(data.message);
-
         const updated = localUsers.map((u) =>
           u._id === id ? { ...u, ban: !u.ban } : u
         );
@@ -68,6 +68,26 @@ const Users = () => {
       toast.error(error.response?.data?.message || error.message);
     }
   };
+
+ const handleDelete = async (id) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to permanently delete this user? This action cannot be undone."
+  );
+
+  if (!confirmDelete) return; 
+
+  try {
+    const { data } = await axios.delete(`/api/user/delete/${id}`);
+    if (data.success) {
+      toast.success(data.message);
+      setLocalUsers((prev) => prev.filter((u) => u._id !== id));
+    } else {
+      toast.error(data.message);
+    }
+  } catch (error) {
+    toast.error(error.response?.data?.message || error.message);
+  }
+};
 
   return (
     <div className={`${colors.bg} px-6 py-6 min-h-screen`}>
@@ -179,24 +199,19 @@ const Users = () => {
                         >
                           <Eye size={16} /> View Profile
                         </button>
-                        {user.ban ? (
-                          <button
-                            onClick={() => handleBan(user._id)}
-                            className={`flex items-center gap-2 px-3 py-2 rounded-md w-full text-left text-sm ${colors.text} ${colors.hover}`}
-                          >
-                            <Ban size={16} />
-                            {user.ban ? "Unban User" : "Ban User"}
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => handleUnBan(user._id)}
-                            className={`flex items-center gap-2 px-3 py-2 rounded-md w-full text-left text-sm ${colors.text} ${colors.hover}`}
-                          >
-                            <Ban size={16} />
-                            {user.ban ? "Unban User" : "Ban User"}
-                          </button>
-                        )}
                         <button
+                          onClick={() =>
+                            user.ban
+                              ? handleUnBan(user._id)
+                              : handleBan(user._id)
+                          }
+                          className={`flex items-center gap-2 px-3 py-2 rounded-md w-full text-left text-sm ${colors.text} ${colors.hover}`}
+                        >
+                          <Ban size={16} />
+                          {user.ban ? "Unban User" : "Ban User"}
+                        </button>
+                        <button
+                          onClick={() => handleDelete(user._id)}
                           className={`flex items-center gap-2 px-3 py-2 rounded-md w-full text-left text-sm text-red-400 hover:bg-red-600/20`}
                         >
                           <Trash2 size={16} /> Delete User

@@ -85,16 +85,23 @@ const UserProfile = () => {
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to permanently delete this user? This action cannot be undone."
+    );
+
+    if (!confirmDelete) return;
+
     try {
-      const res = await axios.delete(`/api/admin/delete/${user._id}`);
-      if (res.data.success) {
-        toast.success("User deleted successfully");
-        setUsers((prev) => prev.filter((u) => u._id !== user._id));
+      const { data } = await axios.delete(`/api/user/delete/${id}`);
+      if (data.success) {
+        toast.success(data.message);
+        setLocalUsers((prev) => prev.filter((u) => u._id !== id));
+      } else {
+        toast.error(data.message);
       }
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to delete user");
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
     }
   };
 
@@ -127,9 +134,9 @@ const UserProfile = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="flex flex-col md:flex-row items-start gap-8">
+      <div className="flex flex-col md:flex-row items-start gap-8 ">
         <motion.div
-          className={`${colors.card} ${colors.shadow} rounded-2xl p-6 w-full md:w-1/3`}
+          className={`${colors.card} ${colors.shadow} rounded-2xl p-6 w-full md:w-1/3   sticky top-10 `}
           initial={{ y: 40, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.1 }}
@@ -146,7 +153,7 @@ const UserProfile = () => {
             <h2 className={`${colors.text} text-2xl font-semibold mt-4`}>
               {user?.firstName} {user?.lastName}
             </h2>
-            <p>{user?.email}</p>
+            <p className={`${colors.text}  text-md`}>{user?.email}</p>
             <p className={`${colors.textMuted} text-sm mt-1`}>
               @{user?.userName}
             </p>

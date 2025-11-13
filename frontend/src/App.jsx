@@ -4,6 +4,8 @@ import { Toaster } from "react-hot-toast";
 import { LearnContext } from "../context/LearnContextProvider";
 import PersistentPlayer from "./components/PersistencePlayer";
 import { memo } from "react";
+import AboutUs from "./pages/AboutUs";
+import ContactPage from "./pages/ContactPage";
 
 const Home = lazy(() => import("./pages/Home"));
 const Materials = lazy(() => import("./pages/Materials"));
@@ -69,6 +71,8 @@ const App = () => {
                 </div>
               ))}
             />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/contact" element={<ContactPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>

@@ -3,11 +3,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Bell, Palette, User } from "lucide-react";
 import { useTheme } from "../store/useTheme";
 import { themes } from "../utils/theme";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = ({ sticky }) => {
   const [open, setOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const colors = themes[theme];
+  const navigate = useNavigate();
 
   return (
     <motion.nav
@@ -68,7 +70,11 @@ const Navbar = ({ sticky }) => {
         />
 
         <div className="flex items-center gap-2 font-medium select-none">
-          <User size={22} />
+          <User
+            size={22}
+            onClick={() => navigate("settings")}
+            className="p-1 hover:border rounded-full w-8 h-8"
+          />
           <span className="hidden sm:inline">Welcome, Shankar</span>
         </div>
       </div>
