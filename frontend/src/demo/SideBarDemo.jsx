@@ -11,12 +11,14 @@ import React, { useState, useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import { io } from "socket.io-client";
 import toast from "react-hot-toast";
+import { useChatRoomTheme } from "../../store/useChatRoomTheme";
 
 const SideBarDemo = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [open, setOpen] = useState(false);
   const [channels, setChannels] = useState([]);
   const [roomName, setRoomName] = useState("");
+  const { roomNames, setRoomNames } = useChatRoomTheme();
   const [roomPassword, setRoomPassword] = useState("");
   const [username, setUsername] = useState(
     () => localStorage.getItem("username") || ""
@@ -35,7 +37,9 @@ const SideBarDemo = () => {
       withCredentials: true,
     });
     setSocket(s);
+
     s.on("channels_list", (list) => setChannels(list));
+
     s.on("room_created", (room) =>
       toast.success(`Room "${room.name}" created by ${room.admin}`)
     );
@@ -54,6 +58,11 @@ const SideBarDemo = () => {
         behavior: "smooth",
       });
     }
+    const rooms = channels.map((room) => ({
+      id: room._id,
+      name: room.name,
+    }));
+    setRoomNames(rooms);
   }, [channels]);
 
   const filteredData = channels.filter((item) =>
@@ -175,8 +184,8 @@ const SideBarDemo = () => {
                     }
                   >
                     <div className="flex flex-col">
-                      <span className="font-medium truncate capitalize">
-                        # {item.name}
+                      <span className="font-medium truncate capitalize ">
+                        {item.name}
                       </span>
                       {item.password && (
                         <span className="text-xs text-red-400 flex items-center gap-1">

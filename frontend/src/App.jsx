@@ -6,7 +6,7 @@ import PersistentPlayer from "./components/PersistencePlayer";
 import { memo } from "react";
 import AboutUs from "./pages/AboutUs";
 import ContactPage from "./pages/ContactPage";
-
+import Spinner from "./components/Spinner";
 const Home = lazy(() => import("./pages/Home"));
 const Materials = lazy(() => import("./pages/Materials"));
 const Chat = lazy(() => import("./pages/Chat"));
@@ -19,12 +19,6 @@ const Playlists = lazy(() => import("./components/PlayLists"));
 const VideoContent = lazy(() => import("./components/VideoContent"));
 const OtpVerify = lazy(() => import("./components/OtpVerify"));
 const ChatRoomDemo = lazy(() => import("./demo/ChatRoomDemo"));
-
-const Spinner = () => (
-  <div className="flex justify-center items-center h-screen bg-black/60 backdrop-blur-md">
-    <div className="w-14 h-14 border-4 border-gray-400 border-t-blue-500 rounded-full animate-spin"></div>
-  </div>
-);
 
 const NotFound = () => (
   <div className="h-screen flex items-center justify-center">

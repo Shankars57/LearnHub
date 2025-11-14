@@ -3,7 +3,9 @@
 
 Frontend: https://learn-hub-rho.vercel.app
 
-Backend: https://learnhub-e0dm.onrender.com
+Backend: https://learnhub-e0dm.onrender.com 
+
+Admin : https://learn-hub-admin-five.vercel.app
 
 📖 About the Project
 

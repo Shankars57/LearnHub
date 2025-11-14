@@ -22,13 +22,14 @@ const ChatRoomDemo = () => {
   const socketRef = useRef(null);
   const bottomRef = useRef(null);
   const typingTimeoutRef = useRef(null);
+
   const inputRef = useRef(null);
   const { user } = useAuthStore();
   const [username, setUsername] = useState("");
   const { pinnedMessages, clearPinnedMessage } = usePinnedMessage();
   const pinnedMessage = pinnedMessages[roomId];
   const [roomName, setRoomName] = useState("");
-  const { theme, setTheme } = useChatRoomTheme();
+  const { theme, setTheme, roomNames } = useChatRoomTheme();
   const currentTheme = themes[theme] || themes["vs-dark"];
 
   useEffect(() => {
@@ -156,11 +157,12 @@ const ChatRoomDemo = () => {
     }
   };
 
-  if (!joined)
+  if (!joined) {
+    const name = roomNames.find((item) => item.id === roomId);
     return (
       <div className="flex flex-col items-center justify-center h-full w-full p-6 text-center space-y-3">
-        <h2 className="text-2xl sm:text-3xl font-bold">
-          Join #{roomName || roomId}
+        <h2 className="text-2xl sm:text-3xl font-bold capitalize">
+          Join # {name?.name || roomName || roomId}
         </h2>
         <input
           type="text"
@@ -184,7 +186,7 @@ const ChatRoomDemo = () => {
         </button>
       </div>
     );
-
+  }
   return (
     <div className={`flex flex-col h-full w-full ${currentTheme.chatBg}`}>
       <div
