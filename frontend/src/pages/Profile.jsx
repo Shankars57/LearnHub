@@ -81,28 +81,28 @@ const Profile = () => {
     };
     fetchStats();
   }, [userData?._id]);
-useEffect(() => {
-  if (!isVerify) {
-    toast.custom(() => (
-      <div
-        className="bg-white p-4 flex items-center justify-center gap-2
+  useEffect(() => {
+    if (!isVerify) {
+      toast.custom(() => (
+        <div
+          className="bg-white p-4 flex items-center justify-center gap-2
                    rounded-lg shadow-sm shadow-blue-600 text-gray-700"
-      >
-        <motion.span
-          initial={{ y: -10, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.3 }}
         >
-          <Mail className="text-white p-2 w-8 h-8 rounded-full bg-green-400" />
-        </motion.span>
-        Please verify your email
-      </div>
-    ));
-  } else {
-    toast.success(`Hello ${user.firstName}`);
-  }
-}, [isVerify]); 
+          <motion.span
+            initial={{ y: -10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Mail className="text-white p-2 w-8 h-8 rounded-full bg-green-400" />
+          </motion.span>
+          Please verify your email
+        </div>
+      ));
+    } else {
+      toast.success(`Hello ${user.firstName}`);
+    }
+  }, [isVerify]);
 
   const studentStatusData = [
     { icon: Medal, label: "Level", value: stats.level },

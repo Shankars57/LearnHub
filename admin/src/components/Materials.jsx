@@ -139,7 +139,7 @@ const Materials = () => {
           ))}
         </div>
       </div>
-      <div className={`overflow-x-auto rounded-xl ${colors.shadow}`}>
+      <div className={`overflow-x-auto rounded-xl ${colors.shadow} custom-scroll`}>
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className={`${colors.textMuted} border-b ${colors.border}`}>
@@ -148,6 +148,7 @@ const Materials = () => {
               <th className="p-3">Type</th>
               <th className="p-3">Subject</th>
               <th className="p-3">Uploaded</th>
+              <th className="p-3">UploadedBy</th>
               <th className="p-3">Actions</th>
             </tr>
           </thead>
@@ -174,6 +175,9 @@ const Materials = () => {
                   <td className="p-3">{file.subject || "General"}</td>
                   <td className="p-3 text-sm">
                     {moment(file.updatedAt).format("MMM DD, YYYY")}
+                  </td> 
+                   <td className="p-3 text-sm">
+                    {file.uploadedBy}
                   </td>
                   <td className="p-3 relative">
                     <button

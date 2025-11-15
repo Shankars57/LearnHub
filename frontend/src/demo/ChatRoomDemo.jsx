@@ -29,7 +29,8 @@ const ChatRoomDemo = () => {
   const { pinnedMessages, clearPinnedMessage } = usePinnedMessage();
   const pinnedMessage = pinnedMessages[roomId];
   const [roomName, setRoomName] = useState("");
-  const { theme, setTheme, roomNames } = useChatRoomTheme();
+  const { theme, setTheme, roomNames, setCurrentChatRoom, currentChatRoom } =
+    useChatRoomTheme();
   const currentTheme = themes[theme] || themes["vs-dark"];
 
   useEffect(() => {
@@ -60,7 +61,9 @@ const ChatRoomDemo = () => {
 
     const handleHistory = (history) => {
       setMessages(history || []);
-      toast.success(`Joined #${roomName || roomId}`);
+      const name = roomNames.find((item) => item.id === roomId);
+      setCurrentChatRoom(name?.name);
+      toast.success(`Joined #${name?.name || roomName || roomId}`);
     };
 
     const handleNewMessage = (msg) => {
@@ -193,7 +196,7 @@ const ChatRoomDemo = () => {
         className={`p-2 border-b ${currentTheme.border} flex items-center justify-between flex-wrap gap-2`}
       >
         <h2 className={`font-semibold text-lg capitalize text-white`}>
-          #{roomName || roomId}
+          #{currentChatRoom || roomName || roomId}
         </h2>
         <div className="flex items-center gap-3 relative">
           <h2 className="font-semibold text-sm sm:text-base text-green-400">

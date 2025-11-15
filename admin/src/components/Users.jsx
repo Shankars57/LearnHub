@@ -160,7 +160,7 @@ const Users = () => {
                     {moment(user.createdAt).format("MMM DD, YYYY")}
                   </td>
                   <td className="p-3">
-                    {moment(user.lastLogin || user.updatedAt).format(
+                    {moment(user.lastLogin || user.updatedAt ).format(
                       "MMM DD, YYYY"
                     )}
                   </td>

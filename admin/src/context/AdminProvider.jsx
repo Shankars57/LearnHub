@@ -10,7 +10,7 @@ export const AdminContext = createContext();
 
 const AdminProvider = ({ children }) => {
   const { setTotalUsers, setUsers } = useUserData();
-  const { setMaterials, setChatRooms } = useStore();
+  const { setMaterials, setChatRooms, chatRooms } = useStore();
   const [uploadState, setUploadState] = useState(false);
   const [loading, setLoading] = useState(false);
   const [token, setToken] = useState("");
@@ -42,6 +42,7 @@ const AdminProvider = ({ children }) => {
     try {
       const { data } = await axios.get("/api/channel/get-channels");
       if (data.success) setChatRooms(data.channels);
+      
     } catch (error) {
       toast.error(error.message);
     }

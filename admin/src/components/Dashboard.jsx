@@ -23,6 +23,7 @@ import {
   BookOpen,
   Clock,
   ArrowRight,
+  PlaneTakeoff
 } from "lucide-react";
 
 const Dashboard = () => {
@@ -45,7 +46,6 @@ const Dashboard = () => {
       const date = new Date(item.createdAt).toLocaleDateString("en-CA");
       map[date] = (map[date] || 0) + 1;
     });
-    console.log(map);
     return map;
   };
   const chartData = useMemo(() => {
@@ -338,12 +338,12 @@ const Dashboard = () => {
       </motion.div>
 
       <motion.p
-        className="text-center mt-8 sm:mt-10 text-xs sm:text-sm opacity-60"
+        className="text-center mt-8 sm:mt-10 text-xs sm:text-sm opacity-60 flex items-center gap-2 justify-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}
       >
-        Data updates automatically as your platform grows 🚀
+        Data updates automatically as your platform grows <span><PlaneTakeoff /></span>
       </motion.p>
     </div>
   );
