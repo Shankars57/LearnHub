@@ -58,7 +58,7 @@ userRouter.get("/profile", verify, async (req, res) => {
 
 userRouter.get("/total-users", async (req, res) => {
   try {
-    const totalUsers = await userModel.find();
+    const totalUsers = await userModel.find().sort({createdAt:-1});
 
     res.json({ success: true, totalUsers });
   } catch (error) {
