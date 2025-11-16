@@ -29,30 +29,35 @@ const ChatRoom = () => {
         {paginated.map((item, i) => (
           <div key={i}>{item.name}</div>
         ))}
-        <button
-          disabled={page === totalPage}
-          onClick={() => setPage((p) => p + 1)}
-          className={`px-4 py-2 rounded-lg border ${colors.text} ${colors.bg} ${
-            colors.shadow
-          } ${
-            page === totalPage
-              ? "opacity-40 cursor-not-allowed"
-              : "hover:opacity-80"
-          }`}
-        >
-          +
-        </button>
-        <button
-          disabled={page === 1}
-          onClick={() => setPage((p) => p - 1)}
-          className={`px-4 py-2 rounded-lg border ${colors.text} ${colors.bg} ${
-            colors.shadow
-          } ${
-            page === 1 ? "opacity-40 cursor-not-allowed" : "hover:opacity-80"
-          }`}
-        >
-          -
-        </button>
+        <div className="flex gap-2 items-center">
+          <button
+            disabled={page === 1}
+            onClick={() => setPage((p) => p - 1)}
+            className={`px-4 py-2 rounded-lg border ${colors.text}  ${
+              colors.bg
+            } ${colors.shadow} ${
+              page === 1 ? "opacity-40 cursor-not-allowed" : "hover:opacity-80 cursor-pointer"
+            }`}
+          >
+            Prev
+          </button>
+          <p>
+            {page} of {totalPage}
+          </p>
+          <button
+            disabled={page === totalPage}
+            onClick={() => setPage((p) => p + 1)}
+            className={`px-4 py-2 rounded-lg border ${colors.text}   ${
+              colors.bg
+            } ${colors.shadow} ${
+              page === totalPage
+                ? "opacity-40 cursor-not-allowed"
+                : "hover:opacity-80 cursor-pointer"
+            }`}
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );
