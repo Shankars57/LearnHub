@@ -96,6 +96,7 @@ const Users = () => {
         <p className={`${colors.text} opacity-70 text-lg`}>
           Monitor and manage all registered users
         </p>
+        <p className={`${colors.text} opacity-70 text-lg`}>Total users:{users.length}</p>
       </div>
 
       <input
