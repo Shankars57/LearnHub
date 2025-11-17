@@ -100,6 +100,10 @@ const Materials = () => {
           <p className={`${colors.textMuted} text-lg`}>
             Manage and monitor all uploaded materials
           </p>
+           <p className={`${colors.textMuted} text-lg`}>
+            Total Materials:{materials.length}
+          </p>
+
         </div>
         <button
           onClick={() => setIsUploaderOpen(true)}
