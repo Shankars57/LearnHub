@@ -60,19 +60,22 @@ const UserProfile = () => {
     );
   }
 
-  const userMaterials = materials.filter(
-    (item) =>
-      item?.user?.userName ||
-      item?.user?.email === user?.email ||
-      item.uploadedBy
-        ?.toLowerCase()
-        .includes(user?.firstName?.toLowerCase() || "") ||
-      item.uploadedBy
-        ?.toLowerCase()
-        .includes(user?.lastName?.toLowerCase() || "")
-  );
-   console.log(userMaterials);
-   
+  const userMaterials = materials.filter((item) => {
+    if (item?.user?.email && item.user.email === user.email) return true;
+    if (item?.user?.userName && item.user.userName === user.userName)
+      return true;
+
+    if (item?.uploadedBy) {
+      const author = item.uploadedBy.trim().toLowerCase();
+      const fullName = `${user.firstName} ${user.lastName}`
+        .trim()
+        .toLowerCase();
+      if (author === fullName) return true;
+    }
+
+    return false;
+  });
+
   const handleBan = async (id) => {
     try {
       const { data } = await axios.post(`/api/user/profile/${id}`);
