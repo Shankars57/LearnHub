@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Eye,
   Download,
@@ -18,6 +18,7 @@ import { useColors } from "../hooks/useColors";
 import { toast } from "react-hot-toast";
 import Uploader from "./Uploader";
 import axios from "axios";
+import { AdminContext } from "../context/AdminProvider";
 
 const Materials = () => {
   const { materials } = useStore();
@@ -30,13 +31,12 @@ const Materials = () => {
   const [open, setOpen] = useState(false);
   const [idx, setIdx] = useState(0);
   const [isUploaderOpen, setIsUploaderOpen] = useState(false);
+  const { token } = useContext(AdminContext);
 
   useEffect(() => {
     setLocalMaterials(materials);
   }, [materials]);
-
   const materialsPerPage = 6;
-
   const filteredMaterials = localMaterials.filter((item) => {
     const matchesType =
       type === "all" || item.fileType.toLowerCase() === type.toLowerCase();
@@ -53,8 +53,26 @@ const Materials = () => {
     startIndex + materialsPerPage
   );
 
-  const handleDelete = (title) => {
-    toast.success(`Deleted ${title}`);
+  const handleDelete = async (title, id) => {
+    const confirm = window.confirm(`Are you sure to delete this material?`);
+    if (!confirm) {
+      return;
+    }
+    try {
+      const { data } = await axios.delete(`/api/material/delete/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (data.success) {
+        toast.success(`${title}-${data.message}`);
+        const updated = localMaterials.filter((m) => m._id !== id);
+        setLocalMaterials(updated);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   const handleFeature = async (title, id) => {
@@ -100,10 +118,9 @@ const Materials = () => {
           <p className={`${colors.textMuted} text-lg`}>
             Manage and monitor all uploaded materials
           </p>
-           <p className={`${colors.textMuted} text-lg`}>
+          <p className={`${colors.textMuted} text-lg`}>
             Total Materials:{materials.length}
           </p>
-
         </div>
         <button
           onClick={() => setIsUploaderOpen(true)}
@@ -143,7 +160,40 @@ const Materials = () => {
           ))}
         </div>
       </div>
-      <div className={`overflow-x-auto rounded-xl ${colors.shadow} custom-scroll`}>
+      {filteredMaterials.length > 0 && (
+        <div className="flex justify-start items-center gap-3 mt-6 mb-3">
+          <button
+            disabled={page === 1}
+            onClick={() => setPage((p) => p - 1)}
+            className={`px-4 py-2 rounded-lg border ${colors.text} ${
+              colors.bg
+            } ${colors.shadow} ${
+              page === 1 ? "opacity-40 cursor-not-allowed" : "hover:opacity-80"
+            }`}
+          >
+            Prev
+          </button>
+          <span className={`${colors.text} text-sm`}>
+            Page {page} of {totalPages}
+          </span>
+          <button
+            disabled={page === totalPages}
+            onClick={() => setPage((p) => p + 1)}
+            className={`px-4 py-2 rounded-lg border ${colors.text} ${
+              colors.bg
+            } ${colors.shadow} ${
+              page === totalPages
+                ? "opacity-40 cursor-not-allowed"
+                : "hover:opacity-80"
+            }`}
+          >
+            Next
+          </button>
+        </div>
+      )}
+      <div
+        className={`overflow-x-auto rounded-xl ${colors.shadow} custom-scroll`}
+      >
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className={`${colors.textMuted} border-b ${colors.border}`}>
@@ -179,10 +229,8 @@ const Materials = () => {
                   <td className="p-3">{file.subject || "General"}</td>
                   <td className="p-3 text-sm">
                     {moment(file.updatedAt).format("MMM DD, YYYY")}
-                  </td> 
-                   <td className="p-3 text-sm">
-                    {file.uploadedBy}
                   </td>
+                  <td className="p-3 text-sm">{file.uploadedBy}</td>
                   <td className="p-3 relative">
                     <button
                       onClick={() => {
@@ -218,7 +266,7 @@ const Materials = () => {
                           {file.featured ? "Remove Feature" : "Feature"}
                         </button>
                         <button
-                          onClick={() => handleDelete(file.title)}
+                          onClick={() => handleDelete(file.title, file._id)}
                           className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm text-red-400 hover:bg-red-600/20`}
                         >
                           <Trash2 size={16} /> Delete
@@ -241,37 +289,6 @@ const Materials = () => {
           </tbody>
         </table>
       </div>
-      {filteredMaterials.length > 0 && (
-        <div className="flex justify-center items-center gap-3 mt-6">
-          <button
-            disabled={page === 1}
-            onClick={() => setPage((p) => p - 1)}
-            className={`px-4 py-2 rounded-lg border ${colors.text} ${
-              colors.bg
-            } ${colors.shadow} ${
-              page === 1 ? "opacity-40 cursor-not-allowed" : "hover:opacity-80"
-            }`}
-          >
-            Prev
-          </button>
-          <span className={`${colors.text} text-sm`}>
-            Page {page} of {totalPages}
-          </span>
-          <button
-            disabled={page === totalPages}
-            onClick={() => setPage((p) => p + 1)}
-            className={`px-4 py-2 rounded-lg border ${colors.text} ${
-              colors.bg
-            } ${colors.shadow} ${
-              page === totalPages
-                ? "opacity-40 cursor-not-allowed"
-                : "hover:opacity-80"
-            }`}
-          >
-            Next
-          </button>
-        </div>
-      )}
     </div>
   );
 };

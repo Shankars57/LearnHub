@@ -23,7 +23,7 @@ import {
   BookOpen,
   Clock,
   ArrowRight,
-  PlaneTakeoff
+  PlaneTakeoff,
 } from "lucide-react";
 
 const Dashboard = () => {
@@ -48,10 +48,14 @@ const Dashboard = () => {
     });
     return map;
   };
+
   const chartData = useMemo(() => {
     const userData = groupByDate(extractCreatedAt(users || []));
     const materialData = groupByDate(extractCreatedAt(materials || []));
-    const chatData = groupByDate(extractCreatedAt(chatRooms || []));
+    const chatData = groupByDate(
+      extractCreatedAt(chatRooms[0]?.messages || [])
+    );
+
     const allDates = Array.from(
       new Set([
         ...Object.keys(userData),
@@ -59,6 +63,7 @@ const Dashboard = () => {
         ...Object.keys(chatData),
       ])
     ).sort();
+
     return allDates.map((date) => ({
       date,
       Users: userData[date] || 0,
@@ -66,6 +71,14 @@ const Dashboard = () => {
       Chats: chatData[date] || 0,
     }));
   }, [users, materials, chatRooms]);
+
+  const chatRoomBarData = useMemo(() => {
+    if (!chatRooms) return [];
+    return chatRooms.map((room) => ({
+      name: room.name || room.roomName,
+      Messages: room.messages?.length || 0,
+    }));
+  }, [chatRooms]);
 
   const cards = [
     {
@@ -108,7 +121,7 @@ const Dashboard = () => {
       })),
       ...(chatRooms || []).map((c) => ({
         type: "Chat",
-        name: c.roomName || "New Chat Room",
+        name: c.roomName || c.name || "New Chat Room",
         date: c.createdAt,
         icon: <MessageSquare className="text-emerald-400" size={18} />,
       })),
@@ -251,6 +264,34 @@ const Dashboard = () => {
         </motion.div>
 
         <motion.div
+          className="bg-white/10 p-4 sm:p-6 rounded-xl shadow-xl md:col-span-2 backdrop-blur-md border border-white/10"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-center">
+            Chat Room Messages (Bar Graph)
+          </h2>
+          <div className="w-full h-[240px] sm:h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chatRoomBarData}>
+                <XAxis dataKey="name" stroke="#ccc" />
+                <YAxis stroke="#ccc" />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#1e293b",
+                    color: "#fff",
+                    borderRadius: 8,
+                  }}
+                />
+                <Legend />
+                <Bar dataKey="Messages" fill="#10b981" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </motion.div>
+
+        <motion.div
           className="md:col-span-2 bg-white/10 p-4 sm:p-6 rounded-xl shadow-xl backdrop-blur-md border border-white/10"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -276,7 +317,6 @@ const Dashboard = () => {
                   cx="50%"
                   cy="50%"
                   outerRadius={90}
-                  fill="#8884d8"
                   label
                 >
                   {pieData.map((entry, i) => (
@@ -343,7 +383,10 @@ const Dashboard = () => {
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}
       >
-        Data updates automatically as your platform grows <span><PlaneTakeoff /></span>
+        Data updates automatically as your platform grows{" "}
+        <span>
+          <PlaneTakeoff />
+        </span>
       </motion.p>
     </div>
   );

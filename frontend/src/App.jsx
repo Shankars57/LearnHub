@@ -19,6 +19,9 @@ const Playlists = lazy(() => import("./components/PlayLists"));
 const VideoContent = lazy(() => import("./components/VideoContent"));
 const OtpVerify = lazy(() => import("./components/OtpVerify"));
 const ChatRoomDemo = lazy(() => import("./demo/ChatRoomDemo"));
+const ResumeTemp = lazy(() => import("./pages/ResumeTemp"));
+const CheatSheets = lazy(() => import("./pages/CheatSheets"));
+const RoadMaps = lazy(() => import("./pages/RoadMaps"));
 
 const NotFound = () => (
   <div className="h-screen flex items-center justify-center">
@@ -48,6 +51,11 @@ const App = () => {
               <Route path=":playlistId" element={<Playlists />} />
             </Route>
             <Route path="/materials" element={<Materials />} />
+
+            <Route path="/cheatsheets" element={<CheatSheets />} />
+            <Route path="/roadmaps" element={<RoadMaps />} />
+            <Route path="/resumes" element={<ResumeTemp />} />
+
             <Route path="/chats" element={<Chat />}>
               <Route
                 index

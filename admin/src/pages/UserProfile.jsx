@@ -25,13 +25,17 @@ import {
 } from "recharts";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useContext } from "react";
+import { AdminContext } from "../context/AdminProvider";
 
 const UserProfile = () => {
   const { id } = useParams();
   const { users = [], setUsers } = useUserData();
   const { materials = [] } = useStore();
   const [localUsers, setLocalUsers] = useState(users);
+  const [localMaterials, setLocalMaterials] = useState([]);
   const colors = useColors();
+  const { token } = useContext(AdminContext);
   const [ban, setBan] = useState(false);
   if (!Array.isArray(users)) {
     return (
@@ -58,6 +62,7 @@ const UserProfile = () => {
 
   const userMaterials = materials.filter(
     (item) =>
+      item?.user?.userName ||
       item?.user?.email === user?.email ||
       item.uploadedBy
         ?.toLowerCase()
@@ -66,7 +71,8 @@ const UserProfile = () => {
         ?.toLowerCase()
         .includes(user?.lastName?.toLowerCase() || "")
   );
-
+   console.log(userMaterials);
+   
   const handleBan = async (id) => {
     try {
       const { data } = await axios.post(`/api/user/profile/${id}`);
@@ -84,7 +90,6 @@ const UserProfile = () => {
       toast.error(error.response?.data?.message || error.message);
     }
   };
-
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to permanently delete this user? This action cannot be undone."
@@ -102,6 +107,28 @@ const UserProfile = () => {
       }
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
+    }
+  };
+
+  const handleMaterialDelete = async (title, id) => {
+    const confirm = window.confirm(`Are you sure to delete this material?`);
+    if (!confirm) {
+      return;
+    }
+    try {
+      const { data } = await axios.delete(`/api/material/delete/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (data.success) {
+        toast.success(`${title}-${data.message}`);
+        const updated = userMaterials.filter((m) => m._id !== id);
+        setLocalMaterials(updated);
+      }
+    } catch (error) {
+      toast.error(error.message);
     }
   };
 
@@ -136,7 +163,7 @@ const UserProfile = () => {
     >
       <div className="flex flex-col md:flex-row items-start gap-8 ">
         <motion.div
-          className={`${colors.card} ${colors.shadow} rounded-2xl p-6 w-full md:w-1/3   sticky top-10 `}
+          className={`${colors.card} ${colors.shadow} rounded-2xl p-6 w-full md:w-1/3   md:sticky top-10 `}
           initial={{ y: 40, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.1 }}
@@ -274,6 +301,9 @@ const UserProfile = () => {
                     </a>
                   </div>
                   <button
+                    onClick={() => {
+                      handleMaterialDelete(material.title, material._id);
+                    }}
                     className={`${colors.bg}/90 shadow-lg shadow-${colors.bg}/10 text-red-500 rounded-lg mt-2 hover:opacity-70 py-2 flex items-center justify-center gap-2`}
                   >
                     {" "}

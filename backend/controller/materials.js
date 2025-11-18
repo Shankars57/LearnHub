@@ -75,7 +75,9 @@ export const featured = async (req, res) => {
     await material.save();
     res.json({
       success: true,
-      message: material.featured ? "Material featured ⭐" : "Remove Featured ⭐",
+      message: material.featured
+        ? "Material featured ⭐"
+        : "Remove Featured ⭐",
     });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
@@ -86,7 +88,7 @@ export const getAllMaterials = async (req, res) => {
   try {
     const data = await pdfModel
       .find()
-      .populate("user", "name email _id")
+      .populate("user", "name email _id userName")
       .sort({ createdAt: -1 });
 
     res.status(200).json({
@@ -99,6 +101,24 @@ export const getAllMaterials = async (req, res) => {
       success: false,
       message: "Server error: " + error.message,
     });
+  }
+};
+
+export const deleteMaterial = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const material = await pdfModel.findByIdAndDelete(id);
+    if (!material) {
+      return res.status(404).json({
+        success: false,
+        message: "Material not found",
+      });
+    }
+    res
+      .status(200)
+      .json({ success: true, message: "Material successfully deleted" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
