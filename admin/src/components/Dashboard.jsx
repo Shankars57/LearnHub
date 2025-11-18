@@ -25,11 +25,13 @@ import {
   ArrowRight,
   PlaneTakeoff,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const color = useColors();
   const { totalUsers, users } = useUserData();
   const { chatRooms, materials } = useStore();
+  const navigate = useNavigate();
 
   const extractCreatedAt = (arr) =>
     arr
@@ -280,12 +282,12 @@ const Dashboard = () => {
                 <Tooltip
                   contentStyle={{
                     backgroundColor: "#1e293b",
-                    color: "#fff",
+                    color: color.bg,
                     borderRadius: 8,
                   }}
                 />
                 <Legend />
-                <Bar dataKey="Messages" fill="#10b981" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="Messages" fill="#ecaa" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -349,6 +351,9 @@ const Dashboard = () => {
           <ul className="divide-y divide-white/10">
             {recentActivities.map((act, i) => (
               <motion.li
+                onClick={() =>
+                  navigate(act.type !== "Chat" ? `/${act.type}s` : "/chatroom")
+                }
                 key={i}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}

@@ -12,6 +12,7 @@ const channelSchema = new mongoose.Schema({
   admin: { type: String },
   password: { type: String, default: null },
   messages: [messageSchema],
+  createdAt: { type: Date, default: Date.now },
 });
 
 const Channel = mongoose.model("Channel", channelSchema);
