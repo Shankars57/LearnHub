@@ -56,9 +56,13 @@ userRouter.get("/profile", verify, async (req, res) => {
   }
 });
 
+userRouter.get("/admin/verify-token", verify, (req, res) => {
+  res.json({ success: true });
+});
+
 userRouter.get("/total-users", async (req, res) => {
   try {
-    const totalUsers = await userModel.find().sort({createdAt:-1});
+    const totalUsers = await userModel.find().sort({ createdAt: -1 });
 
     res.json({ success: true, totalUsers });
   } catch (error) {

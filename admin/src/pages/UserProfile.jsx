@@ -64,7 +64,6 @@ const UserProfile = () => {
     if (item?.user?.email && item.user.email === user.email) return true;
     if (item?.user?.userName && item.user.userName === user.userName)
       return true;
-
     if (item?.uploadedBy) {
       const author = item.uploadedBy.trim().toLowerCase();
       const fullName = `${user.firstName} ${user.lastName}`
