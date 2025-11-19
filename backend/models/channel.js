@@ -12,8 +12,8 @@ const channelSchema = new mongoose.Schema({
   admin: { type: String },
   password: { type: String, default: null },
   messages: [messageSchema],
-  createdAt: { type: Date, default: Date.now },
-});
+ 
+} , {timestamps:true});
 
 const Channel = mongoose.model("Channel", channelSchema);
 export default Channel;
