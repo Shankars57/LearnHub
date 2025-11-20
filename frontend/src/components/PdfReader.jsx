@@ -20,7 +20,7 @@ const PdfReader = ({ url, onClose }) => {
               onClick={onClose}
               className="text-white bg-red-600 px-2 rounded hover:bg-red-700"
             >
-              <X size={14} />
+              Close
             </button>
           </div>
 
