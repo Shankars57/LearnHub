@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useRef } from "react";
 import {
   BookUser,
   Download,
@@ -15,7 +15,7 @@ import { motion } from "framer-motion";
 import Uploader from "../components/Uploader";
 import { LearnContext } from "../../context/LearnContextProvider";
 import { TypeAnimation } from "react-type-animation";
-import { useRef } from "react";
+import PdfReader from "../components/PdfReader";
 
 const bookType = ["all", "notes", "pdf", "docx", "books", "jpg"];
 
@@ -23,8 +23,11 @@ const Materials = () => {
   const [type, setType] = useState("all");
   const [input, setInput] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState(null);
+
   const { materialsData } = useContext(LearnContext);
   const moveUpRef = useRef(null);
+
   const filteredMaterials = materialsData.filter((item) => {
     const matchesType =
       type === "all" || item.fileType.toLowerCase() === type.toLowerCase();
@@ -38,6 +41,10 @@ const Materials = () => {
   return (
     <div className="relative min-h-screen w-full flex flex-col gap-8 bg-gray-900 text-white px-4 py-8">
       {isOpen && <Uploader isOpen={isOpen} setIsOpen={setIsOpen} />}
+
+      {previewUrl && (
+        <PdfReader url={previewUrl} onClose={() => setPreviewUrl(null)} />
+      )}
 
       <motion.div
         initial={{ opacity: 0, y: -40 }}
@@ -103,6 +110,7 @@ const Materials = () => {
           <div ref={moveUpRef} />
         </div>
       </motion.div>
+
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -111,6 +119,7 @@ const Materials = () => {
       >
         {filteredMaterials.map((item, idx) => {
           let FileIcon, iconColor;
+
           switch (item.fileType.toLowerCase()) {
             case "pdf":
               FileIcon = FileChartLine;
@@ -155,9 +164,10 @@ const Materials = () => {
                     {item.fileType.toUpperCase()}
                   </span>
                 </p>
+
                 {item?.featured && (
                   <p className="flex items-center bg-orange-600 px-2 rounded-full text-sm text-white gap-1">
-                    <Star size={15} className="text-yellow-100" />{" "}
+                    <Star size={15} className="text-yellow-100" />
                     <span>Feature</span>
                   </p>
                 )}
@@ -170,33 +180,14 @@ const Materials = () => {
                 <p className="text-blue-400 text-sm">{item.subject}</p>
                 <p className="text-sm text-gray-300">{item.desc}</p>
                 <p className="flex text-white text-gray-500 text-sm items-center gap-2">
-                  <span>
-                    <Calendar size={15} />
-                  </span>
+                  <Calendar size={15} />
                   Upload: {moment(item.updatedAt).fromNow()}
                 </p>
-                {item.fileType === "png" ||
-                  (item.fileType === "jpg" && (
-                    <div className="absolute group w-20 h-20 right-1 ">
-                      <motion.img
-                        whileHover={{ scale: 1.1 }}
-                        src={item.url}
-                        className="w-full h-full  object-fit rounded-md shadow-lg shadow-black/40 hover:shadow-white"
-                      />
-                      <span
-                        className="absolute 
-                      flex items-center justify-center text-white transition ease duration-200
-                      w-full h-full opacity-0 group-hover:opacity-100 bg-black/20  top-0"
-                      >
-                        sample
-                      </span>
-                    </div>
-                  ))}
               </div>
 
               <div className="flex justify-between items-center mt-2 gap-2 flex-wrap">
                 <button
-                  onClick={() => window.open(item.url, "_blank")}
+                  onClick={() => setPreviewUrl(item.url)}
                   className="flex items-center gap-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-3 py-1.5 rounded-md text-sm font-medium shadow-md transition"
                 >
                   <Eye size={16} />
@@ -220,9 +211,9 @@ const Materials = () => {
           );
         })}
       </motion.div>
+
       {filteredMaterials.length === 0 && type !== "all" ? (
-        <h1 className="text-2xl text-center text-red-500 ">
-          {/*Not Found {"   :("}*/}
+        <h1 className="text-2xl text-center text-red-500">
           <TypeAnimation
             sequence={[
               "Not Found :(",
@@ -233,22 +224,14 @@ const Materials = () => {
             wrapper="span"
             speed={60}
             repeat={Infinity}
-            style={{
-              display: "inline-block",
-              whiteSpace: "nowrap",
-            }}
+            style={{ display: "inline-block", whiteSpace: "nowrap" }}
           />
         </h1>
       ) : (
         type === "all" && (
           <h1 className="text-center">
             Please upload new Materials by using the{" "}
-            <b
-              className="text-blue-600  hover:underline"
-              onClick={() => moveUpRef?.current}
-            >
-              Upload button.
-            </b>
+            <b className="text-blue-600 hover:underline">Upload button.</b>
           </h1>
         )
       )}
