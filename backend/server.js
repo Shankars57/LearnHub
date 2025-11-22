@@ -17,6 +17,7 @@ import {
   getChannels,
 } from "./controller/channelController.js";
 import channelRoutes from "./routes/channelsRoute.js";
+import folderRouter from "./routes/folderRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -178,6 +179,7 @@ app.use("/api/material", pdfRouter);
 app.use("/api/user", userRouter);
 app.use("/api/yt", ytRouter);
 app.use("/api/channel", channelRoutes);
+app.use("/api/folder", folderRouter);
 
 app.get("/", (req, res) =>
   res.send("Server is running and ready for connections.")
