@@ -5,21 +5,35 @@ import {
   Eye,
   Trash2,
   Trash,
+  CirclePlus,
 } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import PdfReader from "../PdfReader";
 import axios from "axios";
 import toast from "react-hot-toast";
+import AllMaterialsForAdding from "./AllMaterialsForAdding";
 
 const Folders = ({ filterFolders }) => {
   const [page, setPage] = useState(1);
   const [selectedFolderId, setSelectedFolderId] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [localFolders, setLocalFolders] = useState(filterFolders || []);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     setLocalFolders(filterFolders || []);
   }, [filterFolders]);
+
+  const refreshFolders = useCallback(async () => {
+    try {
+      const { data } = await axios.get("/api/folder/folders");
+      if (data.success) {
+        setLocalFolders(data.folder);
+      }
+    } catch (error) {
+      toast.error(error.message || "Failed to refresh folders");
+    }
+  }, []);
 
   const limit = 4;
   const totalPages =
@@ -37,7 +51,7 @@ const Folders = ({ filterFolders }) => {
 
   const handleDeleteFolder = async (id) => {
     try {
-      const { data } = await axios.delete(`api/folder/delete/${id}`);
+      const { data } = await axios.delete(`/api/folder/delete/${id}`);
       if (data.success) {
         toast.success(data.message || "Folder deleted");
         setLocalFolders((prev) => prev.filter((f) => f._id !== id));
@@ -53,7 +67,7 @@ const Folders = ({ filterFolders }) => {
   const handleDeleteMaterial = async (folderId, materialId) => {
     try {
       const { data } = await axios.delete(
-        `api/folder/delete/${folderId}/${materialId}`
+        `/api/folder/delete/${folderId}/${materialId}`
       );
       if (data.success) {
         toast.success(data.message || "Material deleted");
@@ -156,6 +170,22 @@ const Folders = ({ filterFolders }) => {
                 <h2 className="text-lg md:text-xl font-semibold">
                   {folderToShow.name}
                 </h2>
+                <div className="relative">
+                  <button
+                    onClick={() => setOpen(true)}
+                    title="Add materials"
+                    className="flex items-center px-2"
+                  >
+                    <CirclePlus />
+                  </button>
+                  {open && (
+                    <AllMaterialsForAdding
+                      setOpen={setOpen}
+                      folderId={folderToShow._id}
+                      onUpdated={refreshFolders}
+                    />
+                  )}
+                </div>
               </div>
               <p className="text-xs md:text-sm text-gray-300">
                 Materials: {folderToShow.materials?.length || 0}

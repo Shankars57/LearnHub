@@ -301,11 +301,11 @@ const Materials = () => {
                     {save && index === idx && (
                       <motion.div
                         whileHover={{ scale: 1.05 }}
-                        className="flex absolute right-1 flex-col max-h-40 overflow-y-auto custom-scrollbar items-start bg-black/80 gap-2 z-[9999] px-2 py-1"
+                        className="flex absolute right-1 flex-col max-h-40  overflow-y-auto custom-scrollbar items-start bg-black/80 gap-2 z-[9999] px-2 py-1"
                       >
                         {filterFolders.map((folderItem, folderIdx) => (
                           <button
-                            className="flex items-center gap-1"
+                            className="flex items-center gap-1 w-full hover:bg-blue-900 px-2 py-1 rounded-lg "
                             onClick={() =>
                               addMaterialToFolder(folderItem._id, item)
                             }
