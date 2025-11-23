@@ -214,150 +214,152 @@ const Materials = () => {
       </motion.div>
 
       {options === "mat" ? (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-[90%] mx-auto mt-6"
-        >
-          {filteredMaterials.map((item, idx) => {
-            let FileIcon, iconColor;
+        <div className="w-[90%] mx-auto mt-6 max-h-[450px] overflow-y-auto py-5 px-2 custom-scrollbar pr-1">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+          >
+            {filteredMaterials.map((item, idx) => {
+              let FileIcon, iconColor;
 
-            switch (item.fileType.toLowerCase()) {
-              case "pdf":
-                FileIcon = FileChartLine;
-                iconColor = "bg-red-600";
-                break;
-              case "docx":
-              case "txt":
-                FileIcon = FileArchive;
-                iconColor = "bg-green-600";
-                break;
-              case "jpg":
-              case "png":
-                FileIcon = FileChartColumn;
-                iconColor = "bg-yellow-500";
-                break;
-              default:
-                FileIcon = FileChartLine;
-                iconColor = "bg-blue-600";
-            }
+              switch (item.fileType.toLowerCase()) {
+                case "pdf":
+                  FileIcon = FileChartLine;
+                  iconColor = "bg-red-600";
+                  break;
+                case "docx":
+                case "txt":
+                  FileIcon = FileArchive;
+                  iconColor = "bg-green-600";
+                  break;
+                case "jpg":
+                case "png":
+                  FileIcon = FileChartColumn;
+                  iconColor = "bg-yellow-500";
+                  break;
+                default:
+                  FileIcon = FileChartLine;
+                  iconColor = "bg-blue-600";
+              }
 
-            const isNew = idx < 2;
+              const isNew = idx < 2;
 
-            return (
-              <motion.div
-                key={idx}
-                whileHover={{ scale: 1.05 }}
-                className="relative w-full bg-gray-800/60 border border-gray-700 rounded-xl flex flex-col gap-3 px-4 py-4 text-gray-300 hover:shadow-md hover:shadow-gray-800/40 transition-all"
-              >
-                {isNew && (
-                  <span className="absolute top-3 right-3 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full font-semibold shadow-md">
-                    New
-                  </span>
-                )}
-
-                <div className="w-full flex items-center justify-between">
-                  <p className="flex items-center gap-2 text-sm sm:text-base">
-                    <FileIcon
-                      size={20}
-                      className={`text-white w-8 h-8 rounded-lg p-1 ${iconColor}`}
-                    />
-                    <span className="bg-white/30 px-2 rounded-md">
-                      {item.fileType.toUpperCase()}
+              return (
+                <motion.div
+                  key={idx}
+                  whileHover={{ scale: 1.05 }}
+                  className="relative w-full bg-gray-800/60 border border-gray-700 rounded-xl flex flex-col gap-3 px-4 py-4 text-gray-300 hover:shadow-md hover:shadow-gray-800/40 transition-all"
+                >
+                  {isNew && (
+                    <span className="absolute top-3 right-3 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full font-semibold shadow-md">
+                      New
                     </span>
-                  </p>
-
-                  {item?.featured && (
-                    <p className="flex items-center bg-orange-600 px-2 rounded-full text-sm text-white gap-1">
-                      <Star size={15} className="text-yellow-100" />
-                      <span>Feature</span>
-                    </p>
                   )}
-                </div>
 
-                <div className="absolute right-5 top-10">
-                  <div title="save" className="relative">
-                    {!save && (
-                      <button
-                        onClick={() => {
-                          setIndex(idx);
-                          setSave(true);
-                        }}
-                      >
-                        <Bookmark />
-                      </button>
-                    )}
-                    {save && index === idx && (
-                      <button
-                        onClick={() => {
-                          setSave(false);
-                        }}
-                      >
-                        <X />
-                      </button>
-                    )}
+                  <div className="w-full flex items-center justify-between">
+                    <p className="flex items-center gap-2 text-sm sm:text-base">
+                      <FileIcon
+                        size={20}
+                        className={`text-white w-8 h-8 rounded-lg p-1 ${iconColor}`}
+                      />
+                      <span className="bg-white/30 px-2 rounded-md">
+                        {item.fileType.toUpperCase()}
+                      </span>
+                    </p>
 
-                    {save && index === idx && (
-                      <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        className="flex absolute right-1 flex-col max-h-40  overflow-y-auto custom-scrollbar items-start bg-black/80 gap-2 z-[9999] px-2 py-1"
-                      >
-                        {filterFolders.map((folderItem, folderIdx) => (
-                          <button
-                            className="flex items-center gap-1 w-full hover:bg-blue-900 px-2 py-1 rounded-lg "
-                            onClick={() =>
-                              addMaterialToFolder(folderItem._id, item)
-                            }
-                            key={folderIdx}
-                          >
-                            <Folder />
-                            {folderItem.name}
-                          </button>
-                        ))}
-                      </motion.div>
+                    {item?.featured && (
+                      <p className="flex items-center bg-orange-600 px-2 rounded-full text-sm text-white gap-1">
+                        <Star size={15} className="text-yellow-100" />
+                        <span>Feature</span>
+                      </p>
                     )}
                   </div>
-                </div>
 
-                <div className="flex flex-col gap-1">
-                  <h1 className="text-xl capitalize text-white font-semibold hover:text-blue-400 transition">
-                    {item.title}
-                  </h1>
-                  <p className="text-blue-400 text-sm">{item.subject}</p>
-                  <p className="text-sm text-gray-300">{item.desc}</p>
-                  <p className="flex text-white text-gray-500 text-sm items-center gap-2">
-                    <Calendar size={15} />
-                    Upload: {moment(item.updatedAt).fromNow()}
-                  </p>
-                </div>
+                  <div className="absolute right-5 top-10">
+                    <div title="save" className="relative">
+                      {!save && (
+                        <button
+                          onClick={() => {
+                            setIndex(idx);
+                            setSave(true);
+                          }}
+                        >
+                          <Bookmark />
+                        </button>
+                      )}
+                      {save && index === idx && (
+                        <button
+                          onClick={() => {
+                            setSave(false);
+                          }}
+                        >
+                          <X />
+                        </button>
+                      )}
 
-                <div className="flex justify-between items-center mt-2 gap-2 flex-wrap">
-                  <button
-                    onClick={() => setPreviewUrl(item.url)}
-                    className="flex items-center gap-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-3 py-1.5 rounded-md text-sm font-medium shadow-md transition"
-                  >
-                    <Eye size={16} />
-                    Preview
-                  </button>
+                      {save && index === idx && (
+                        <motion.div
+                          whileHover={{ scale: 1.05 }}
+                          className="flex absolute right-1 flex-col max-h-40 overflow-y-auto custom-scrollbar items-start bg-black/80 gap-2 z-[9999] px-2 py-5"
+                        >
+                          {filterFolders.map((folderItem, folderIdx) => (
+                            <button
+                              className="flex items-center gap-1 w-full hover:bg-blue-900 px-2 py-1 rounded-lg"
+                              onClick={() =>
+                                addMaterialToFolder(folderItem._id, item)
+                              }
+                              key={folderIdx}
+                            >
+                              <Folder />
+                              {folderItem.name}
+                            </button>
+                          ))}
+                        </motion.div>
+                      )}
+                    </div>
+                  </div>
 
-                  <a
-                    href={item.url}
-                    download
-                    className="flex items-center gap-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-3 py-1.5 rounded-md text-sm font-medium shadow-md transition"
-                  >
-                    <Download size={16} />
-                    Download
-                  </a>
+                  <div className="flex flex-col gap-1">
+                    <h1 className="text-xl capitalize text-white font-semibold hover:text-blue-400 transition">
+                      {item.title}
+                    </h1>
+                    <p className="text-blue-400 text-sm">{item.subject}</p>
+                    <p className="text-sm text-gray-300">{item.desc}</p>
+                    <p className="flex text-white text-gray-500 text-sm items-center gap-2">
+                      <Calendar size={15} />
+                      Upload: {moment(item.updatedAt).fromNow()}
+                    </p>
+                  </div>
 
-                  <p className="text-xs flex items-center gap-1 text-yellow-400 font-semibold">
-                    <Star size={14} /> 4.9
-                  </p>
-                </div>
-              </motion.div>
-            );
-          })}
-        </motion.div>
+                  <div className="flex justify-between items-center mt-2 gap-2 flex-wrap">
+                    <button
+                      onClick={() => setPreviewUrl(item.url)}
+                      className="flex items-center gap-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-3 py-1.5 rounded-md text-sm font-medium shadow-md transition"
+                    >
+                      <Eye size={16} />
+                      Preview
+                    </button>
+
+                    <a
+                      href={item.url}
+                      download
+                      className="flex items-center gap-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-3 py-1.5 rounded-md text-sm font-medium shadow-md transition"
+                    >
+                      <Download size={16} />
+                      Download
+                    </a>
+
+                    <p className="text-xs flex items-center gap-1 text-yellow-400 font-semibold">
+                      <Star size={14} /> 4.9
+                    </p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </div>
       ) : (
         <Folders filterFolders={filterFolders} />
       )}

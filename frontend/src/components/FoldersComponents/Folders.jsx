@@ -192,53 +192,55 @@ const Folders = ({ filterFolders }) => {
               </p>
             </div>
 
-            {folderToShow.materials && folderToShow.materials.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {folderToShow.materials.map((mat) => (
-                  <div
-                    key={mat._id}
-                    className="flex flex-col justify-between bg-gray-800/80 rounded-xl px-3 py-3 md:px-4 md:py-4 shadow-md border border-gray-700/60"
-                  >
-                    <div className="flex flex-col gap-1 mb-3">
-                      <span className="text-sm md:text-base font-medium text-white line-clamp-2">
-                        {mat.title}
-                      </span>
-                      <a
-                        target="__blank"
-                        href={mat.link}
-                        className="text-[11px] md:text-xs text-gray-300 break-all max-h-10 overflow-hidden"
-                      >
-                        Link
-                      </a>
-                    </div>
+            <div className="max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
+              {folderToShow.materials && folderToShow.materials.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {folderToShow.materials.map((mat) => (
+                    <div
+                      key={mat._id}
+                      className="flex flex-col justify-between bg-gray-800/80 rounded-xl px-3 py-3 md:px-4 md:py-4 shadow-md border border-gray-700/60"
+                    >
+                      <div className="flex flex-col gap-1 mb-3">
+                        <span className="text-sm md:text-base font-medium text-white line-clamp-2">
+                          {mat.title}
+                        </span>
+                        <a
+                          target="__blank"
+                          href={mat.link}
+                          className="text-[11px] md:text-xs text-gray-300 break-all max-h-10 overflow-hidden"
+                        >
+                          Link
+                        </a>
+                      </div>
 
-                    <div className="flex items-center justify-between mt-auto gap-2">
-                      <button
-                        onClick={() => setPreviewUrl(mat.link)}
-                        className="flex-1 flex items-center justify-center gap-1 text-[11px] md:text-xs bg-blue-600 px-2 py-1.5 rounded-lg hover:bg-blue-700"
-                      >
-                        <Eye className="w-4 h-4" />
-                        Preview
-                      </button>
+                      <div className="flex items-center justify-between mt-auto gap-2">
+                        <button
+                          onClick={() => setPreviewUrl(mat.link)}
+                          className="flex-1 flex items-center justify-center gap-1 text-[11px] md:text-xs bg-blue-600 px-2 py-1.5 rounded-lg hover:bg-blue-700"
+                        >
+                          <Eye className="w-4 h-4" />
+                          Preview
+                        </button>
 
-                      <button
-                        onClick={() =>
-                          handleDeleteMaterial(folderToShow._id, mat._id)
-                        }
-                        className="flex items-center justify-center gap-1 text-[11px] md:text-xs bg-red-600 px-2 py-1.5 rounded-lg hover:bg-red-700"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                        Delete
-                      </button>
+                        <button
+                          onClick={() =>
+                            handleDeleteMaterial(folderToShow._id, mat._id)
+                          }
+                          className="flex items-center justify-center gap-1 text-[11px] md:text-xs bg-red-600 px-2 py-1.5 rounded-lg hover:bg-red-700"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          Delete
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm md:text-base text-gray-300 text-center py-6">
-                No materials saved in this folder yet.
-              </p>
-            )}
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm md:text-base text-gray-300 text-center py-6">
+                  No materials saved in this folder yet.
+                </p>
+              )}
+            </div>
           </>
         ) : (
           <p className="text-sm md:text-base text-gray-300 text-center py-6">
