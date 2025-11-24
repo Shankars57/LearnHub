@@ -23,6 +23,7 @@ import CreateFolder from "../components/FoldersComponents/CreateFolder";
 import axios from "axios";
 import Folders from "../components/FoldersComponents/Folders";
 import { toast } from "react-hot-toast";
+import useMaterialStore from "../../store/useMaterialStore";
 
 const bookType = ["all", "notes", "pdf", "docx", "books", "jpg"];
 
@@ -33,13 +34,14 @@ const Materials = () => {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isOpenFolder, setIsOpenFolder] = useState(false);
   const { materialsData, userData } = useContext(LearnContext);
-  const [options, setOptions] = useState("mat");
+
   const moveUpRef = useRef(null);
   const [isFolderUploaded, setIsFolderUploaded] = useState(false);
   const [folders, setFolders] = useState([]);
   const [save, setSave] = useState(false);
   const [index, setIndex] = useState(0);
   const [update, setUpdate] = useState(false);
+  const { options, setOptions } = useMaterialStore();
 
   const getFolders = async () => {
     try {
@@ -364,7 +366,7 @@ const Materials = () => {
         <Folders filterFolders={filterFolders} />
       )}
 
-      {filteredMaterials.length === 0 && type !== "all" ? (
+      {filteredMaterials.length === 0 && type !== "all" && options === "mat" ? (
         <h1 className="text-2xl text-center text-red-500">
           <TypeAnimation
             sequence={[
