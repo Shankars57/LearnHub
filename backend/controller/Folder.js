@@ -49,9 +49,9 @@ export const deleteFolder = async (req, res) => {
     if (!folder) {
       res.json({ success: false, message: "No folder found" });
     }
-    res.json({ success: true ,message:"Folder deleted"});
+    res.json({ success: true, message: "Folder deleted" });
   } catch (error) {
-     res.json({ success: false, message: error.message });
+    res.json({ success: false, message: error.message });
   }
 };
 

@@ -9,6 +9,7 @@ import { useEffect } from "react";
 const CreateFolder = ({ setIsOpenFolder, setIsFolderUploaded }) => {
   const { token } = useContext(LearnContext);
   const inputRef = useRef();
+  const [disable, setDisable] = useState(false);
   const [folderData, setFolderData] = useState({
     name: "",
     type: "public",
@@ -25,7 +26,7 @@ const CreateFolder = ({ setIsOpenFolder, setIsFolderUploaded }) => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-
+    setDisable(true);
     try {
       const { data } = await axios.post(
         "/api/folder/create",
@@ -45,6 +46,8 @@ const CreateFolder = ({ setIsOpenFolder, setIsFolderUploaded }) => {
       }
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      setDisable(false);
     }
   };
 
@@ -96,9 +99,12 @@ const CreateFolder = ({ setIsOpenFolder, setIsFolderUploaded }) => {
         </div>
         <button
           type="submit"
-          className="flex gap-2 px-2 py-1 bg-blue-800 text-white rounded-lg"
+          disabled={disable}
+          className={`flex gap-2 px-2 py-1 bg-blue-800 text-white rounded-lg ${
+             disable && "opacity-60"
+          }`}
         >
-          <CirclePlus /> create
+          <CirclePlus /> { !disable ? "create" : "Creating"}
         </button>
       </form>
     </div>
