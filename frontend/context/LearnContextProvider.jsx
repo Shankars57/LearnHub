@@ -47,7 +47,8 @@ const LearnContextProvider = ({ children }) => {
       });
       if (data.success) {
         setUserData(data.user);
-        localStorage.setItem("user", JSON.stringify(data.user));
+        const { email, ...safeUser } = data.user;
+        localStorage.setItem("user", JSON.stringify(safeUser));
       }
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
