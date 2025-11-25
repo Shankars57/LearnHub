@@ -18,7 +18,7 @@ const SideBarDemo = () => {
   const [open, setOpen] = useState(false);
   const [channels, setChannels] = useState([]);
   const [roomName, setRoomName] = useState("");
-  const { roomNames, setRoomNames } = useChatRoomTheme();
+  const { roomNames, setRoomNames, roomId, setRoomId } = useChatRoomTheme();
   const [roomPassword, setRoomPassword] = useState("");
   const [username, setUsername] = useState(
     () => localStorage.getItem("username") || ""
@@ -173,7 +173,10 @@ const SideBarDemo = () => {
                   className="relative flex items-center justify-between px-4 py-2 rounded-lg hover:bg-gray-700/60 transition"
                 >
                   <NavLink
-                    onClick={() => setOpen(false)}
+                    onClick={() => {
+                      setOpen(false);
+                      setRoomId(item.name, item._id);
+                    }}
                     to={`/chats/${item._id}`}
                     className={({ isActive }) =>
                       `flex-1 text-left ${

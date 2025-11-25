@@ -7,9 +7,10 @@ export const useChatRoomTheme = create(
       theme: "vs-dark",
       roomNames: [],
       currentChatRoom: "",
+      roomId: {},
+      setRoomId: (name, id) => set({ roomId: { name, id } }),
       setRoomNames: (roomNames) => set({ roomNames }),
       setCurrentChatRoom: (name) => set({ currentChatRoom: name }),
-
       setTheme: (t) => set({ theme: t }),
     }),
     { name: "chatroom-theme" }

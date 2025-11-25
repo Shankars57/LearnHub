@@ -7,6 +7,7 @@ import { memo } from "react";
 import AboutUs from "./pages/AboutUs";
 import ContactPage from "./pages/ContactPage";
 import Spinner from "./components/Spinner";
+import { useChatRoomTheme } from "../store/useChatRoomTheme";
 const Home = lazy(() => import("./pages/Home"));
 const Materials = lazy(() => import("./pages/Materials"));
 const Chat = lazy(() => import("./pages/Chat"));
@@ -31,7 +32,7 @@ const NotFound = () => (
 
 const App = () => {
   const { token, userData } = useContext(LearnContext);
-
+  const { roomId } = useChatRoomTheme();
   return (
     <>
       <Toaster />
@@ -59,7 +60,7 @@ const App = () => {
             <Route path="/chats" element={<Chat />}>
               <Route
                 index
-                element={<Navigate to="6901a102e93045ffc9ef8c24" replace />}
+                element={<Navigate to={roomId.id ? roomId.id : "" } replace />}
               />
               <Route path=":roomId" element={<ChatRoomDemo />} />
             </Route>
