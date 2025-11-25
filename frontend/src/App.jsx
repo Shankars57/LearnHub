@@ -60,7 +60,7 @@ const App = () => {
             <Route path="/chats" element={<Chat />}>
               <Route
                 index
-                element={<Navigate to={roomId.id ? roomId.id : "" } replace />}
+                element={<Navigate to={roomId.id && roomId.id} replace />}
               />
               <Route path=":roomId" element={<ChatRoomDemo />} />
             </Route>

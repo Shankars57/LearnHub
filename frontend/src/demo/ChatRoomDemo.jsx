@@ -160,60 +160,58 @@ const ChatRoomDemo = () => {
     }
   };
 
+  if (!roomId) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center gap-6 text-center px-4">
+        <div className="text-4xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-4 animate-pulse">
+          Please Select a Room or Create a New One
+          <MessageCircle className="text-indigo-500 w-12 h-12 drop-shadow-lg" />
+        </div>
+
+        <p className="text-lg text-gray-500 dark:text-gray-300 max-w-lg">
+          Start a conversation and enjoy real-time chatting with your friends.
+        </p>
+        <button
+          className="px-8 py-3 rounded-2xl bg-indigo-600 text-white font-semibold text-lg shadow-lg
+    hover:bg-indigo-700 hover:scale-105 transition-all duration-300"
+        >
+          Create Room
+        </button>
+      </div>
+    );
+  }
+
   if (!joined) {
     const name = roomNames.find((item) => item.id === roomId);
     return (
-      <>
-        {roomId ? (
-          <div className="flex flex-col items-center justify-center h-full w-full p-6 text-center space-y-3">
-            <h2 className="text-2xl sm:text-3xl font-bold capitalize">
-              Join # {name?.name || roomName || roomId}
-            </h2>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter your username"
-              className="px-4 py-2 rounded-lg border w-full max-w-xs outline-none"
-            />
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter room password (if any)"
-              className="px-4 py-2 rounded-lg border w-full max-w-xs outline-none"
-            />
-            <button
-              onClick={joinRoom}
-              className="px-6 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white w-full max-w-xs"
-            >
-              Join Room
-            </button>
-          </div>
-        ) : (
-          <div className="h-full flex flex-col items-center justify-center gap-6 text-center px-4">
-            <div className="text-4xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-4 animate-pulse">
-              Please Select a Room or Create a New One
-              <MessageCircle className="text-indigo-500 w-12 h-12 drop-shadow-lg" />
-            </div>
-
-            <p className="text-lg text-gray-500 dark:text-gray-300 max-w-lg">
-              Start a conversation and enjoy real-time chatting with your
-              friends.
-            </p>
-
-            <button
-            
-              className="px-8 py-3 rounded-2xl bg-indigo-600 text-white font-semibold text-lg shadow-lg
-    hover:bg-indigo-700 hover:scale-105 transition-all duration-300"
-            >
-              Create Room
-            </button>
-          </div>
-        )}
-      </>
+      <div className="flex flex-col items-center justify-center h-full w-full p-6 text-center space-y-3">
+        <h2 className="text-2xl sm:text-3xl font-bold capitalize">
+          Join # {name?.name || roomName || roomId}
+        </h2>
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Enter your username"
+          className="px-4 py-2 rounded-lg border w-full max-w-xs outline-none"
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Enter room password (if any)"
+          className="px-4 py-2 rounded-lg border w-full max-w-xs outline-none"
+        />
+        <button
+          onClick={joinRoom}
+          className="px-6 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white w-full max-w-xs"
+        >
+          Join Room
+        </button>
+      </div>
     );
   }
+
   return (
     <div className={`flex flex-col h-full w-full ${currentTheme.chatBg}`}>
       <div
@@ -268,7 +266,7 @@ const ChatRoomDemo = () => {
       )}
 
       <div
-        className={`relative flex-1 p-4 overflow-y-auto space-y-3 overflow-x-hidden ${currentTheme.bg}   custom-scrollbar `}
+        className={`relative flex-1 p-4 overflow-y-auto space-y-3 overflow-x-hidden ${currentTheme.bg} custom-scrollbar`}
       >
         {messages.length === 0 ? (
           <p className="text-gray-400 text-center italic mt-10">
@@ -306,7 +304,7 @@ const ChatRoomDemo = () => {
             e.target.style.height = `${Math.min(e.target.scrollHeight, 50)}px`;
             handleTyping(e);
           }}
-          className={`flex-1 px-4 py-2 h-[50px] bg-[#1E1E1E]/90 custom-scrollbar text-gray-100 rounded-lg border border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-none resize-none shadow-inner sm:placeholder:text-xs md:placeholder:text-sm placeholder:truncate`}
+          className={`flex-1 px-4 py-2 h-[50px] bg-[#1E1E1E]/90 custom-scrollbar text-gray-100 rounded-lg border border-blue-600 focus:outline-none flu`}
         />
         <button
           onClick={sendMessage}
