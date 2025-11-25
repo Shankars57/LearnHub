@@ -346,6 +346,7 @@ const Materials = () => {
 
                     <a
                       href={item.url}
+                      target="__blank"
                       download
                       className="flex items-center gap-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-3 py-1.5 rounded-md text-sm font-medium shadow-md transition"
                     >
