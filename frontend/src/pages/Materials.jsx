@@ -46,11 +46,9 @@ const Materials = () => {
   const getFolders = async () => {
     try {
       const { data } = await axios.get(`/api/folder/folders`);
-      if (data.success) {
-        setFolders(data.folder);
-      }
+      if (data.success) setFolders(data.folder);
     } catch (error) {
-      toast.error(error.message || "Failed to fetch folders");
+      toast.error(error.message);
     }
   };
 
@@ -65,11 +63,11 @@ const Materials = () => {
         link: material.url,
       });
       if (data.success) {
-        toast.success(data.message || "Saved to folder");
+        toast.success(data.message);
         setSave(false);
         setUpdate((prev) => !prev);
       } else {
-        toast.error(data.message || "Failed to save material");
+        toast.error(data.message);
       }
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
@@ -92,11 +90,9 @@ const Materials = () => {
   return (
     <div className="relative min-h-screen w-full flex flex-col gap-8 bg-gray-900 text-white px-4 py-8">
       {isOpen && <Uploader isOpen={isOpen} setIsOpen={setIsOpen} />}
-
       {previewUrl && (
         <PdfReader url={previewUrl} onClose={() => setPreviewUrl(null)} />
       )}
-
       {isOpenFolder && (
         <CreateFolder
           setIsOpenFolder={setIsOpenFolder}
@@ -166,8 +162,6 @@ const Materials = () => {
             Upload
           </motion.button>
 
-          <div ref={moveUpRef} />
-
           <div className="flex gap-2">
             <motion.button
               whileHover={{ scale: 1.1 }}
@@ -200,6 +194,7 @@ const Materials = () => {
           >
             Materials
           </motion.button>
+
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
@@ -346,8 +341,8 @@ const Materials = () => {
 
                     <a
                       href={item.url}
-                      target="__blank"
-                      download
+                      target="_blank"
+                      download={`${item.title}.${item.fileType}`}
                       className="flex items-center gap-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-3 py-1.5 rounded-md text-sm font-medium shadow-md transition"
                     >
                       <Download size={16} />
