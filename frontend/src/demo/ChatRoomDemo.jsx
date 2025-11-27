@@ -166,27 +166,6 @@ const ChatRoomDemo = () => {
     }
   };
 
-  if (!roomState) {
-    return (
-      <div className="h-full flex flex-col items-center justify-center gap-6 text-center px-4">
-        <div className="text-4xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-4 animate-pulse">
-          Please Select a Room or Create a New One
-          <MessageCircle className="text-indigo-500 w-12 h-12 drop-shadow-lg" />
-        </div>
-
-        <p className="text-lg text-gray-500 dark:text-gray-300 max-w-lg">
-          Start a conversation and enjoy real-time chatting with your friends.
-        </p>
-        <button
-          className="px-8 py-3 rounded-2xl bg-indigo-600 text-white font-semibold text-lg shadow-lg
-    hover:bg-indigo-700 hover:scale-105 transition-all duration-300"
-        >
-          Create Room
-        </button>
-      </div>
-    );
-  }
-
   if (!joined) {
     const name = roomNames.find((item) => item.id === roomId);
     return (
