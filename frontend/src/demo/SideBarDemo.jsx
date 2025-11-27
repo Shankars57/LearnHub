@@ -18,7 +18,8 @@ const SideBarDemo = () => {
   const [open, setOpen] = useState(false);
   const [channels, setChannels] = useState([]);
   const [roomName, setRoomName] = useState("");
-  const { roomNames, setRoomNames, roomId, setRoomId } = useChatRoomTheme();
+  const { roomNames, setRoomNames, roomId, setRoomId, setRoomState } =
+    useChatRoomTheme();
   const [roomPassword, setRoomPassword] = useState("");
   const [username, setUsername] = useState(
     () => localStorage.getItem("username") || ""
@@ -175,6 +176,7 @@ const SideBarDemo = () => {
                   <NavLink
                     onClick={() => {
                       setOpen(false);
+                      setRoomState(roomId.name && true);
                       setRoomId(item.name, item._id);
                     }}
                     to={`/chats/${item._id}`}

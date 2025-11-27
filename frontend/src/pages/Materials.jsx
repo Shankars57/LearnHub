@@ -34,7 +34,6 @@ const Materials = () => {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isOpenFolder, setIsOpenFolder] = useState(false);
   const { materialsData, userData } = useContext(LearnContext);
-
   const moveUpRef = useRef(null);
   const [isFolderUploaded, setIsFolderUploaded] = useState(false);
   const [folders, setFolders] = useState([]);
@@ -86,7 +85,6 @@ const Materials = () => {
   const filterFolders = folders.filter(
     (item) => item?.user?.email === userData?.email
   );
-
   return (
     <div className="relative min-h-screen w-full flex flex-col gap-8 bg-gray-900 text-white px-4 py-8">
       {isOpen && <Uploader isOpen={isOpen} setIsOpen={setIsOpen} />}

@@ -347,7 +347,9 @@ const AI = () => {
             e.target.style.height = "auto";
             e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
           }}
-          className={`flex-1 px-4 py-2 h-[50px] bg-[#1E1E1E]/90 text-gray-100 custom-scrollbar rounded-lg border ${t.border} focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-none resize-none shadow-inner`}
+          className={`flex-1 px-4 py-2 
+          h-[50px] bg-[#1E1E1E]/90 text-gray-100 custom-scrollbar rounded-lg border ${t.border} focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-none resize-none
+           shadow-inner`}
         />
         <button
           onClick={handleSend}

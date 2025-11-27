@@ -32,7 +32,7 @@ const NotFound = () => (
 
 const App = () => {
   const { token, userData } = useContext(LearnContext);
-  const { roomId } = useChatRoomTheme();
+  const { roomId  } = useChatRoomTheme();
   return (
     <>
       <Toaster />

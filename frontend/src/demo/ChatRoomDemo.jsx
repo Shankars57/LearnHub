@@ -22,15 +22,21 @@ const ChatRoomDemo = () => {
   const socketRef = useRef(null);
   const bottomRef = useRef(null);
   const typingTimeoutRef = useRef(null);
-
   const inputRef = useRef(null);
   const { user } = useAuthStore();
   const [username, setUsername] = useState("");
   const { pinnedMessages, clearPinnedMessage } = usePinnedMessage();
   const pinnedMessage = pinnedMessages[roomId];
   const [roomName, setRoomName] = useState("");
-  const { theme, setTheme, roomNames, setCurrentChatRoom, currentChatRoom } =
-    useChatRoomTheme();
+  const {
+    theme,
+    setTheme,
+    roomNames,
+    setCurrentChatRoom,
+    currentChatRoom,
+    roomState,
+    setRoomState,
+  } = useChatRoomTheme();
   const currentTheme = themes[theme] || themes["vs-dark"];
 
   useEffect(() => {
@@ -160,7 +166,7 @@ const ChatRoomDemo = () => {
     }
   };
 
-  if (!roomId) {
+  if (!roomState) {
     return (
       <div className="h-full flex flex-col items-center justify-center gap-6 text-center px-4">
         <div className="text-4xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-4 animate-pulse">
@@ -184,31 +190,33 @@ const ChatRoomDemo = () => {
   if (!joined) {
     const name = roomNames.find((item) => item.id === roomId);
     return (
-      <div className="flex flex-col items-center justify-center h-full w-full p-6 text-center space-y-3">
-        <h2 className="text-2xl sm:text-3xl font-bold capitalize">
-          Join # {name?.name || roomName || roomId}
-        </h2>
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="Enter your username"
-          className="px-4 py-2 rounded-lg border w-full max-w-xs outline-none"
-        />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Enter room password (if any)"
-          className="px-4 py-2 rounded-lg border w-full max-w-xs outline-none"
-        />
-        <button
-          onClick={joinRoom}
-          className="px-6 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white w-full max-w-xs"
-        >
-          Join Room
-        </button>
-      </div>
+      <>
+        <div className="flex flex-col items-center justify-center h-full w-full p-6 text-center space-y-3">
+          <h2 className="text-2xl sm:text-3xl font-bold capitalize">
+            Join # {name?.name || roomName || roomId}
+          </h2>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Enter your username"
+            className="px-4 py-2 rounded-lg border w-full max-w-xs outline-none"
+          />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter room password (if any)"
+            className="px-4 py-2 rounded-lg border w-full max-w-xs outline-none"
+          />
+          <button
+            onClick={joinRoom}
+            className="px-6 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white w-full max-w-xs"
+          >
+            Join Room
+          </button>
+        </div>
+      </>
     );
   }
 
@@ -304,7 +312,7 @@ const ChatRoomDemo = () => {
             e.target.style.height = `${Math.min(e.target.scrollHeight, 50)}px`;
             handleTyping(e);
           }}
-          className={`flex-1 px-4 py-2 h-[50px] bg-[#1E1E1E]/90 custom-scrollbar text-gray-100 rounded-lg border border-blue-600 focus:outline-none flu`}
+          className={`flex-1 px-4 py-2 h-[50px] bg-[#1E1E1E]/90 custom-scrollbar text-gray-100 rounded-lg border border-blue-600 focus:outline-none resize-none flu`}
         />
         <button
           onClick={sendMessage}

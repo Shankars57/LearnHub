@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import Sidebar from "../layout/Sidebar";
 import { Outlet } from "react-router-dom";
 import SideBarDemo from "../demo/SideBarDemo";
 
 const Chat = () => {
+  const [roomState, setRoomState] = useState(false);
   return (
     <section
       id="features"
@@ -14,7 +15,7 @@ const Chat = () => {
       <div className="absolute top-0 left-0 bg-grid-pattern "></div>
       <div className="flex flex-col md:flex-row md:pl-8 mx-auto h-[90vh]  ">
         <div className="w-full md:w-64 mb-4 md:mb-0 md:mr-4">
-          <SideBarDemo />
+          <SideBarDemo setRoomState={setRoomState} />
         </div>
         <div
           className="flex-1
@@ -22,7 +23,7 @@ const Chat = () => {
          rounded-xl shadow-md shadow-blue-800/50 overflow-y-auto
          border border-gray-800"
         >
-          <Outlet />
+          <Outlet roomState={roomState} />
         </div>
       </div>
     </section>
