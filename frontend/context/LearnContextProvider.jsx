@@ -15,7 +15,7 @@ const LearnContextProvider = ({ children }) => {
   const [userData, setUserData] = useState({});
   const [materialsData, setMaterialsData] = useState([]);
   const [uploadState, setUploadState] = useState(false);
-
+  const [refresh, setRefresh] = useState(false);
   const isTokenValid = (token) => {
     if (!token) return false;
     try {
@@ -63,11 +63,14 @@ const LearnContextProvider = ({ children }) => {
   }, [token]);
 
   const getAllMaterials = async () => {
+    setRefresh(true);
     try {
       const { data } = await axios.get("/api/material/get-materials");
       if (data.success) setMaterialsData(data.data);
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
+    } finally {
+      setRefresh(false);
     }
   };
 
@@ -101,6 +104,9 @@ const LearnContextProvider = ({ children }) => {
     setUserData,
     uploadState,
     setUploadState,
+    getAllMaterials,
+    refresh,
+    setRefresh,
   };
 
   return (

@@ -12,6 +12,8 @@ import {
   Bookmark,
   Folder,
   X,
+  RefreshCcw,
+  RefreshCcwDot,
 } from "lucide-react";
 import moment from "moment";
 import { motion } from "framer-motion";
@@ -33,13 +35,15 @@ const Materials = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isOpenFolder, setIsOpenFolder] = useState(false);
-  const { materialsData, userData } = useContext(LearnContext);
+  const { materialsData, userData, getAllMaterials, refresh } =
+    useContext(LearnContext);
   const moveUpRef = useRef(null);
   const [isFolderUploaded, setIsFolderUploaded] = useState(false);
   const [folders, setFolders] = useState([]);
   const [save, setSave] = useState(false);
   const [index, setIndex] = useState(0);
   const [update, setUpdate] = useState(false);
+
   const { options, setOptions } = useMaterialStore();
 
   const getFolders = async () => {
@@ -208,6 +212,20 @@ const Materials = () => {
         </div>
       </motion.div>
 
+      <div className="flex p-5 w-[90%] mx-auto">
+        <button
+          onClick={() => getAllMaterials()}
+          className="px-2
+         py-1 rounded-lg flex items-center justify-center
+         gap-1 bg-green-700"
+        >
+          Refresh{" "}
+          <span className={`w-5 h-5 ${refresh && "animate-spin"}`}>
+            <RefreshCcw size={18} />
+          </span>
+        
+        </button>
+      </div>
       {options === "mat" ? (
         <div className="w-[90%] mx-auto mt-6 max-h-[450px] overflow-y-auto py-5 px-2 custom-scrollbar pr-1">
           <motion.div
