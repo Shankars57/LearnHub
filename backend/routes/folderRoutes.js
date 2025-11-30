@@ -4,6 +4,7 @@ import {
   deleteFolder,
   deleteMaterial,
   getFolders,
+  getFoldersById,
   saveMaterial,
 } from "../controller/Folder.js";
 import { verify } from "../middleware/auth.js";
@@ -14,4 +15,5 @@ folderRouter.get("/folders", getFolders);
 folderRouter.delete("/delete/:id", deleteFolder);
 folderRouter.post("/save/:id", saveMaterial);
 folderRouter.delete("/delete/:folderId/:materialId", deleteMaterial);
+folderRouter.get("/folders/:id", getFoldersById);
 export default folderRouter;

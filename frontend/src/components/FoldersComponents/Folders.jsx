@@ -7,15 +7,17 @@ import {
   Trash,
   CirclePlus,
 } from "lucide-react";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import PdfReader from "../PdfReader";
 import axios from "axios";
 import toast from "react-hot-toast";
 import AllMaterialsForAdding from "./AllMaterialsForAdding";
+import { LearnContext } from "../../../context/LearnContextProvider";
 
 const Folders = ({ filterFolders }) => {
   const [page, setPage] = useState(1);
   const [selectedFolderId, setSelectedFolderId] = useState(null);
+  const { userData } = useContext(LearnContext);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [localFolders, setLocalFolders] = useState(filterFolders || []);
   const [open, setOpen] = useState(false);
@@ -26,9 +28,12 @@ const Folders = ({ filterFolders }) => {
 
   const refreshFolders = useCallback(async () => {
     try {
-      const { data } = await axios.get("/api/folder/folders");
+      const { data } = await axios.get(`/api/folder/folders`);
       if (data.success) {
-        setLocalFolders(data.folder);
+        const filtered = data.folder.filter(
+          (item) => item?.user?.email === userData?.email
+        );
+        setLocalFolders(filtered);
       }
     } catch (error) {
       toast.error(error.message || "Failed to refresh folders");

@@ -1,4 +1,5 @@
 import folderModel from "../models/folders.js";
+import mongoose from "mongoose";
 import userModel from "../models/user.js";
 
 export const createFolder = async (req, res) => {
@@ -39,6 +40,42 @@ export const getFolders = async (req, res) => {
     return res.json({ success: true, folder });
   } catch (error) {
     return res.json({ success: false, message: error.message });
+  }
+};
+
+export const getFoldersById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid user id" });
+    }
+
+    const folders = await folderModel
+      .find({ user: id })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    if (!folders || folders.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "No folders found for this user" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      count: folders.length,
+      data: folders,
+    });
+  } catch (error) {
+    console.error("Error in getFoldersById:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while fetching folders",
+      error: error.message,
+    });
   }
 };
 
