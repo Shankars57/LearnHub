@@ -56,6 +56,17 @@ const PlayLists = () => {
       setShowNext(false);
     }
   };
+  const playPrevVideo = () => {
+    const index = videos.findIndex(
+      (v) => v.contentDetails.videoId === currentVideo.contentDetails.videoId
+    );
+    const prev = videos[index - 1];
+    if (prev) {
+      setCurrentVideo(prev);
+      setVideo(prev);
+      setShowNext(false);
+    }
+  };
 
   useEffect(() => {
     loadYTAPI();
@@ -136,9 +147,11 @@ const PlayLists = () => {
                 className="flex flex-col items-center text-center w-full"
               >
                 <div className="w-full max-w-5xl mx-auto rounded-2xl overflow-hidden shadow-2xl shadow-blue-900/30 border border-gray-800">
-                  <div className="relative w-full aspect-video">
+                  <div className="relative w-full pb-[56.25%]">
+                    {" "}
+
                     <iframe
-                      className="absolute top-0 left-0 w-full h-full"
+                      className="absolute inset-0 w-full h-full"
                       src={`https://www.youtube.com/embed/${currentVideo.contentDetails.videoId}?rel=0&modestbranding=1`}
                       title={currentVideo.snippet.title}
                       frameBorder="0"
@@ -148,7 +161,34 @@ const PlayLists = () => {
                   </div>
                 </div>
 
-                <div className="mt-4">
+                <div className="mt-4 flex gap-1">
+                  <button
+                    onClick={playPrevVideo}
+                    disabled={
+                      videos.findIndex(
+                        (v) =>
+                          v.contentDetails.videoId ===
+                          currentVideo?.contentDetails.videoId
+                      ) === 0
+                    }
+                    className={`px-6 py-2 rounded-xl text-white font-semibold transition-all ${
+                      videos.findIndex(
+                        (v) =>
+                          v.contentDetails.videoId ===
+                          currentVideo?.contentDetails.videoId
+                      ) === 0
+                        ? "bg-gray-700 cursor-not-allowed"
+                        : "bg-blue-600 hover:bg-blue-700"
+                    }`}
+                  >
+                    {videos.findIndex(
+                      (v) =>
+                        v.contentDetails.videoId ===
+                        currentVideo?.contentDetails.videoId
+                    ) === 0
+                      ? "Prev Video"
+                      : "Play Prev Video"}
+                  </button>
                   <button
                     onClick={playNextVideo}
                     disabled={
@@ -178,7 +218,7 @@ const PlayLists = () => {
                     videos.length - 1
                       ? "Please search for another playlist"
                       : "Play Next Video"}
-                  </button>
+                  </button>{" "}
                 </div>
 
                 {showNext && (
