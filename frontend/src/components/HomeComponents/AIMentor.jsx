@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Bot, Code, Lightbulb, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import Snowfall from "react-snowfall";
 const features = [
   { icon: Code, text: "Explain code line-by-line" },
   { icon: Lightbulb, text: "Generate practice problems" },
@@ -13,6 +13,8 @@ export default function AIMentor() {
   const navigate = useNavigate();
   return (
     <section id="ai" className="relative py-24 bg-gradient-to-br from-gray-950 via-blue-950 to-purple-950 overflow-hidden">
+      <Snowfall />
+
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

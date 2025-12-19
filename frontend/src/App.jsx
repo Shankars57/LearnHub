@@ -1,12 +1,12 @@
-import React, { useContext, Suspense, lazy } from "react";
+import { useContext, Suspense, lazy } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { LearnContext } from "../context/LearnContextProvider";
 import PersistentPlayer from "./components/PersistencePlayer";
-import { memo } from "react";
 import AboutUs from "./pages/AboutUs";
 import ContactPage from "./pages/ContactPage";
 import Spinner from "./components/Spinner";
+import Snowfall from "react-snowfall";
 import { useChatRoomTheme } from "../store/useChatRoomTheme";
 const Home = lazy(() => import("./pages/Home"));
 const Materials = lazy(() => import("./pages/Materials"));
@@ -32,7 +32,7 @@ const NotFound = () => (
 
 const App = () => {
   const { token, userData } = useContext(LearnContext);
-  const { roomId  } = useChatRoomTheme();
+  const { roomId } = useChatRoomTheme();
   return (
     <>
       <Toaster />
@@ -40,6 +40,7 @@ const App = () => {
         {token && <Navbar />}
         <PersistentPlayer />
         <main className={`${token && "pt-16"}`}>
+          <Snowfall color="#82C3D9" style={{ zIndex: 99999 }} />
           <Routes>
             <Route path="/" element={token ? <Home /> : <Login />} />
             <Route
@@ -66,14 +67,6 @@ const App = () => {
             </Route>
             <Route path="/ai" element={<AI />} />
             <Route path="/profile" element={<Profile />} />
-            <Route
-              path="/testing"
-              element={memo(() => (
-                <div>
-                  <h1 className="testing">testing</h1>
-                </div>
-              ))}
-            />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="*" element={<NotFound />} />

@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Users, MessageSquare, Zap, Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Snowfall from "react-snowfall";
 const chatRooms = [
   {
     name: "JavaScript Ninjas",
@@ -32,7 +33,7 @@ export default function Community() {
   const navigate = useNavigate();
   return (
     <section id="community" className="relative py-24 bg-gradient-to-br from-[#02010a] via-[#050019] to-[#0b001f] overflow-hidden">
-     
+       <Snowfall />
       <div className="absolute inset-0">
         <div className="absolute top-1/4 left-0 w-80 h-80 bg-blue-800 rounded-full filter blur-[120px] opacity-25"></div>
         <div className="absolute bottom-1/4 right-0 w-80 h-80 bg-purple-800 rounded-full filter blur-[120px] opacity-25"></div>

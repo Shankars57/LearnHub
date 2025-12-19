@@ -11,7 +11,7 @@ import {
   FileUser,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import Snowfall from "react-snowfall";
 const materialTypes = [
   {
     icon: FileText,
@@ -76,6 +76,7 @@ export default function Materials() {
       id="materials"
       className="relative py-24 bg-gradient-to-br from-blue-950 via-gray-900 to-purple-950 overflow-hidden"
     >
+      <Snowfall />
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
       <div className="absolute top-1/3 right-0 w-96 h-96 bg-blue-600 rounded-full filter blur-3xl opacity-10"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-600 rounded-full filter blur-3xl opacity-10"></div>

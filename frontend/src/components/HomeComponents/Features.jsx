@@ -6,7 +6,7 @@ import {
   TrendingUp,
   BookOpen,
 } from "lucide-react";
-import React from "react";
+import Snowfall from "react-snowfall";
 import { motion } from "framer-motion";
 
 const features = [
@@ -57,6 +57,7 @@ const features = [
 const Features = () => {
   return (
     <section id="features" className="relative py-24 bg-gradient-to-br from-gray-900 via-blue-950 to-gray-900 overflow-hidden">
+      <Snowfall />
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
       <div className="w-[80%] mx-auto flex flex-col gap-20">
         <motion.div

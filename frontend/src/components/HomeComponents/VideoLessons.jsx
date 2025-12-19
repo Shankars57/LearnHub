@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Play, Clock, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import Snowfall from "react-snowfall";
 const playlists = [
   {
     title: "JavaScript Fundamentals",
@@ -40,7 +40,11 @@ const playlists = [
 export default function YouTubeSection() {
   const navigate = useNavigate();
   return (
-    <section id="playlists" className="relative py-24 bg-gradient-to-br from-gray-900 to-blue-950 overflow-hidden">
+    <section
+      id="playlists"
+      className="relative py-24 bg-gradient-to-br from-gray-900 to-blue-950 overflow-hidden"
+    >
+      <Snowfall />
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600 rounded-full filter blur-3xl opacity-10"></div>
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600 rounded-full filter blur-3xl opacity-10"></div>
 
@@ -117,7 +121,10 @@ export default function YouTubeSection() {
           viewport={{ once: true }}
           className="text-center mt-12"
         >
-          <button  onClick={()=>navigate("/playlist")} className="px-8 py-4 bg-gradient-to-r from-red-600 to-orange-600 text-white font-semibold rounded-full hover:scale-105 transition-transform shadow-lg shadow-red-500/30">
+          <button
+            onClick={() => navigate("/playlist")}
+            className="px-8 py-4 bg-gradient-to-r from-red-600 to-orange-600 text-white font-semibold rounded-full hover:scale-105 transition-transform shadow-lg shadow-red-500/30"
+          >
             Browse All Playlists
           </button>
         </motion.div>
