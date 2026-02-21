@@ -13,7 +13,7 @@ export default function AIMentor() {
   const navigate = useNavigate();
   return (
     <section id="ai" className="relative py-24 bg-gradient-to-br from-gray-950 via-blue-950 to-purple-950 overflow-hidden">
-      <Snowfall />
+      { /*<Snowfall />*/}
 
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
 

@@ -40,7 +40,7 @@ const App = () => {
         {token && <Navbar />}
         <PersistentPlayer />
         <main className={`${token && "pt-16"}`}>
-          <Snowfall color="#82C3D9" style={{ zIndex: 99999 }} />
+          {/*<Snowfall />*/}
           <Routes>
             <Route path="/" element={token ? <Home /> : <Login />} />
             <Route
