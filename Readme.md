@@ -7,6 +7,11 @@ Backend: https://learnhub-e0dm.onrender.com
 
 Admin : https://learn-hub-admin-five.vercel.app
 
+Mobile APK (ZIP)
+
+`LearnHub.zip` in the project root contains the Android APK.
+Extract the ZIP file and install the APK on your mobile device to run the app.
+
 📖 About the Project
 
 LearnHub is a modern full-stack learning and resource-sharing platform built using the MERN stack, where learners can:
