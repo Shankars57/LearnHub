@@ -1,4 +1,4 @@
-import { useContext, Suspense, lazy } from "react";
+import { useContext, Suspense, lazy, useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { LearnContext } from "../context/LearnContextProvider";
@@ -8,6 +8,7 @@ import ContactPage from "./pages/ContactPage";
 import Spinner from "./components/Spinner";
 import Snowfall from "react-snowfall";
 import { useChatRoomTheme } from "../store/useChatRoomTheme";
+import { useThemeStore } from "../store/useThemeStore";
 const Home = lazy(() => import("./pages/Home"));
 const Materials = lazy(() => import("./pages/Materials"));
 const Chat = lazy(() => import("./pages/Chat"));
@@ -25,14 +26,22 @@ const CheatSheets = lazy(() => import("./pages/CheatSheets"));
 const RoadMaps = lazy(() => import("./pages/RoadMaps"));
 
 const NotFound = () => (
-  <div className="h-screen flex items-center justify-center">
-    <h1 className="text-white text-5xl">Page Not Found 404.</h1>
+  <div className="theme-page h-screen flex items-center justify-center px-4">
+    <h1 className="text-4xl sm:text-5xl font-bold text-center theme-text">
+      Page Not Found 404
+    </h1>
   </div>
 );
 
 const App = () => {
   const { token, userData } = useContext(LearnContext);
   const { roomId } = useChatRoomTheme();
+  const initTheme = useThemeStore((state) => state.initTheme);
+
+  useEffect(() => {
+    initTheme();
+  }, [initTheme]);
+
   return (
     <>
       <Toaster />

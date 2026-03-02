@@ -22,7 +22,7 @@ const MessageItem = ({ msg, username, roomId, onDelete }) => {
     if (isPinned) {
       clearPinnedMessage(roomId);
       toast.custom(() => (
-        <div className="bg-white border border-red-500 px-4 py-2 rounded-lg shadow-md text-gray-800 flex items-center gap-1">
+        <div className="theme-panel border border-red-500/60 px-4 py-2 rounded-lg shadow-md theme-text flex items-center gap-1">
           <PinOff size={15} style={{ transform: "rotate(-25deg)" }} />
           <span>Message unpinned</span>
         </div>
@@ -30,7 +30,7 @@ const MessageItem = ({ msg, username, roomId, onDelete }) => {
     } else {
       setPinnedMessage(roomId, { ...msg, _id: msgId });
       toast.custom(() => (
-        <div className="bg-white border border-green-500 px-4 py-2 rounded-lg shadow-md text-gray-800 flex items-center gap-1">
+        <div className="theme-panel border border-green-500/60 px-4 py-2 rounded-lg shadow-md theme-text flex items-center gap-1">
           <Pin size={15} style={{ transform: "rotate(-25deg)" }} />
           <span>Message pinned</span>
         </div>
@@ -43,14 +43,14 @@ const MessageItem = ({ msg, username, roomId, onDelete }) => {
     <div
       className={`px-3 py-2 rounded-lg w-fit max-w-[90%] sm:max-w-xl break-words relative ${
         msg.user === username
-          ? "ml-auto bg-blue-100 text-gray-700"
-          : "bg-gray-100 text-gray-800"
+          ? "ml-auto bg-gradient-to-r from-blue-500/25 to-cyan-500/20 theme-text border border-blue-500/35"
+          : "theme-surface theme-text border border-[var(--border-color)]"
       } ${isPinned ? "sticky top-0 border-2 border-blue-500 z-10" : ""}`}
     >
       <div className="flex justify-between items-center">
-        <p className="text-xs font-semibold mb-1 px-2 py-1 rounded-lg bg-white/40 inline-block">
+        <p className="text-xs font-semibold mb-1 px-2 py-1 rounded-lg bg-black/10 inline-block">
           <span>{msg.user}</span>
-          <span className="pl-2 text-gray-600">
+          <span className="pl-2 theme-muted">
             {moment(msg.time).isSame(new Date(), "day")
               ? moment(msg.time).format("hh:mm A")
               : moment(msg.time).format("MMM D, hh:mm A")}
@@ -61,19 +61,19 @@ const MessageItem = ({ msg, username, roomId, onDelete }) => {
         <div className="relative">
           <button
             onClick={() => setMenuOpen((prev) => !prev)}
-            className="text-gray-500 hover:text-gray-700 focus:outline-none"
+            className="theme-muted hover:opacity-80 focus:outline-none"
           >
             <MoreVertical size={16} />
           </button>
 
           {menuOpen && (
             <div
-              className="absolute right-0 mt-1 bg-white rounded-md shadow-lg border border-gray-200 z-50 w-28"
+              className="absolute right-0 mt-1 theme-panel rounded-md shadow-lg border border-[var(--border-color)] z-50 w-28"
               onMouseLeave={() => setMenuOpen(false)}
             >
               <button
                 onClick={togglePin}
-                className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 flex items-center gap-2"
+                className="w-full text-left px-3 py-2 text-sm hover:bg-black/5 flex items-center gap-2 theme-text"
               >
                 {!isPinned ? (
                   <>
@@ -91,7 +91,7 @@ const MessageItem = ({ msg, username, roomId, onDelete }) => {
                     onDelete(msgId);
                     setMenuOpen(false);
                   }}
-                  className="w-full text-left px-3 py-2 text-sm text-red-500 hover:bg-gray-100 flex items-center gap-2"
+                  className="w-full text-left px-3 py-2 text-sm text-red-500 hover:bg-red-500/10 flex items-center gap-2"
                 >
                   <Trash size={14} /> Delete
                 </button>
@@ -135,7 +135,7 @@ const MessageItem = ({ msg, username, roomId, onDelete }) => {
                 {String(children).replace(/\n$/, "")}
               </SyntaxHighlighter>
             ) : (
-              <code className="bg-gray-200 px-1 py-0.5 rounded text-pink-700">
+              <code className="theme-chip px-1 py-0.5 rounded text-rose-600">
                 {children}
               </code>
             );

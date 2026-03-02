@@ -1,120 +1,106 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Brain, Youtube, MessageCircle, Lock, Users } from "lucide-react";
+import { Brain, Lock, MessageCircle, Users, Youtube } from "lucide-react";
+
+const featureCards = [
+  {
+    title: "AI Mentor",
+    icon: Brain,
+    color: "text-cyan-500",
+    description:
+      "Ask doubts instantly and get learning-focused responses for concepts, coding, and revision.",
+  },
+  {
+    title: "Curated Video Learning",
+    icon: Youtube,
+    color: "text-red-500",
+    description:
+      "Discover high-value playlists aligned to your path instead of searching randomly.",
+  },
+  {
+    title: "Real-Time Collaboration",
+    icon: MessageCircle,
+    color: "text-emerald-500",
+    description:
+      "Chat with peers, create focused rooms, and learn together with quick feedback loops.",
+  },
+  {
+    title: "Secure Access",
+    icon: Lock,
+    color: "text-amber-500",
+    description:
+      "Google OAuth, verification flow, and protected features for trusted learner accounts.",
+  },
+  {
+    title: "Learning Community",
+    icon: Users,
+    color: "text-violet-500",
+    description:
+      "Share notes, discuss strategies, and build momentum through collaborative learning.",
+  },
+];
 
 const AboutUs = () => {
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col items-center justify-center px-6 py-16">
-      <motion.h1
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="text-4xl md:text-5xl font-bold mb-6 text-center bg-gradient-to-r from-cyan-400 to-blue-500 text-transparent bg-clip-text"
-      >
-        About LearnHub
-      </motion.h1>
-
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3, duration: 0.8 }}
-        className="max-w-3xl text-center text-gray-300 mb-12 leading-relaxed"
-      >
-        <span className="text-cyan-400 font-semibold">LearnHub</span> is an
-        AI-powered real-time learning and resource-sharing platform built using
-        the MERN stack. We're redefining how learners interact, collaborate, and
-        grow by combining cutting-edge AI, community-driven discussions, and
-        video-based learning — all in one place.
-      </motion.p>
-
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl">
-      
+    <section className="theme-page pt-24 pb-16 px-4 sm:px-8">
+      <div className="max-w-6xl mx-auto space-y-8">
         <motion.div
-          whileHover={{ scale: 1.05 }}
-          className="p-6 bg-gray-800 rounded-2xl shadow-lg border border-gray-700"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="theme-card rounded-3xl p-6 sm:p-9"
         >
-          <Brain className="text-cyan-400 mb-4" size={40} />
-          <h3 className="text-xl font-semibold mb-2 text-cyan-300">
-            AI Mentor (Gemini API)
-          </h3>
-          <p className="text-gray-400 text-sm">
-            Get personalized answers and learning assistance with our AI Mentor
-            powered by Gemini API. It helps you clarify doubts, understand
-            concepts, and boost productivity.
+          <h1
+            className="text-3xl sm:text-5xl font-extrabold"
+            style={{ fontFamily: "Roboto Mono, monospace" }}
+          >
+            About LearnHub
+          </h1>
+          <p className="theme-muted mt-4 leading-relaxed max-w-3xl">
+            LearnHub is a focused learning platform built to combine AI guidance,
+            structured resources, and collaborative study workflows in one place.
+            The goal is simple: reduce learning friction and increase consistency
+            for students and early professionals.
           </p>
         </motion.div>
 
-    
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          className="p-6 bg-gray-800 rounded-2xl shadow-lg border border-gray-700"
-        >
-          <Youtube className="text-red-500 mb-4" size={40} />
-          <h3 className="text-xl font-semibold mb-2 text-red-400">
-            YouTube Learning
-          </h3>
-          <p className="text-gray-400 text-sm">
-            Explore educational content fetched directly through the YouTube
-            Data API — curated to match your interests and study goals.
-          </p>
-        </motion.div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {featureCards.map((card, index) => {
+            const Icon = card.icon;
+            return (
+              <motion.article
+                key={card.title}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, delay: index * 0.08 }}
+                whileHover={{ y: -4 }}
+                className="theme-card rounded-2xl p-5"
+              >
+                <Icon className={`${card.color}`} size={30} />
+                <h2 className="text-xl font-semibold mt-3">{card.title}</h2>
+                <p className="theme-muted text-sm mt-2 leading-relaxed">
+                  {card.description}
+                </p>
+              </motion.article>
+            );
+          })}
+        </div>
 
         <motion.div
-          whileHover={{ scale: 1.05 }}
-          className="p-6 bg-gray-800 rounded-2xl shadow-lg border border-gray-700"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.35, duration: 0.7 }}
+          className="theme-surface rounded-2xl p-5 sm:p-6"
         >
-          <MessageCircle className="text-green-400 mb-4" size={40} />
-          <h3 className="text-xl font-semibold mb-2 text-green-300">
-            Real-Time Chat
-          </h3>
-          <p className="text-gray-400 text-sm">
-            Stay connected with peers and mentors through Socket.IO-powered
-            real-time chat rooms with typing indicators and live collaboration.
-          </p>
-        </motion.div>
-
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          className="p-6 bg-gray-800 rounded-2xl shadow-lg border border-gray-700"
-        >
-          <Lock className="text-yellow-400 mb-4" size={40} />
-          <h3 className="text-xl font-semibold mb-2 text-yellow-300">
-            Secure Authentication
-          </h3>
-          <p className="text-gray-400 text-sm">
-            Experience one-click sign-in using Google OAuth 2.0 with robust
-            session management and email verification via Nodemailer.
-          </p>
-        </motion.div>
-
-      
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          className="p-6 bg-gray-800 rounded-2xl shadow-lg border border-gray-700"
-        >
-          <Users className="text-purple-400 mb-4" size={40} />
-          <h3 className="text-xl font-semibold mb-2 text-purple-300">
-            Learning Community
-          </h3>
-          <p className="text-gray-400 text-sm">
-            Join a growing community of learners, share resources, discuss
-            ideas, and grow together in an interactive environment.
+          <p className="theme-muted leading-relaxed">
+            LearnHub is designed for consistent, skill-based growth. Whether you
+            are preparing for placements, internships, or technical interviews,
+            the platform keeps content, practice, and mentorship connected in one
+            workflow.
           </p>
         </motion.div>
       </div>
-
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1, duration: 1 }}
-        className="text-gray-500 mt-16 text-sm text-center max-w-2xl"
-      >
-        LearnHub isn't just a platform — it's a movement toward smarter,
-        AI-enhanced, collaborative learning. Whether you're a student, mentor,
-        or lifelong learner, we're here to make your journey easier and more
-        engaging.
-      </motion.p>
-    </div>
+    </section>
   );
 };
 

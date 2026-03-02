@@ -56,7 +56,13 @@ const features = [
 ];
 const Features = () => {
   return (
-    <section id="features" className="relative py-24 bg-gradient-to-br from-gray-900 via-blue-950 to-gray-900 overflow-hidden">
+    <section
+      id="features"
+      className="relative py-24 overflow-hidden"
+      style={{
+        background: "linear-gradient(165deg, var(--page-bg), var(--page-alt-bg))",
+      }}
+    >
      { /*<Snowfall />*/}
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
       <div className="w-[80%] mx-auto flex flex-col gap-20">
@@ -67,14 +73,14 @@ const Features = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4">
+          <h2 className="text-4xl sm:text-5xl font-bold theme-text mb-4">
             Everything You Need to
             <span className="bg-gradient-to-r from-blue-400 to-purple-400 text-transparent bg-clip-text">
               {" "}
               Succeed
             </span>
           </h2>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+          <p className="text-xl theme-muted max-w-2xl mx-auto">
             A complete learning ecosystem designed for modern developers
           </p>
         </motion.div>
@@ -96,17 +102,17 @@ const Features = () => {
                 }}
               ></div>
 
-              <div className="relative h-full bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-xl rounded-2xl p-8 border border-white/10 hover:border-white/20 transition-all duration-300">
+              <div className="relative h-full theme-card backdrop-blur-xl rounded-2xl p-8 hover:border-white/20 transition-all duration-300">
                 <div
                   className={`inline-flex p-3 rounded-xl bg-gradient-to-r ${feature.gradient} mb-4`}
                 >
                   <feature.icon className="w-6 h-6 text-white" />
                 </div>
 
-                <h3 className="text-xl font-bold text-white mb-3">
+                <h3 className="text-xl font-bold theme-text mb-3">
                   {feature.title}
                 </h3>
-                <p className="text-gray-400 leading-relaxed">
+                <p className="theme-muted leading-relaxed">
                   {feature.description}
                 </p>
 

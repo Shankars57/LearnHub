@@ -1,102 +1,87 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Bot,
-  Code,
   BookOpen,
-  Lightbulb,
-  Sparkles,
-  Send,
-  TerminalSquare,
-  Palette,
   Check,
-  Loader2,
-  Copy,
   CheckCircle2,
+  Code,
+  Copy,
+  Lightbulb,
+  Loader2,
+  Palette,
+  Send,
+  Sparkles,
+  TerminalSquare,
 } from "lucide-react";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import {
+  oneDark,
+  oneLight,
+} from "react-syntax-highlighter/dist/esm/styles/prism";
 import toast from "react-hot-toast";
 import { useAIThemeStore } from "../../store/AIStore/useAiThemeStore";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
-  visible: (i = 0) => ({
+  visible: (index = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.15, duration: 0.6, type: "spring" },
+    transition: { delay: index * 0.12, duration: 0.5, type: "spring" },
   }),
 };
 
-const promptsList = [
+const prompts = [
   {
-    icon: <Code size={26} className="text-blue-400" />,
-    prompt: "Explain Binary Search",
+    icon: <Code size={24} className="text-blue-500" />,
+    prompt: "Explain binary search with dry run.",
     title: "Algorithms",
   },
   {
-    icon: <BookOpen size={26} className="text-teal-400" />,
-    prompt: "React vs Vue comparison",
+    icon: <BookOpen size={24} className="text-emerald-500" />,
+    prompt: "React vs Vue comparison for beginners.",
     title: "Web Dev",
   },
   {
-    icon: <Lightbulb size={26} className="text-yellow-400" />,
-    prompt: "Career advice for CS students",
+    icon: <Lightbulb size={24} className="text-amber-500" />,
+    prompt: "Career roadmap for a CS student.",
     title: "Career",
   },
   {
-    icon: <Sparkles size={26} className="text-blue-300" />,
-    prompt: "Study plan for interviews",
+    icon: <Sparkles size={24} className="text-fuchsia-500" />,
+    prompt: "Create a 4-week interview prep schedule.",
     title: "Planning",
   },
 ];
 
-const themes = {
+const themeOptions = {
   "vs-dark": {
-    bg: "bg-[#1E1E1E]",
-    chatBg: "bg-[#252526]/90",
-    msgBot: "bg-[#252526]/95 border border-[#3C3C3C]",
-    msgUser: "bg-gradient-to-r from-blue-600 to-indigo-500",
-    border: "border-[#3C3C3C]",
-    accent: "from-blue-600 to-indigo-700",
+    label: "Dark",
+    bubble: "from-blue-600 to-cyan-500",
+    focusRing: "focus:ring-blue-500",
   },
   "vs-light": {
-    bg: "bg-[#1b1f27]",
-    chatBg: "bg-[#232833]",
-    msgBot: "bg-[#2c3340] border border-[#3a4252]",
-    msgUser: "bg-gradient-to-r from-blue-600 to-blue-400",
-    border: "border-[#3a4252]",
-    accent: "from-blue-600 to-blue-400",
+    label: "Light",
+    bubble: "from-indigo-500 to-sky-500",
+    focusRing: "focus:ring-indigo-500",
   },
-  "vs-high-contrast": {
-    bg: "bg-[#000000]",
-    chatBg: "bg-[#111111]",
-    msgBot: "bg-[#111111] border border-white/70",
-    msgUser: "bg-gradient-to-r from-yellow-500 to-orange-500",
-    border: "border-white/70",
-    accent: "from-yellow-500 to-orange-500",
-  },
-  "vs-dark-contrast": {
-    bg: "bg-[#0A0A0A]",
-    chatBg: "bg-[#121212]",
-    msgBot: "bg-[#121212] border border-white/40 shadow-[0_0_10px_#00ffff80]",
-    msgUser:
-      "bg-gradient-to-r from-cyan-500 to-blue-500 shadow-[0_0_15px_#00ffff80]",
-    border: "border-white/30",
-    accent: "from-cyan-500 to-blue-500",
+  "ai-theme": {
+    label: "Moderate",
+    bubble: "from-amber-600 to-teal-600",
+    focusRing: "focus:ring-amber-500",
   },
 };
 
 const TypingDots = () => (
   <div className="flex gap-1 ml-3 mt-2">
-    {[0, 1, 2].map((i) => (
+    {[0, 1, 2].map((index) => (
       <motion.span
-        key={i}
-        className="w-2 h-2 bg-gray-400 rounded-full"
+        key={index}
+        className="w-2 h-2 rounded-full bg-[var(--text-secondary)]"
         animate={{ y: ["0%", "-40%", "0%"] }}
-        transition={{ repeat: Infinity, delay: i * 0.2, duration: 0.6 }}
+        transition={{ repeat: Infinity, delay: index * 0.2, duration: 0.6 }}
       />
     ))}
   </div>
@@ -104,37 +89,48 @@ const TypingDots = () => (
 
 const AI = () => {
   const [messages, setMessages] = useState([
-    { sender: "bot", text: "👋 Hey! I’m your AI Assistant. Ask me anything!" },
+    { sender: "bot", text: "Hi! I am your AI assistant. Ask me anything." },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [started, setStarted] = useState(false);
+  const [openThemeDropdown, setOpenThemeDropdown] = useState(false);
   const messageEndRef = useRef(null);
   const inputRef = useRef(null);
   const { theme, setTheme } = useAIThemeStore();
-  const [openDrop, setOpenDrop] = useState(false);
-  const t = themes[theme] || themes["vs-dark"];
+
+  const currentTheme = themeOptions[theme] || themeOptions["vs-dark"];
+  const syntaxTheme = theme === "vs-dark" ? oneDark : oneLight;
 
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  const codeBlockBackground = useMemo(
+    () => (theme === "vs-dark" ? "#111827" : "#f8fafc"),
+    [theme]
+  );
+
   const handleSend = async () => {
     if (!input.trim() || loading) return;
+
     setStarted(true);
-    const userMsg = { sender: "user", text: input };
-    setMessages((prev) => [...prev, userMsg]);
+    const userMessage = { sender: "user", text: input };
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setLoading(true);
+
     try {
       const { data } = await axios.post("/api/ai-chat", { prompt: input });
-      if (data.success) toast.success("AI replied!");
+      if (data.success) toast.success("AI replied.");
       setMessages((prev) => [...prev, { sender: "bot", text: data.reply }]);
-    } catch (err) {
+    } catch (error) {
       const msg =
-        err?.response?.data?.message || err.message || "Something went wrong";
+        error?.response?.data?.message ||
+        error.message ||
+        "Something went wrong.";
       toast.error(msg);
-      setMessages((prev) => [...prev, { sender: "bot", text: `⚠️ ${msg}` }]);
+      setMessages((prev) => [...prev, { sender: "bot", text: `Error: ${msg}` }]);
     } finally {
       setLoading(false);
     }
@@ -142,35 +138,38 @@ const AI = () => {
 
   const CodeBlock = ({ code, lang = "text" }) => {
     const [copied, setCopied] = useState(false);
+
     const copyToClipboard = async () => {
       try {
         await navigator.clipboard.writeText(code);
         setCopied(true);
-        toast.success("Copied to clipboard!");
+        toast.success("Copied to clipboard.");
         setTimeout(() => setCopied(false), 1500);
       } catch {
-        toast.error("Failed to copy!");
+        toast.error("Failed to copy.");
       }
     };
+
     return (
-      <div className="relative group rounded-xl overflow-hidden my-3">
-        <div
+      <div className="relative group rounded-xl overflow-hidden my-3 border border-[var(--border-color)]">
+        <button
+          type="button"
           onClick={copyToClipboard}
-          className="absolute top-2 right-2 p-2 bg-[#2c2c2c]/80 text-gray-300 rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-[#3a3a3a] cursor-pointer"
+          className="absolute top-2 right-2 p-2 rounded-lg theme-btn-secondary opacity-0 group-hover:opacity-100 transition"
         >
           {copied ? (
-            <CheckCircle2 size={16} className="text-green-400" />
+            <CheckCircle2 size={16} className="text-green-500" />
           ) : (
-            <Copy size={16} />
+            <Copy size={16} className="theme-text" />
           )}
-        </div>
+        </button>
         <SyntaxHighlighter
           language={lang}
-          style={oneDark}
+          style={syntaxTheme}
           customStyle={{
             margin: 0,
             padding: "1rem",
-            background: "#1E1E1E",
+            background: codeBlockBackground,
             borderRadius: "0.5rem",
             overflowX: "auto",
           }}
@@ -182,184 +181,171 @@ const AI = () => {
   };
 
   return (
-    <section
-      id="ai"
-      className={`relative min-h-[90vh] ${t.bg} text-white flex flex-col font-[Inter]`}
-    >
-      <div
-        className={`border-b ${t.border} px-6 py-4 flex items-center justify-between ${t.chatBg} backdrop-blur-md`}
-      >
+    <section id="ai" className="theme-page relative min-h-[90vh] flex flex-col">
+      <div className="theme-surface border-b border-[var(--border-color)] px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className={`p-2 bg-gradient-to-br ${t.accent} rounded-lg`}>
-            <Bot size={22} />
+          <div className={`p-2 rounded-lg bg-gradient-to-r ${currentTheme.bubble}`}>
+            <Bot size={20} className="text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-semibold text-gray-100 flex items-center gap-2">
-              AI Assistant{" "}
-              <TerminalSquare size={16} className="text-gray-400" />
+            <h1 className="text-lg font-semibold theme-text flex items-center gap-2">
+              AI Assistant
+              <TerminalSquare size={16} className="theme-muted" />
             </h1>
-            <p className="text-xs text-gray-400 flex items-center gap-1">
-              Powered by intelligent insights <Sparkles className="w-3 h-3" />
+            <p className="text-xs theme-muted flex items-center gap-1">
+              Powered by intelligent insights
+              <Sparkles className="w-3 h-3" />
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-4 relative">
-          <span className="text-xs text-green-400 flex items-center gap-1">
-            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-            Gemini-Flash-lite-2.5
+          <span className="text-xs text-green-500 flex items-center gap-1">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            Gemini Flash Lite
           </span>
-          <div
-            onClick={() => setOpenDrop(!openDrop)}
-            className="relative p-2 rounded-lg hover:bg-white/10 transition cursor-pointer "
+          <button
+            type="button"
+            onClick={() => setOpenThemeDropdown((prev) => !prev)}
+            className="relative p-2 rounded-lg theme-btn-secondary"
           >
-            <Palette size={18} className="text-gray-300 sticky top-10" />
-            {openDrop && (
-              <div className="absolute right-0 top-10 w-52 bg-[#1E1E1E] border border-gray-700 rounded-lg shadow-lg overflow-hidden z-50">
-                {Object.keys(themes).map((k) => (
-                  <div
-                    key={k}
-                    onClick={() => {
-                      setTheme(k);
-                      setOpenDrop(false);
-                    }}
-                    className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between hover:bg-white/10 transition cursor-pointer ${
-                      theme === k ? "text-blue-400" : "text-gray-300"
-                    }`}
-                  >
-                    {k.replaceAll("-", " ")}
-                    {theme === k && <Check size={16} />}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+            <Palette size={18} className="theme-text" />
+          </button>
+          {openThemeDropdown ? (
+            <div className="absolute right-0 top-12 w-44 theme-panel rounded-lg shadow-lg z-50 p-1">
+              {Object.entries(themeOptions).map(([key, option]) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => {
+                    setTheme(key);
+                    setOpenThemeDropdown(false);
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-md text-sm flex items-center justify-between ${
+                    theme === key
+                      ? "theme-btn text-white"
+                      : "theme-btn-secondary theme-text"
+                  }`}
+                >
+                  {option.label}
+                  {theme === key ? <Check size={15} /> : null}
+                </button>
+              ))}
+            </div>
+          ) : null}
         </div>
       </div>
 
-      <div
-        className={`flex-1 overflow-y-auto p-6 space-y-5 custom-scrollbar ${t.bg}`}
-      >
-        {!started && (
+      <div className="flex-1 overflow-y-auto p-6 space-y-5 custom-scrollbar">
+        {!started ? (
           <motion.div
             initial="hidden"
             animate="visible"
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-10 place-items-center"
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 mt-8 place-items-center"
           >
-            {promptsList.map((item, i) => (
-              <motion.div
-                key={i}
-                custom={i}
+            {prompts.map((item, index) => (
+              <motion.button
+                type="button"
+                key={item.prompt}
+                custom={index}
                 variants={fadeUp}
-                whileHover={{ scale: 1.05, boxShadow: "0 0 15px #2563eb80" }}
+                whileHover={{ scale: 1.03 }}
                 onClick={() => {
                   setInput(item.prompt);
                   setStarted(true);
-                  inputRef.current.focus();
+                  inputRef.current?.focus();
                 }}
-                className={`cursor-pointer ${t.msgBot} rounded-2xl ${t.chatBg} p-6 w-60 hover:border-blue-500/70 transition-all`}
+                className="theme-card rounded-2xl p-5 w-60 text-left"
               >
                 <div className="mb-3">{item.icon}</div>
-                <p className="text-gray-100 text-sm font-medium mb-1">
-                  {item.prompt}
-                </p>
-                <p className="text-xs text-gray-500">{item.title}</p>
-              </motion.div>
+                <p className="theme-text text-sm font-medium mb-1">{item.prompt}</p>
+                <p className="text-xs theme-muted">{item.title}</p>
+              </motion.button>
             ))}
           </motion.div>
-        )}
+        ) : null}
 
-        {started &&
-          messages.map((msg, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, x: msg.sender === "user" ? 40 : -40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3 }}
-              className={`flex ${
-                msg.sender === "user" ? "justify-end" : "justify-start"
-              }`}
-            >
-              <div
-                className={`px-4 py-3 rounded-2xl text-sm max-w-[95%] md:max-w-[70%] shadow-md leading-loose
-                 ${
-                  msg.sender === "user"
-                    ? `${t.msgUser} text-white rounded-br-none`
-                    : `${t.msgBot} text-gray-200 rounded-bl-none`
-                }`}
+        {started
+          ? messages.map((message, index) => (
+              <motion.div
+                key={`${message.sender}-${index}`}
+                initial={{ opacity: 0, x: message.sender === "user" ? 40 : -40 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3 }}
+                className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
               >
-                {msg.sender === "bot" ? (
-                  <ReactMarkdown
-                    components={{
-                      code({ inline, className, children }) {
-                        if (inline) {
+                <div
+                  className={`px-4 py-3 rounded-2xl text-sm max-w-[95%] md:max-w-[70%] shadow-md leading-loose ${
+                    message.sender === "user"
+                      ? `bg-gradient-to-r ${currentTheme.bubble} text-white rounded-br-none`
+                      : "theme-card theme-text rounded-bl-none"
+                  }`}
+                >
+                  {message.sender === "bot" ? (
+                    <ReactMarkdown
+                      components={{
+                        code({ inline, className, children }) {
+                          if (inline) {
+                            return (
+                              <code className="theme-chip px-1 py-0.5 rounded">
+                                {children}
+                              </code>
+                            );
+                          }
+                          const lang = className?.replace("language-", "") || "text";
                           return (
-                            <code className="bg-[#333333] px-1 rounded text-blue-400">
-                              {children}
-                            </code>
+                            <CodeBlock
+                              code={String(children).replace(/\n$/, "")}
+                              lang={lang}
+                            />
                           );
-                        }
-                        const lang =
-                          className?.replace("language-", "") || "text";
-                        return (
-                          <CodeBlock
-                            code={String(children).replace(/\n$/, "")}
-                            lang={lang}
-                          />
-                        );
-                      },
-                    }}
-                  >
-                    {msg.text}
-                  </ReactMarkdown>
-                ) : (
-                  msg.text
-                )}
-              </div>
-            </motion.div>
-          ))}
+                        },
+                      }}
+                    >
+                      {message.text}
+                    </ReactMarkdown>
+                  ) : (
+                    message.text
+                  )}
+                </div>
+              </motion.div>
+            ))
+          : null}
 
-        {loading && (
+        {loading ? (
           <div className="flex justify-start">
-            <div className="px-4 py-3 rounded-2xl bg-[#252526] text-gray-500/70 border border-[#3C3C3C]">
-              Thinking <TypingDots />
+            <div className="px-4 py-3 rounded-2xl theme-card theme-muted">
+              Thinking
+              <TypingDots />
             </div>
           </div>
-        )}
+        ) : null}
         <div ref={messageEndRef} />
       </div>
 
-      <div
-        className={`sticky bottom-0 left-0 w-full border-t ${t.border} ${t.chatBg} p-4 flex items-center`}
-      >
+      <div className="sticky bottom-0 left-0 w-full border-t border-[var(--border-color)] theme-surface p-4 flex items-center">
         <textarea
           placeholder="Type your message..."
           value={input}
           ref={inputRef}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
+          onKeyDown={(event) => {
+            if (event.key === "Enter" && !event.shiftKey) {
+              event.preventDefault();
               handleSend();
             }
           }}
-          onChange={(e) => {
-            setInput(e.target.value);
-            e.target.style.height = "auto";
-            e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
+          onChange={(event) => {
+            setInput(event.target.value);
+            event.target.style.height = "auto";
+            event.target.style.height = `${Math.min(event.target.scrollHeight, 120)}px`;
           }}
-          className={`flex-1 px-4 py-2 
-          h-[50px] bg-[#1E1E1E]/90 text-gray-100 custom-scrollbar rounded-lg border ${t.border} focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-none resize-none
-           shadow-inner`}
+          className={`flex-1 px-4 py-2 h-[50px] custom-scrollbar rounded-lg border theme-input focus:outline-none focus:ring-2 resize-none ${currentTheme.focusRing}`}
         />
         <button
           onClick={handleSend}
           disabled={loading}
-          className={`ml-3 p-2 bg-gradient-to-r ${
-            t.accent
-          } rounded-lg text-white transition ${
-            loading
-              ? "opacity-50 cursor-not-allowed"
-              : "hover:shadow-[0_0_12px_#2563eb80]"
+          className={`ml-3 p-2 rounded-lg text-white transition bg-gradient-to-r ${currentTheme.bubble} ${
+            loading ? "opacity-50 cursor-not-allowed" : "hover:brightness-110"
           }`}
         >
           {loading ? (

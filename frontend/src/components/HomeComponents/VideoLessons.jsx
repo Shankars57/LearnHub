@@ -42,7 +42,10 @@ export default function YouTubeSection() {
   return (
     <section
       id="playlists"
-      className="relative py-24 bg-gradient-to-br from-gray-900 to-blue-950 overflow-hidden"
+      className="relative py-24 overflow-hidden"
+      style={{
+        background: "linear-gradient(165deg, var(--page-bg), var(--page-alt-bg))",
+      }}
     >
      { /*<Snowfall />*/}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600 rounded-full filter blur-3xl opacity-10"></div>
@@ -56,14 +59,14 @@ export default function YouTubeSection() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4">
+          <h2 className="text-4xl sm:text-5xl font-bold theme-text mb-4">
             Curated Video
             <span className="bg-gradient-to-r from-red-400 to-orange-400 text-transparent bg-clip-text">
               {" "}
               Lessons
             </span>
           </h2>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+          <p className="text-xl theme-muted max-w-2xl mx-auto">
             Hand-picked tutorials from the best creators, organized just for you
           </p>
         </motion.div>
@@ -96,11 +99,11 @@ export default function YouTubeSection() {
                 </div>
               </div>
 
-              <h3 className="text-lg font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">
+              <h3 className="text-lg font-bold theme-text mb-2 group-hover:text-blue-400 transition-colors">
                 {playlist.title}
               </h3>
 
-              <div className="flex items-center gap-4 text-sm text-gray-400">
+              <div className="flex items-center gap-4 text-sm theme-muted">
                 <div className="flex items-center gap-1">
                   <Clock className="w-4 h-4" />
                   <span>{playlist.duration}</span>
