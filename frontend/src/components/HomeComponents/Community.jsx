@@ -132,6 +132,7 @@ export default function Community() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
                 whileHover={{ scale: 1.02 }}
+                onClick={() => navigate("/chats")}
                 className="theme-card rounded-xl p-6 transition-all cursor-pointer"
               >
                 <div className="flex items-center justify-between mb-4">

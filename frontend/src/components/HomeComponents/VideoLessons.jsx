@@ -80,6 +80,7 @@ export default function YouTubeSection() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
               whileHover={{ y: -10 }}
+              onClick={() => navigate("/playlist")}
               className="group cursor-pointer"
             >
               <div className="relative overflow-hidden rounded-xl mb-4">

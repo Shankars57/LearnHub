@@ -1,13 +1,13 @@
 import {
-  Target,
-  MessageCircle,
-  Youtube,
-  Puzzle,
-  TrendingUp,
   BookOpen,
+  MessageCircle,
+  Puzzle,
+  Target,
+  TrendingUp,
+  Youtube,
 } from "lucide-react";
-import Snowfall from "react-snowfall";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const features = [
   {
@@ -16,14 +16,15 @@ const features = [
     description:
       "Personalized guidance for every learner. Get instant help, code reviews, and smart suggestions tailored to your learning pace.",
     gradient: "from-blue-500 to-cyan-500",
+    path: "/ai",
   },
-
   {
     icon: MessageCircle,
     title: "Group Chat Rooms",
     description:
       "Learn together and solve problems as a community. Join study rooms, collaborate on projects, and grow with peers.",
     gradient: "from-purple-500 to-pink-500",
+    path: "/chats",
   },
   {
     icon: Youtube,
@@ -31,13 +32,15 @@ const features = [
     description:
       "Curated video lessons for each topic. Access hand-picked tutorials from the best creators, organized by skill level.",
     gradient: "from-red-500 to-orange-500",
+    path: "/playlist",
   },
   {
-    icon: BookOpen, 
+    icon: BookOpen,
     title: "Learning Materials",
     description:
       "Access structured notes, PDFs, and curated resources for every topic. Study anytime, anywhere with organized materials.",
     gradient: "from-yellow-500 to-amber-500",
+    path: "/materials",
   },
   {
     icon: Puzzle,
@@ -45,6 +48,7 @@ const features = [
     description:
       "Build real-world apps while learning concepts. Apply your knowledge immediately with guided projects and challenges.",
     gradient: "from-green-500 to-emerald-500",
+    path: "/roadmaps",
   },
   {
     icon: TrendingUp,
@@ -52,9 +56,13 @@ const features = [
     description:
       "Smart dashboard to track learning goals. Visualize your growth, set milestones, and celebrate achievements.",
     gradient: "from-indigo-500 to-purple-500",
+    path: "/profile",
   },
 ];
+
 const Features = () => {
+  const navigate = useNavigate();
+
   return (
     <section
       id="features"
@@ -63,7 +71,6 @@ const Features = () => {
         background: "linear-gradient(165deg, var(--page-bg), var(--page-alt-bg))",
       }}
     >
-     { /*<Snowfall />*/}
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
       <div className="w-[80%] mx-auto flex flex-col gap-20">
         <motion.div
@@ -84,10 +91,11 @@ const Features = () => {
             A complete learning ecosystem designed for modern developers
           </p>
         </motion.div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
             <motion.div
-              key={index}
+              key={feature.title}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -98,7 +106,7 @@ const Features = () => {
               <div
                 className="absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl -z-10"
                 style={{
-                  backgroundImage: `linear-gradient(to right, var(--tw-gradient-stops))`,
+                  backgroundImage: "linear-gradient(to right, var(--tw-gradient-stops))",
                 }}
               ></div>
 
@@ -109,20 +117,20 @@ const Features = () => {
                   <feature.icon className="w-6 h-6 text-white" />
                 </div>
 
-                <h3 className="text-xl font-bold theme-text mb-3">
-                  {feature.title}
-                </h3>
-                <p className="theme-muted leading-relaxed">
-                  {feature.description}
-                </p>
+                <h3 className="text-xl font-bold theme-text mb-3">{feature.title}</h3>
+                <p className="theme-muted leading-relaxed">{feature.description}</p>
 
-                <div className="mt-6 cursor-pointer  flex items-center hover:gap-2 text-sm font-semibold">
+                <button
+                  type="button"
+                  onClick={() => navigate(feature.path)}
+                  className="mt-6 cursor-pointer flex items-center hover:gap-2 text-sm font-semibold"
+                >
                   <span
                     className={`bg-gradient-to-r ${feature.gradient} text-transparent bg-clip-text`}
                   >
-                    Learn more →
+                    Learn more {"->"}
                   </span>
-                </div>
+                </button>
               </div>
             </motion.div>
           ))}

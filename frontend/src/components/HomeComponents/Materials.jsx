@@ -1,15 +1,5 @@
 import { motion } from "framer-motion";
-import {
-  FileText,
-  BookOpen,
-  Image,
-  FileType,
-  Download,
-  Star,
-  Map,
-  ScrollText,
-  FileUser,
-} from "lucide-react";
+import { ArrowRight, BookOpen, FileText, FileType, Image, Map, ScrollText, FileUser } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Snowfall from "react-snowfall";
 const materialTypes = [
@@ -20,6 +10,7 @@ const materialTypes = [
       "Comprehensive study materials and reference guides in PDF format",
     count: "500+",
     gradient: "from-red-500 to-orange-500",
+    path: "/materials",
   },
   {
     icon: BookOpen,
@@ -28,6 +19,7 @@ const materialTypes = [
       "Concise, well-organized notes for quick revision and learning",
     count: "1000+",
     gradient: "from-blue-500 to-cyan-500",
+    path: "/materials",
   },
   {
     icon: FileType,
@@ -35,6 +27,7 @@ const materialTypes = [
     description: "Editable documents for assignments and practice exercises",
     count: "300+",
     gradient: "from-purple-500 to-pink-500",
+    path: "/materials",
   },
   {
     icon: Image,
@@ -42,6 +35,7 @@ const materialTypes = [
     description: "Infographics and diagrams to visualize complex concepts",
     count: "800+",
     gradient: "from-green-500 to-emerald-500",
+    path: "/materials",
   },
   {
     icon: ScrollText,
@@ -50,6 +44,7 @@ const materialTypes = [
       "Quick reference sheets for syntax, algorithms, and important formulas",
     count: "200+",
     gradient: "from-yellow-500 to-amber-500",
+    path: "/cheatsheets",
   },
   {
     icon: Map,
@@ -58,6 +53,7 @@ const materialTypes = [
       "Step-by-step learning paths to guide your development journey",
     count: "50+",
     gradient: "from-indigo-500 to-blue-500",
+    path: "/roadmaps",
   },
   {
     icon: FileUser,
@@ -66,6 +62,7 @@ const materialTypes = [
       "Professional resume templates to help you stand out in job applications",
     count: "100+",
     gradient: "from-pink-500 to-rose-500",
+    path: "/resumes",
   },
 ];
 
@@ -113,6 +110,7 @@ export default function Materials() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
               whileHover={{ y: -10 }}
+              onClick={() => navigate(material.path)}
               className="group relative"
             >
               <div className="relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all h-full">
@@ -130,10 +128,18 @@ export default function Materials() {
                 </p>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-white">
-                    {material.count}
-                  </span>
-                  <span className="text-sm text-gray-400">resources</span>
+                  <span className="text-2xl font-bold text-white">{material.count}</span>
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      navigate(material.path);
+                    }}
+                    className="text-sm text-blue-300 hover:text-blue-200 flex items-center gap-1"
+                  >
+                    Open
+                    <ArrowRight size={14} />
+                  </button>
                 </div>
               </div>
             </motion.div>

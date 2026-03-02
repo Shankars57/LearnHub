@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { TypeAnimation } from "react-type-animation";
+import { useNavigate } from "react-router-dom";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 40 },
@@ -27,6 +28,8 @@ const pills = [
 ];
 
 const Hero = () => {
+  const navigate = useNavigate();
+
   return (
     <section
       id="hero"
@@ -139,6 +142,7 @@ const Hero = () => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            onClick={() => navigate("/playlist")}
             className="theme-btn-secondary flex items-center justify-center px-6 sm:px-7 py-2.5 sm:py-3 rounded-full text-sm sm:text-base gap-2"
           >
             Watch Demo
